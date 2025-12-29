@@ -7,6 +7,7 @@ namespace SwiftArcadeMode.Utils.Sounds
 {
     public static class SoundEffectManager
     {
+        public static bool DebugLogs { get; set; } = false;
         public static bool Disabled { get; private set; } = false;
         public static string BasePath;
 
@@ -22,7 +23,12 @@ namespace SwiftArcadeMode.Utils.Sounds
                 return;
 
             string path = Path.Combine(BasePath, Path.Combine(folders));
-            if (AudioClipStorage.LoadClip(path, id))
+            bool success = AudioClipStorage.LoadClip(path, id);
+
+            if (!DebugLogs)
+                return;
+
+            if (success)
                 Logger.Info("Successfully loaded sound clip at \"" + path + "\", ID: " + id);
             else
                 Logger.Error("Failed to load sound clip at \"" + path + "\", ID: " + id);

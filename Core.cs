@@ -51,6 +51,7 @@ namespace SwiftArcadeMode
             string soundEffectDir = Path.Combine(SaveManager.GeneralDirectory, "Sounds");
             Directory.CreateDirectory(soundEffectDir);
             SoundEffectManager.BasePath = soundEffectDir;
+            SoundEffectManager.DebugLogs = Config.SoundLogs;
 
             Logger.Info($"Scoring save file path: {SaveManager.SavePath}");
 
