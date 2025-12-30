@@ -1,8 +1,6 @@
 ﻿using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using MEC;
-using ProjectMER.Features;
-using ProjectMER.Features.Objects;
 using SwiftArcadeMode.Utils.Projectiles;
 using SwiftArcadeMode.Utils.Structures;
 using System;
@@ -14,8 +12,6 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
     public abstract class CasterBase(PerkInventory inv) : PerkItemReceiveBase(inv)
     {
         public abstract Type[] ListSpells();
-
-        public Type[] Spells { get; private set; }
 
         public override ItemType ItemType => ItemType.KeycardCustomTaskForce;
         public override string PerkDescription => $"Allows you to cast {Name} spells.\nDrop the keycard to change spell, inspect to cast.";
@@ -29,6 +25,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         public override string ReadyMessage => Player.IsInventoryFull ? "Failed to refresh, no space in inventory." : "Spells refreshed!";
 
         public SpellBase CurrentSpell { get; private set; }
+        public SpellBase[] Spells { get; private set; }
         public Item CurrentSpellItem { get; private set; }
         public ushort CurrentSpellItemSerial { get; private set; }
         public int CurrentSpellIndex
@@ -40,7 +37,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
                     return;
 
                 currentSpellIndex = value % Spells.Length;
-                CurrentSpell = Activator.CreateInstance(Spells[currentSpellIndex]) as SpellBase;
+                CurrentSpell = Spells[currentSpellIndex];
                 CurrentSpell?.Init(this);
             }
         }
@@ -56,12 +53,12 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             PlayerEvents.DroppingItem += OnDroppingItem;
             PlayerEvents.DroppedItem += OnDroppedItem;
             PlayerEvents.InspectingKeycard += OnInspectingKeycard;
-            PlayerEvents.Death += OnDeath;
+            PlayerEvents.Dying += OnDying;
             PlayerEvents.ChangingItem += OnChangingItem;
 
             castDuration.OnTimerEnd += OnCastTimerEnded;
 
-            Spells = ListSpells();
+            Spells = [.. ListSpells().Select(t => (SpellBase)Activator.CreateInstance(t)).Where(s => s != null)];
 
             if (Player != null && Spells.Length <= 0)
                 Player.GetPerkInventory().RemovePerk(this);
@@ -75,7 +72,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             PlayerEvents.DroppingItem -= OnDroppingItem;
             PlayerEvents.DroppedItem -= OnDroppedItem;
             PlayerEvents.InspectingKeycard -= OnInspectingKeycard;
-            PlayerEvents.Death -= OnDeath;
+            PlayerEvents.Dying -= OnDying;
             PlayerEvents.ChangingItem -= OnChangingItem;
 
             castDuration.OnTimerEnd -= OnCastTimerEnded;
@@ -137,7 +134,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             });
         }
 
-        private void OnDeath(LabApi.Events.Arguments.PlayerEvents.PlayerDeathEventArgs ev)
+        private void OnDying(LabApi.Events.Arguments.PlayerEvents.PlayerDyingEventArgs ev)
         {
             if (ev.Player != Player)
             {

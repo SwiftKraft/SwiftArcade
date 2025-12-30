@@ -24,6 +24,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
         public class Golem(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
+            public override string TypeName => "Rock Golem";
+
             public override float Range => 15;
 
             public override float Delay => 1.5f;
