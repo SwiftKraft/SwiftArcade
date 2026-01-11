@@ -8,6 +8,7 @@ using MEC;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Logger = LabApi.Features.Console.Logger;
 
 namespace SwiftArcadeMode.Features.Humans.Perks
 {
@@ -45,13 +46,17 @@ namespace SwiftArcadeMode.Features.Humans.Perks
             if (!PerkPickups.ContainsKey(ev.Pickup.Serial))
                 return;
 
-            Type type = PerkPickups[ev.Pickup.Serial].Perk;
-            PerkManager.PerkProfile prof = PerkPickups[ev.Pickup.Serial].Profile;
+            try
+            {
+                Type type = PerkPickups[ev.Pickup.Serial].Perk;
+                PerkManager.PerkProfile prof = PerkPickups[ev.Pickup.Serial].Profile;
 
-            CheckPickupEventArgs chk = new(type, prof, ev);
-            PerkEvents.OnCheckPickup(chk);
+                CheckPickupEventArgs chk = new(type, prof, ev);
+                PerkEvents.OnCheckPickup(chk);
 
-            ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {prof.FancyName}\n{prof.Description}{(PerkManager.HasPerk(ev.Player, type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : "")}", [HintEffectPresets.FadeOut()], 5f);
+                ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {prof.FancyName}\n{prof.Description}{(PerkManager.HasPerk(ev.Player, type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : "")}", [HintEffectPresets.FadeOut()], 5f);
+            }
+            catch (Exception ex) { Logger.Error(ex); }
         }
 
         private static void OnPickedUpItem(PlayerPickedUpItemEventArgs ev)
@@ -59,26 +64,30 @@ namespace SwiftArcadeMode.Features.Humans.Perks
             if (!PerkPickups.ContainsKey(ev.Item.Serial))
                 return;
 
-            ev.Player.RemoveItem(ev.Item);
-
-            AttemptAddEventArgs pick = new(ev, PerkPickups[ev.Item.Serial]);
-            PerkEvents.OnAttemptAdd(pick);
-
-            if (!pick.IsAllowed || !PerkManager.GivePerk(ev.Player, PerkPickups[ev.Item.Serial]))
+            try
             {
-                SpawnPerk(PerkPickups[ev.Item.Serial], ev.Player.Position);
-                return;
+                ev.Player.RemoveItem(ev.Item);
+
+                AttemptAddEventArgs pick = new(ev, PerkPickups[ev.Item.Serial]);
+                PerkEvents.OnAttemptAdd(pick);
+
+                if (!pick.IsAllowed || !PerkManager.GivePerk(ev.Player, PerkPickups[ev.Item.Serial]))
+                {
+                    SpawnPerk(PerkPickups[ev.Item.Serial], ev.Player.Position);
+                    return;
+                }
+
+                PerkEvents.OnPickedUpPerk(new(ev.Player, PerkPickups[ev.Item.Serial]));
+
+                PerkPickups.Remove(ev.Item.Serial);
+
+                if (LightSources.ContainsKey(ev.Item.Serial))
+                {
+                    LightSources[ev.Item.Serial].Destroy();
+                    LightSources.Remove(ev.Item.Serial);
+                }
             }
-
-            PerkEvents.OnPickedUpPerk(new(ev.Player, PerkPickups[ev.Item.Serial]));
-
-            PerkPickups.Remove(ev.Item.Serial);
-
-            if (LightSources.ContainsKey(ev.Item.Serial))
-            {
-                LightSources[ev.Item.Serial].Destroy();
-                LightSources.Remove(ev.Item.Serial);
-            }
+            catch (Exception ex) { Logger.Error(ex); }
         }
 
         private static void OnRoundStarted() => Timing.CallDelayed(0.1f, SpawnPerks);
