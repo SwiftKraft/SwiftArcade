@@ -101,7 +101,11 @@ namespace SwiftArcadeMode.Utils.Deployable
                 return;
             }
 
-            Schematic.transform.SetPositionAndRotation(Dummy.Position, Dummy.Rotation);
+            if (Dummy.ReferenceHub.transform.hasChanged)
+            {
+                Schematic.transform.SetPositionAndRotation(Dummy.Position, Dummy.Rotation);
+                Dummy.ReferenceHub.transform.hasChanged = false;
+            }
         }
 
         public virtual void Destroy()
