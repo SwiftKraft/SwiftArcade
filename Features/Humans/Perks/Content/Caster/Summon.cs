@@ -11,6 +11,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         public Player Owner { get; set; }
         public SpellBase Spell { get; private set; } = spell;
 
+        public abstract float DestroyRange { get; }
         public abstract float Health { get; }
 
         public virtual bool DieOnOwnerDeath => true;
@@ -23,6 +24,18 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
             if (DieOnOwnerDeath)
                 PlayerEvents.Death += OnOwnerDied;
+        }
+
+        public override void Tick()
+        {
+            base.Tick();
+
+            if ((Owner.Position - Position).sqrMagnitude > DestroyRange * DestroyRange)
+            {
+                Destroy();
+                Spell.Caster.SendMessage($"{Name} has been destroyed! \nYou are too far away to support its existence.");
+                return;
+            }
         }
 
         protected virtual void OnOwnerDied(LabApi.Events.Arguments.PlayerEvents.PlayerDeathEventArgs ev)

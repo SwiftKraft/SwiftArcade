@@ -33,6 +33,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
             public override float Health => 500f;
 
+            public override float DestroyRange => 25f;
+
             public override void Initialize()
             {
                 base.Initialize();

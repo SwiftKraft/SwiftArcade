@@ -32,13 +32,15 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         {
             public Timer SpawnTimer = new(10f);
 
-            public int Limit = 5;
+            public int Limit = 3;
             public float Range = 3f;
             public float MaxHeight = 2f;
 
             readonly List<Ghoul> spawned = [];
 
-            public override float Health => 500f;
+            public override float Health => 200f;
+
+            public override float DestroyRange => 20f;
 
             public override void Initialize()
             {
@@ -82,7 +84,9 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
                 public override float Delay => 1f;
 
-                public override float Health => 80f;
+                public override float Health => 30f;
+
+                public override float DestroyRange => 20f;
 
                 public override void Attack(Player target)
                 {
@@ -114,7 +118,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
                     {
                         if (hit != null)
                         {
-                            hit.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, 10f * (hit.IsSCP() ? 2f : 1f), 50, ExplosionType.Disruptor));
+                            hit.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, 3f * (hit.IsSCP() ? 2f : 1f), 50, ExplosionType.Disruptor));
                             Owner?.SendHitMarker(0.5f);
                         }
                     }

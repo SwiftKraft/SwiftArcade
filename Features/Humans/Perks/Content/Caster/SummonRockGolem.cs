@@ -26,11 +26,13 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         {
             public override string TypeName => "Rock Golem";
 
-            public override float Range => 15;
+            public override float Range => 10;
 
-            public override float Delay => 1.5f;
+            public override float Delay => 2.5f;
 
-            public override float Health => 700f;
+            public override float Health => 200f;
+
+            public override float DestroyRange => 20f;
 
             Vector3 damp;
             Vector3 vel;
@@ -68,7 +70,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
                 {
                     if (hit != null)
                     {
-                        float damage = 90f;
+                        float damage = 50f;
 
                         hit.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, damage * (hit.IsSCP() ? 2.5f : 1f), 30, ExplosionType.Grenade));
                         Owner?.SendHitMarker(2f);

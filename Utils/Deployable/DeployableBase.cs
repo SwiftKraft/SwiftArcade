@@ -113,7 +113,8 @@ namespace SwiftArcadeMode.Utils.Deployable
             DeployableManager.AllDeployables.Remove(this);
             if (Dummy != null)
                 NetworkServer.Destroy(Dummy.GameObject);
-            Schematic?.Destroy();
+            if (Schematic != null && Schematic.gameObject != null)
+                Schematic.Destroy();
             Scp096Events.AddingTarget -= On096AddingTarget;
             Scp173Events.AddingObserver -= On173AddingObserver;
             Destroyed = true;

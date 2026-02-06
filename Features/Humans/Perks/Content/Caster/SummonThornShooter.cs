@@ -27,13 +27,15 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         {
             public override string TypeName => "Thorn Shooter";
             public override float Health => 150f;
-            public override float Range => 15f;
-            public override float Delay => 0.1f;
+            public override float Range => 6f;
+            public override float Delay => 0.2f;
+
+            public override float DestroyRange => 20f;
 
             public override void Attack(Player target)
             {
                 Vector3 direction = Quaternion.Euler(Random.insideUnitSphere * 5f) * (target.Camera.position - Dummy.Camera.position).normalized;
-                new ThornShot.Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 40f, 4f, Dummy);
+                new ThornShot.Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 20f, 4f, Dummy);
             }
         }
     }

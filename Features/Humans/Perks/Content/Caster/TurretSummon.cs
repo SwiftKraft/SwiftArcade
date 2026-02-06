@@ -25,6 +25,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         public override void Tick()
         {
             base.Tick();
+
             Timer.Tick(Time.fixedDeltaTime);
             if (Timer.Ended)
             {

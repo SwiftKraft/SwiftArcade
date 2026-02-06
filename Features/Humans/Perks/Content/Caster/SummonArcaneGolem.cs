@@ -27,16 +27,18 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         {
             public override string TypeName => "Arcane Golem";
 
-            public override float Health => 250f;
+            public override float Health => 200f;
 
-            public override float Range => 15f;
+            public override float Range => 10f;
 
-            public override float Delay => 0.5f;
+            public override float Delay => 1f;
+
+            public override float DestroyRange => 20f;
 
             public override void Attack(Player target)
             {
                 Vector3 direction = (target.Position - Dummy.Camera.position).normalized;
-                new MagicMissile.Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 9f, 5f, Dummy);
+                new MagicMissile.Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 9f, 4f, Dummy);
             }
         }
     }
