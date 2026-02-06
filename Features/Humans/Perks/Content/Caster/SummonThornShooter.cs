@@ -27,7 +27,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         {
             public override string TypeName => "Thorn Shooter";
             public override float Health => 150f;
-            public override float Range => 6f;
+            public override float Range => 5f;
             public override float Delay => 0.2f;
 
             public override float DestroyRange => 20f;
