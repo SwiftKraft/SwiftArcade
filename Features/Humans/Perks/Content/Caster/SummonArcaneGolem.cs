@@ -27,7 +27,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         {
             public override string TypeName => "Arcane Golem";
 
-            public override float Health => 200f;
+            public override float Health => 70f;
 
             public override float Range => 10f;
 

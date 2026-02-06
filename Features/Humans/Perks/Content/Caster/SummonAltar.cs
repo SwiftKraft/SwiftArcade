@@ -38,7 +38,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
             readonly List<Ghoul> spawned = [];
 
-            public override float Health => 200f;
+            public override float Health => 100f;
 
             public override float DestroyRange => 20f;
 
@@ -84,7 +84,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
                 public override float Delay => 1f;
 
-                public override float Health => 30f;
+                public override float Health => 25f;
 
                 public override float DestroyRange => 20f;
 

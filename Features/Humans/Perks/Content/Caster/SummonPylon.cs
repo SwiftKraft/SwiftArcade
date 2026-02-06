@@ -31,7 +31,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
             public Timer HealDelay = new();
 
-            public override float Health => 500f;
+            public override float Health => 150f;
 
             public override float DestroyRange => 25f;
 
