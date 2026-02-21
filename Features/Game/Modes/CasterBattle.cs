@@ -1,4 +1,5 @@
-﻿using LabApi.Features.Wrappers;
+﻿using LabApi.Events.Handlers;
+using LabApi.Features.Wrappers;
 using SwiftArcadeMode.Features.Humans.Perks;
 using SwiftArcadeMode.Features.Humans.Perks.Content;
 using SwiftArcadeMode.Features.Humans.Perks.Content.Caster;
@@ -10,9 +11,20 @@ namespace SwiftArcadeMode.Features.Game.Modes
     {
         public override PerkSpawnRulesBase OverrideSpawnRules => new PerkRules();
 
-        public override void End() { }
+        public override void End() => PlayerEvents.ChangedRole -= OnChangedRole;
 
-        public override void Start() => Server.SendBroadcast("CASTER BATTLE MODE\nHas been activated.", 10, Broadcast.BroadcastFlags.Normal, true);
+        public override void Start()
+        {
+            Server.SendBroadcast("CASTER BATTLE MODE\nHas been activated.", 10, Broadcast.BroadcastFlags.Normal, true);
+
+            PlayerEvents.ChangedRole += OnChangedRole;
+        }
+
+        private void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
+        {
+            ev.Player.MaxHealth *= 2.5f;
+            ev.Player.Health = ev.Player.MaxHealth;
+        }
 
         public override void Tick() { }
 
