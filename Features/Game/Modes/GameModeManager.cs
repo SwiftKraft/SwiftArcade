@@ -11,11 +11,10 @@ namespace SwiftArcadeMode.Features.Game.Modes
 {
     public static class GameModeManager
     {
+        public static float Chance { get; set; } = 0.25f;
         public static bool Allow { get; set; } = true;
 
         public static readonly List<Type> Registry = [];
-
-        public static float Chance = 0.25f;
 
         public static GameModeBase Current
         {
@@ -38,6 +37,7 @@ namespace SwiftArcadeMode.Features.Game.Modes
         public static void Enable()
         {
             Allow = Core.Instance.Config.AllowCustomGameModes;
+            Chance = Core.Instance.Config.CustomGameModeChance;
 
             RegisterModes();
 

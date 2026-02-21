@@ -81,11 +81,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
                 public Altar Parent { get; set; }
 
                 public override float Range => 7f;
-
                 public override float Delay => 1f;
-
                 public override float Health => 25f;
-
                 public override float DestroyRange => 20f;
 
                 public override void Attack(Player target)

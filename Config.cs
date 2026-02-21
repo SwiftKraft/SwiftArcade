@@ -11,5 +11,6 @@
         public bool SkeletonBalance { get; set; } = true;
         public bool Replace096 { get; set; } = true;
         public string SchematicPrefix { get; set; } = "SAM-";
+        public float CustomGameModeChance { get; set; } = 0.25f;
     }
 }

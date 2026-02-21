@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
-    [Perk("Baller", Rarity.Legendary)]
+    [Perk("Baller", Rarity.Secret)]
     public class Baller(PerkInventory inv) : PerkBase(inv)
     {
         public override string Name => "Baller";
