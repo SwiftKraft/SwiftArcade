@@ -1,8 +1,8 @@
-﻿using CommandSystem;
-using System;
-
-namespace SwiftArcadeMode.Commands.RA
+﻿namespace SwiftArcadeMode.Commands.RA
 {
+    using System;
+    using CommandSystem;
+
     public abstract class ConfigCommand : ICommand
     {
         public abstract string Command { get; }
@@ -21,7 +21,7 @@ namespace SwiftArcadeMode.Commands.RA
                 return false;
             }
 
-            if (arguments.Array.Length < 2 || !bool.TryParse(arguments.Array[1], out bool option))
+            if (arguments.Count < 1 || !bool.TryParse(arguments.At(0), out bool option))
             {
                 response = "Please provide a valid value! (true/false)";
                 return false;

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Diseased
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Diseased
 {
+    using System;
+
     [UpgradePath(PlayerRoles.RoleTypeId.Scp939)]
     [Perk("939.Diseased", Rarity.Epic, PerkRestriction.SCP)]
     public class Diseased(PerkInventory inv) : UpgradePathPerkBase(inv)

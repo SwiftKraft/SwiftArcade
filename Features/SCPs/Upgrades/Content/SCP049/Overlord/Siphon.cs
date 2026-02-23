@@ -1,10 +1,9 @@
-﻿using LabApi.Events.Handlers;
-using LabApi.Features.Console;
-using LabApi.Features.Wrappers;
-using System.Linq;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.Overlord
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.Overlord
 {
+    using System.Linq;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+
     public class Siphon(UpgradePathPerkBase parent) : UpgradeCooldownBase<Overlord>(parent)
     {
         public override string Name => "Siphon";
@@ -12,11 +11,12 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.Overlord
         public override string Description => $"Siphons {Amount} HP from nearby zombies when activating <i>The Doctor's Call</i>.";
 
         public float Amount => 100f;
+
         public float Range => 15f;
 
         public override float Cooldown => 3f;
 
-        public override string UpgradeDescription => "";
+        public override string UpgradeDescription => string.Empty;
 
         public override void Effect()
         {

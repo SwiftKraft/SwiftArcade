@@ -1,8 +1,8 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+
     public abstract class UpgradeKillBase<T>(UpgradePathPerkBase parent) : UpgradeBase<T>(parent) where T : UpgradePathPerkBase
     {
         public override void Init()

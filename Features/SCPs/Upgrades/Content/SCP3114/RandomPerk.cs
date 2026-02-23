@@ -1,8 +1,8 @@
-﻿using SwiftArcadeMode.Utils.Extensions;
-using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP3114
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP3114
 {
+    using System;
+    using SwiftArcadeMode.Utils.Extensions;
+
     public class RandomPerk(UpgradePathPerkBase parent) : UpgradeBase<RandomPerks>(parent)
     {
         public override string Name => $"Random Perk ({Rarity})";

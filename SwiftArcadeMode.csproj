@@ -1,13 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-	<LangVersion>12.0</LangVersion>
+	<TargetFramework>net48</TargetFramework>
+	<LangVersion>14</LangVersion>
 	<ImplicitUsings>disable</ImplicitUsings>
-	<Nullable>disable</Nullable>
+	<Nullable>enable</Nullable>
 	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	<AssemblyName>SwiftArcade</AssemblyName>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118" IncludeAssets="all" PrivateAssets="all" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp-firstpass" HintPath="$(SCPSLREFERENCES)\Assembly-CSharp-firstpass.dll" />
@@ -16,6 +21,7 @@
 		<Reference Include="CommandSystem.Core" HintPath="$(SCPSLREFERENCES)\CommandSystem.Core.dll" />
 		<Reference Include="LabApi" HintPath="$(SCPSLREFERENCES)\LabApi.dll" />
 		<Reference Include="Mirror" HintPath="$(SCPSLREFERENCES)\Mirror-Publicized.dll" />
+		<Reference Include="mscorlib" HintPath="$(SCPSLREFERENCES)\mscorlib.dll" />
 		<Reference Include="Pooling" HintPath="$(SCPSLREFERENCES)\Pooling.dll" />
 		<Reference Include="ProjectMER" HintPath="$(SCPSLREFERENCES)\ProjectMER.dll" />
 		<Reference Include="UnityEngine" HintPath="$(SCPSLREFERENCES)\UnityEngine.dll" />
@@ -32,5 +38,24 @@
 	  <Folder Include="Features\SCPs\Upgrades\Content\SCP079\" />
 	  <Folder Include="Features\SCPs\Upgrades\Content\SCP096\" />
 	</ItemGroup>
+
+	<PropertyGroup>
+		<NoWarn>$(NoWarn);SA0001</NoWarn>
+		<NoWarn>$(NoWarn);SA1000</NoWarn>
+		<NoWarn>$(NoWarn);SA1008</NoWarn>
+		<NoWarn>$(NoWarn);SA1520</NoWarn>
+		<NoWarn>$(NoWarn);SA1009</NoWarn>
+		<NoWarn>$(NoWarn);SA1002</NoWarn>
+		<NoWarn>$(NoWarn);SA1600</NoWarn>
+		<NoWarn>$(NoWarn);SA1602</NoWarn>
+		<NoWarn>$(NoWarn);SA1010</NoWarn>
+		<NoWarn>$(NoWarn);SA1013</NoWarn>
+		<NoWarn>$(NoWarn);SA1028</NoWarn>
+		<NoWarn>$(NoWarn);SA1101</NoWarn>
+		<NoWarn>$(NoWarn);SA1011</NoWarn>
+		<NoWarn>$(NoWarn);SA1503</NoWarn>
+		<NoWarn>$(NoWarn);SA1118</NoWarn>
+		<NoWarn>$(NoWarn);SA1633</NoWarn>
+	</PropertyGroup>
 
 </Project>

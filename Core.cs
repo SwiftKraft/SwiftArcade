@@ -1,33 +1,36 @@
-﻿using AdminToys;
-using CustomPlayerEffects;
-using LabApi.Events.Handlers;
-using LabApi.Features;
-using LabApi.Loader.Features.Plugins;
-using MEC;
-using ProjectMER;
-using ProjectMER.Events.Arguments;
-using SwiftArcadeMode.Features;
-using SwiftArcadeMode.Features.Game.Modes;
-using SwiftArcadeMode.Features.Humans.Perks;
-using SwiftArcadeMode.Features.Humans.Perks.Crafting;
-using SwiftArcadeMode.Features.Scoring;
-using SwiftArcadeMode.Features.Scoring.Saving;
-using SwiftArcadeMode.Features.SCPs.Upgrades;
-using SwiftArcadeMode.Features.ServerSpecificSettings;
-using SwiftArcadeMode.Utils.Deployable;
-using SwiftArcadeMode.Utils.Effects;
-using SwiftArcadeMode.Utils.Projectiles;
-using SwiftArcadeMode.Utils.Sounds;
-using System;
-using System.IO;
-using System.Linq;
-using Logger = LabApi.Features.Console.Logger;
+﻿using LabApi.Features.Wrappers;
 
 namespace SwiftArcadeMode
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using AdminToys;
+    using CustomPlayerEffects;
+    using LabApi.Events.Handlers;
+    using LabApi.Features;
+    using LabApi.Loader.Features.Plugins;
+    using MEC;
+    using ProjectMER.Events.Arguments;
+    using SwiftArcadeMode.Features;
+    using SwiftArcadeMode.Features.Game.Modes;
+    using SwiftArcadeMode.Features.Humans.Perks;
+    using SwiftArcadeMode.Features.Humans.Perks.Crafting;
+    using SwiftArcadeMode.Features.Scoring;
+    using SwiftArcadeMode.Features.Scoring.Saving;
+    using SwiftArcadeMode.Features.SCPs.Upgrades;
+    using SwiftArcadeMode.Features.ServerSpecificSettings;
+    using SwiftArcadeMode.Utils.Deployable;
+    using SwiftArcadeMode.Utils.Effects;
+    using SwiftArcadeMode.Utils.Projectiles;
+    using SwiftArcadeMode.Utils.Sounds;
+    using Logger = LabApi.Features.Console.Logger;
+
     public class Core : Plugin<Config>
     {
-        public static Core Instance { get; private set; }
+        public static Core Instance { get; private set; } = null!;
+
+        public static Config CoreConfig { get; private set; } = null!;
 
         public override string Name => "SCPSL Arcade Mode";
 
@@ -41,6 +44,16 @@ namespace SwiftArcadeMode
 
         public override void Enable()
         {
+            Instance = this;
+
+            if (Config is null)
+            {
+                Logger.Error("Failed to load config!");
+                return;
+            }
+
+            CoreConfig = Config;
+
             Logger.Info($"Arcade Mode {Version} by SwiftKraft: Loaded!");
 
             SaveManager.GeneralDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SCP Secret Laboratory", "Swift Arcade Mode");
@@ -53,9 +66,10 @@ namespace SwiftArcadeMode
             SoundEffectManager.BasePath = soundEffectDir;
             SoundEffectManager.DebugLogs = Config.SoundLogs;
 
-            Logger.Info($"Scoring save file path: {SaveManager.SavePath}");
+            if (AppDomain.CurrentDomain.GetAssemblies().All(assembly => !assembly.FullName.Contains("AudioPlayerApi")))
+                SoundEffectManager.Disable();
 
-            Instance = this;
+            Logger.Info($"Scoring save file path: {SaveManager.SavePath}");
 
             StaticUnityMethods.OnFixedUpdate += FixedUpdate;
 
@@ -80,45 +94,6 @@ namespace SwiftArcadeMode
             ProjectMER.Events.Handlers.Schematic.SchematicSpawned += OnSchematicSpawned;
 
             SaveManager.LoadScores();
-        }
-
-        public void OnSchematicSpawned(SchematicSpawnedEventArgs ev)
-        {
-            if (!Config.SpeedUpSchematics)
-                return;
-
-            ev.Schematic.gameObject.GetComponent<AdminToyBase>().syncInterval = 0;
-
-            foreach (AdminToyBase toyBase in ev.Schematic.AdminToyBases.Where(toy => toy.name.StartsWith("anim_")))
-            {
-                toyBase.syncInterval = 0;
-            }
-        }
-
-        private void OnRoundRestarted() => SaveManager.SaveScores();
-
-        private void OnLeft(LabApi.Events.Arguments.PlayerEvents.PlayerLeftEventArgs ev)
-        {
-            if (ev.Player.TryGetPerkInventory(out PerkInventory inv))
-                inv.ClearPerks();
-        }
-
-        private void OnMapGenerated(LabApi.Events.Arguments.ServerEvents.MapGeneratedEventArgs ev) => SaveManager.LoadScores();
-
-        private void OnRoundStarted() => SaveManager.LoadScores();
-
-        private void OnRoundEnded(LabApi.Events.Arguments.ServerEvents.RoundEndedEventArgs ev) => SaveManager.SaveScores();
-
-        private void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
-        {
-            if (Config.Replace096 && ev.NewRole.RoleTypeId == PlayerRoles.RoleTypeId.Scp096 && ev.ChangeReason == PlayerRoles.RoleChangeReason.RoundStart)
-                Timing.CallDelayed(0.1f, () => ev.Player.SetRole(PlayerRoles.RoleTypeId.Scp3114));
-        }
-
-        private void OnUpdatedEffect(LabApi.Events.Arguments.PlayerEvents.PlayerEffectUpdatedEventArgs ev)
-        {
-            if (Config.SkeletonBalance && ev.Effect is Strangled str)
-                str.ServerChangeDuration(2f);
         }
 
         public override void Disable()
@@ -148,9 +123,48 @@ namespace SwiftArcadeMode
             SaveManager.SaveScores();
         }
 
-        private void OnQuit() => SaveManager.SaveScores();
+        private static void OnSchematicSpawned(SchematicSpawnedEventArgs ev)
+        {
+            if (!CoreConfig.SpeedUpSchematics)
+                return;
 
-        public static void FixedUpdate()
+            ev.Schematic.gameObject.GetComponent<AdminToyBase>().syncInterval = 0;
+
+            foreach (AdminToyBase toyBase in ev.Schematic.AdminToyBases.Where(toy => toy.name.StartsWith("anim_")))
+            {
+                toyBase.syncInterval = 0;
+            }
+        }
+
+        private static void OnRoundRestarted() => SaveManager.SaveScores();
+
+        private static void OnLeft(LabApi.Events.Arguments.PlayerEvents.PlayerLeftEventArgs ev)
+        {
+            if (Player.TryGetPerkInventory(out PerkInventory inv))
+                inv.ClearPerks();
+        }
+
+        private static void OnMapGenerated(LabApi.Events.Arguments.ServerEvents.MapGeneratedEventArgs ev) => SaveManager.LoadScores();
+
+        private static void OnRoundStarted() => SaveManager.LoadScores();
+
+        private static void OnRoundEnded(LabApi.Events.Arguments.ServerEvents.RoundEndedEventArgs ev) => SaveManager.SaveScores();
+
+        private static void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
+        {
+            if (CoreConfig.Replace096 && ev.NewRole.RoleTypeId == PlayerRoles.RoleTypeId.Scp096 && ev.ChangeReason == PlayerRoles.RoleChangeReason.RoundStart)
+                Timing.CallDelayed(0.1f, () => ev.Player.SetRole(PlayerRoles.RoleTypeId.Scp3114));
+        }
+
+        private static void OnUpdatedEffect(LabApi.Events.Arguments.PlayerEvents.PlayerEffectUpdatedEventArgs ev)
+        {
+            if (CoreConfig.SkeletonBalance && ev.Effect is Strangled str)
+                str.ServerChangeDuration(2f);
+        }
+
+        private static void OnQuit() => SaveManager.SaveScores();
+
+        private static void FixedUpdate()
         {
             GameModeManager.Tick();
             PerkManager.Tick();

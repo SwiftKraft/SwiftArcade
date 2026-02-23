@@ -1,8 +1,8 @@
-﻿using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     public abstract class PerkCooldownBase(PerkInventory inv) : PerkBase(inv)
     {
         public override string Description => $"{PerkDescription}\nCooldown: {Cooldown}s.";
@@ -12,6 +12,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public virtual string ReadyMessage => "Ready!";
 
         public virtual float Cooldown => 10f;
+
         protected Timer CooldownTimer = new();
 
         public override void Init()

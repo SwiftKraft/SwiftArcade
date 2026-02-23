@@ -1,12 +1,12 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerStatsSystem;
-using System;
-using System.Linq;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades
 {
+    using System;
+    using System.Linq;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using PlayerStatsSystem;
+
     public static class UpgradePathGiver
     {
         public static bool AllowLeveling { get; set; } = true;
@@ -28,6 +28,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
                 }
             }
         }
+
         private static int _scpTeamExperience;
 
         public static int Requirement => SCPLevel * 4;
@@ -41,19 +42,26 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
                     return;
 
                 if (_scpLevel < value)
+                {
                     for (int i = 0; i < value - _scpLevel; i++)
+                    {
                         foreach (Player p in Player.List)
-                            if (p.IsSCP && p.TryGetPerkInventory(out PerkInventory inv))
+                        {
+                            if (p.IsSCP && Player.TryGetPerkInventory(out PerkInventory inv))
                             {
                                 inv.UpgradeQueue.Create(3, [.. UpgradePathManager.RegisteredUpgrades.Where((u) => inv.TryGetPerk(u.Perk.Perk, out PerkBase ba) && ba is UpgradePathPerkBase b && b.Maxed)]);
                                 p.SendBroadcast("SCP Team Leveled Up! \nCurrent Level: " + value, 5);
                                 p.Heal(p.MaxHealth * 0.2f);
                             }
+                        }
+                    }
+                }
 
                 PerkEvents.OnScpTeamLevelUp(new(_scpLevel, value));
                 _scpLevel = value;
             }
         }
+
         private static int _scpLevel = 1;
 
         public class ScpTeamLevelUpEventArgs(int prevLevel, int newLevel) : EventArgs

@@ -1,13 +1,8 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Arguments.PlayerEvents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+    using LabApi.Events.Arguments.PlayerEvents;
+
     [Perk("HitAndRun", Rarity.Common, conflictPerks: typeof(RaceCar))]
     public class HitAndRun(PerkInventory inv) : PerkKillBase(inv)
     {

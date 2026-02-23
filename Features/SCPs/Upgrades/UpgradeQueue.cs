@@ -1,12 +1,12 @@
-﻿using Hints;
-using LabApi.Features.Wrappers;
-using System.Collections.Generic;
-using System.Text;
-using MEC;
-using Random = UnityEngine.Random;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades
 {
+    using System.Collections.Generic;
+    using System.Text;
+    using Hints;
+    using LabApi.Features.Wrappers;
+    using MEC;
+    using Random = UnityEngine.Random;
+
     public class UpgradeQueue(Player p)
     {
         public readonly Player Parent = p;
@@ -87,7 +87,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
                 br.Append(i + 1);
                 br.Append(" - ");
                 br.Append(t.Choices[i].Perk.Profile.FancyName);
-                br.AppendLine("");
+                br.AppendLine(string.Empty);
                 sb.AppendLine(t.Choices[i].Perk.Profile.Description);
                 sb.AppendLine();
             }
@@ -100,7 +100,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
         {
             if (Upgrades.Count <= 0)
             {
-                name = "";
+                name = string.Empty;
                 return false;
             }
 
@@ -108,15 +108,15 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
 
             if (index < 0 || index >= t.Choices.Length)
             {
-                name = "";
+                name = string.Empty;
                 return false;
             }
 
-            if (Parent.TryGetPerkInventory(out PerkInventory inv) && inv.TryGetPerk(t.Choices[index].Perk.Perk, out PerkBase perkBase) && perkBase is UpgradePathPerkBase b)
+            if (Player.TryGetPerkInventory(out PerkInventory inv) && inv.TryGetPerk(t.Choices[index].Perk.Perk, out PerkBase perkBase) && perkBase is UpgradePathPerkBase b)
             {
                 if (b.Maxed)
                 {
-                    name = "";
+                    name = string.Empty;
                     return false;
                 }
 

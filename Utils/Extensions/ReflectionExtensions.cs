@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace SwiftArcadeMode.Utils.Extensions
+﻿namespace SwiftArcadeMode.Utils.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
     public static class ReflectionExtensions
     {
         public static HashSet<Type> GetAllNonAbstractSubclasses<T>()

@@ -1,17 +1,15 @@
-﻿using LabApi.Features.Wrappers;
-using MEC;
-using PlayerRoles;
-using PlayerStatsSystem;
-using ProjectMER.Events.Handlers;
-using ProjectMER.Features;
-using ProjectMER.Features.Objects;
-using SwiftArcadeMode.Utils.Extensions;
-using SwiftArcadeMode.Utils.Projectiles;
-using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerStatsSystem;
+    using ProjectMER.Features;
+    using ProjectMER.Features.Objects;
+    using SwiftArcadeMode.Utils.Extensions;
+    using SwiftArcadeMode.Utils.Projectiles;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     public class RayOfDarkness : SpellBase
     {
         public static readonly LayerMask CastMask = LayerMask.GetMask("Default", "Door", "Glass", "Hitbox");
@@ -31,9 +29,9 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
         public override float CastDuration => 4f;
 
-        Vector3 hitPos;
+        private Vector3 hitPos;
 
-        readonly Timer timer = new(0.05f);
+        private readonly Timer timer = new(0.05f);
 
         public override void Cast()
         {

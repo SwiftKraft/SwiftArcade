@@ -1,7 +1,7 @@
-﻿using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Features.Wrappers;
+
     [Perk("BombHen", Rarity.Legendary)]
     public class BombHen(PerkInventory inv) : PerkTriggerCooldownBase(inv)
     {

@@ -1,9 +1,9 @@
-﻿using PlayerRoles;
-using SwiftArcadeMode.Utils.Interfaces;
-using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades
 {
+    using System;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Interfaces;
+
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class UpgradePathAttribute(params RoleTypeId[] roles) : Attribute, IWeight
     {

@@ -1,12 +1,12 @@
-﻿using CommandSystem;
-using Hints;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features;
-using System;
-using System.Text;
-
-namespace SwiftArcadeMode.Commands.Client
+﻿namespace SwiftArcadeMode.Commands.Client
 {
+    using System;
+    using System.Text;
+    using CommandSystem;
+    using Hints;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features;
+
     [CommandHandler(typeof(ClientCommandHandler))]
     public class ClientSeePerksCommand : ICommand
     {
@@ -15,21 +15,6 @@ namespace SwiftArcadeMode.Commands.Client
         public string[] Aliases => ["sperk", "sp"];
 
         public string Description => "Shows you all the perks that you have.";
-
-        public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
-        {
-            Player p = Player.Get(sender);
-
-            if (!PerkManager.Inventories.ContainsKey(p) || PerkManager.Inventories[p].Perks.Count <= 0)
-            {
-                response = "\n\nYou have no perks.";
-                return true;
-            }
-
-            response = GetPerks(p, out string b);
-            p.SendHint(b, [HintEffectPresets.FadeOut()], 10f);
-            return true;
-        }
 
         public static string GetPerks(Player p, out string brief)
         {
@@ -56,6 +41,26 @@ namespace SwiftArcadeMode.Commands.Client
 
             brief = hint.ToString();
             return stringBuilder.ToString();
+        }
+
+        public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
+        {
+            Player? p = Player.Get(sender);
+            if (p is null)
+            {
+                response = "You must be a player to use this command!";
+                return false;
+            }
+
+            if (!PerkManager.Inventories.ContainsKey(p) || PerkManager.Inventories[p].Perks.Count <= 0)
+            {
+                response = "\n\nYou have no perks.";
+                return true;
+            }
+
+            response = GetPerks(p, out string b);
+            p.SendHint(b, [HintEffectPresets.FadeOut()], 10f);
+            return true;
         }
     }
 }

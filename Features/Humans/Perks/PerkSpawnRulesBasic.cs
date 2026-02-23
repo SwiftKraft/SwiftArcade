@@ -1,11 +1,11 @@
-﻿using LabApi.Features.Wrappers;
-using MapGeneration;
-using System;
-using UnityEngine;
-using Random = UnityEngine.Random;
-
-namespace SwiftArcadeMode.Features.Humans.Perks
+﻿namespace SwiftArcadeMode.Features.Humans.Perks
 {
+    using System;
+    using LabApi.Features.Wrappers;
+    using MapGeneration;
+    using UnityEngine;
+    using Random = UnityEngine.Random;
+
     public class PerkSpawnRulesBasic : PerkSpawnRulesBase
     {
         public virtual RoomName[] SpawnRooms => [

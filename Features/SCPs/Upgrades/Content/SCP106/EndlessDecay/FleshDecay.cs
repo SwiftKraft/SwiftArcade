@@ -1,23 +1,19 @@
-﻿using LabApi.Features.Wrappers;
-using PlayerStatsSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.EndlessDecay
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.EndlessDecay
 {
+    using System.Linq;
+    using LabApi.Features.Wrappers;
+    using PlayerStatsSystem;
+
     public class FleshDecay(UpgradePathPerkBase parent) : UpgradeCooldownTriggerBase<EndlessDecay>(parent)
     {
         public override string Name => "Flesh Decay";
 
         public override string UpgradeDescription => $"Damages humans around you by {Amount} HP.";
 
-        public override string ReadyMessage => "";
+        public override string ReadyMessage => string.Empty;
 
         public virtual float Amount => 2f;
+
         public virtual float Radius => 5f;
 
         public override float Cooldown => 1f;

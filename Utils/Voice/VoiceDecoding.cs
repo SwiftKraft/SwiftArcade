@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using VoiceChat.Codec;
-using VoiceChat.Networking;
-
-namespace SwiftArcadeMode.Utils.Voice
+﻿namespace SwiftArcadeMode.Utils.Voice
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using VoiceChat.Codec;
+    using VoiceChat.Networking;
+
     public static class VoiceDecoding
     {
         private static readonly Dictionary<ReferenceHub, OpusDecoder> Decoders = [];
@@ -23,35 +24,30 @@ namespace SwiftArcadeMode.Utils.Voice
             return ReadBuffer.Segment(0, len);
         }
 
-        public static float CalculateRMS(float[] pcmData)
+        public static double CalculateRMS(ArraySegment<float> pcmData)
         {
-            if (pcmData == null || pcmData.Length == 0)
-                return 0f;
+            if (pcmData.Count == 0)
+                return 0F;
 
-            double sumOfSquares = 0.0;
+            double sumOfSquares = pcmData.Aggregate(0D, (current, sample) => current + (sample * sample));
 
-            foreach (float sample in pcmData)
-            {
-                sumOfSquares += sample * sample;
-            }
-
-            double meanSquare = sumOfSquares / pcmData.Length;
-            return (float)Math.Sqrt(meanSquare);
+            double meanSquare = sumOfSquares / pcmData.Count;
+            return Math.Sqrt(meanSquare);
         }
 
-        public static float CalculateLoudnessDB(float[] pcmData)
+        public static double CalculateLoudnessDB(ArraySegment<float> pcmData)
         {
-            if (pcmData == null || pcmData.Length == 0)
+            if (pcmData.Count == 0)
                 return -96f; // Silence in dB
 
-            float rms = CalculateRMS(pcmData);
+            double rms = CalculateRMS(pcmData);
 
             // Convert to dBFS (decibels relative to full scale)
             // Avoid log(0) by using a very small value
             if (rms < 1e-6f)
                 return -96f;
 
-            return 20f * (float)Math.Log10(rms);
+            return 20f * Math.Log10(rms);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Handlers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+    using LabApi.Events.Handlers;
+
     [Perk("Phoenix", Rarity.Legendary)]
     public class Phoenix(PerkInventory inv) : PerkBase(inv)
     {

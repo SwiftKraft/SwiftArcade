@@ -1,17 +1,21 @@
-﻿using SwiftArcadeMode.Utils.Sounds;
-using System.IO;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 {
+    using System.IO;
+    using SwiftArcadeMode.Utils.Sounds;
+    using UnityEngine;
+
     public abstract class SpellBase
     {
         public CasterBase Caster { get; private set; }
 
         public abstract string Name { get; }
+
         public abstract Color BaseColor { get; }
+
         public abstract int RankIndex { get; }
+
         public abstract float CastTime { get; }
+
         public virtual float CastDuration => 0f;
 
         public virtual string[] SoundList => ["cast", "hit"];
@@ -35,7 +39,13 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         public void PlaySound(string id, string name = "speaker", float volume = 1f, bool loop = false, bool destroyOnEnd = true, float minDist = 5f, float maxDist = 15f) => SoundEffectManager.PlaySound(Caster.Player, GetType().Name + "." + id, name, volume, loop, destroyOnEnd, minDist, maxDist);
 
         public abstract void Cast();
-        public virtual void Tick() { }
-        public virtual void End() { }
+
+        public virtual void Tick()
+        {
+        }
+
+        public virtual void End()
+        {
+        }
     }
 }

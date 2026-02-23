@@ -1,8 +1,7 @@
-﻿using CustomPlayerEffects;
-using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 {
+    using CustomPlayerEffects;
+
     public class GamblerPocketDimension : GamblerStatusEffectBase<PocketCorroding>
     {
         public override bool Positive => false;

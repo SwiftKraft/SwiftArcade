@@ -1,13 +1,14 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Utils.Extensions;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using SwiftArcadeMode.Utils.Extensions;
+
     [Perk("GunGame", Rarity.Rare)]
     public class GunGame(PerkInventory inv) : PerkKillBase(inv)
     {
-        public static ItemType[] Pool = [
+        private int lastRandom;
+
+        public static ItemType[] Pool { get; } = [
             ItemType.GunA7,
             ItemType.GunAK,
             ItemType.GunRevolver,
@@ -26,8 +27,6 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public override string Name => "Gun Game";
 
         public override string Description => "Randomizes your weapon on kill.";
-
-        int lastRandom;
 
         protected override void OnPlayerDying(PlayerDyingEventArgs ev)
         {

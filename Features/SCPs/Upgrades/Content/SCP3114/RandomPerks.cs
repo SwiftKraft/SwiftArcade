@@ -1,8 +1,8 @@
-﻿using PlayerRoles;
-using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP3114
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP3114
 {
+    using System;
+    using PlayerRoles;
+
     [UpgradePath(RoleTypeId.Scp3114)]
     [Perk("3114.RandomPerks", Rarity.Legendary, PerkRestriction.SCP)]
     public class RandomPerks(PerkInventory inv) : UpgradePathPerkBase(inv)

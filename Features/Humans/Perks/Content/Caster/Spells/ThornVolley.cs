@@ -1,9 +1,9 @@
-﻿using MEC;
-using UnityEngine;
-using Random = UnityEngine.Random;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using MEC;
+    using UnityEngine;
+    using Random = UnityEngine.Random;
+
     public class ThornVolley : SpellBase
     {
         public override string Name => "Thorn Volley";
@@ -14,7 +14,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
         public override float CastTime => 0.5f;
 
-        CoroutineHandle coroutine;
+        private CoroutineHandle coroutine;
 
         public override void Cast()
         {

@@ -1,13 +1,9 @@
-﻿using InventorySystem.Items;
-using LabApi.Features.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using System.Linq;
+    using InventorySystem.Items;
+    using LabApi.Features.Wrappers;
+
     public abstract class PerkItemReceiveBase(PerkInventory inv) : PerkTriggerCooldownBase(inv)
     {
         public abstract ItemType ItemType { get; }

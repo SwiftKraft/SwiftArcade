@@ -1,13 +1,13 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Arguments.Scp049Events;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using System;
-using System.Collections.Generic;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Arguments.Scp049Events;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+
     [UpgradePath(RoleTypeId.Scp049)]
     [Perk("049.ArmyBuilder", Rarity.Uncommon, PerkRestriction.SCP)]
     public class ArmyBuilder(PerkInventory inv) : UpgradePathPerkBase(inv)
@@ -25,7 +25,9 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
         public override string PathDescription => "Focuses on zombie buffs.";
 
         public event Action<Player> OnAddedZombie;
+
         public event Action<Player> OnLostZombie;
+
         public event Action<Player> OnZombieKilled;
 
         public override void Init()

@@ -1,12 +1,12 @@
-﻿using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features.Humans.Perks;
-using SwiftArcadeMode.Features.Humans.Perks.Content;
-using SwiftArcadeMode.Features.Humans.Perks.Content.Caster;
-using System;
-
-namespace SwiftArcadeMode.Features.Game.Modes
+﻿namespace SwiftArcadeMode.Features.Game.Modes
 {
+    using System;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features.Humans.Perks;
+    using SwiftArcadeMode.Features.Humans.Perks.Content;
+    using SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Perks;
+
     public class CasterBattle : GameModeBase
     {
         public override PerkSpawnRulesBase OverrideSpawnRules => new PerkRules();
@@ -26,11 +26,14 @@ namespace SwiftArcadeMode.Features.Game.Modes
             ev.Player.Health = ev.Player.MaxHealth;
         }
 
-        public override void Tick() { }
+        public override void Tick()
+        {
+        }
 
         public class PerkRules : PerkSpawnRulesBasic
         {
-            public static Type[] Pool = [
+            public static Type[] Pool { get; } =
+            [
                 typeof(SuperRegeneration),
                 typeof(PerkSlotUpgrade),
                 typeof(Ninjutsu),
@@ -41,9 +44,9 @@ namespace SwiftArcadeMode.Features.Game.Modes
                 typeof(Druid),
                 typeof(Sorcerer),
                 typeof(Warlock)
-                ];
+            ];
 
-            public override Func<PerkAttribute, bool> Criteria => (p) => Pool.Contains(p.Perk);
+            public override Func<PerkAttribute, bool> Criteria => p => Pool.Contains(p.Perk);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Utils.Interfaces;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 {
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Utils.Interfaces;
+
     public abstract class GamblerEffectBase : IWeight
     {
         public abstract bool Positive { get; }

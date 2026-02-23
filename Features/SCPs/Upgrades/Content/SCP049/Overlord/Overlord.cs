@@ -1,8 +1,8 @@
-﻿using PlayerRoles;
-using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.Overlord
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.Overlord
 {
+    using System;
+    using PlayerRoles;
+
     [UpgradePath(RoleTypeId.Scp049)]
     [Perk("049.Overlord", Rarity.Epic, PerkRestriction.SCP)]
     public class Overlord(PerkInventory inv) : UpgradePathPerkBase(inv)

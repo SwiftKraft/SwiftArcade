@@ -1,7 +1,7 @@
-﻿using LabApi.Events.Handlers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Handlers;
+
     [Perk("Vampire", Rarity.Epic, PerkRestriction.Human, conflictPerks: [typeof(Reaper), typeof(Regeneration), typeof(SuperRegeneration)])]
     public class Vampire(PerkInventory inv) : Reaper(inv)
     {
@@ -17,6 +17,12 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
             PlayerEvents.UsingItem += OnUsingItem;
         }
 
+        public override void Remove()
+        {
+            base.Remove();
+            PlayerEvents.UsingItem -= OnUsingItem;
+        }
+
         private void OnUsingItem(LabApi.Events.Arguments.PlayerEvents.PlayerUsingItemEventArgs ev)
         {
             if (ev.Player != Player)
@@ -27,12 +33,6 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
                 SendMessage("You cannot use medical items!");
                 ev.IsAllowed = false;
             }
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            PlayerEvents.UsingItem -= OnUsingItem;
         }
     }
 }

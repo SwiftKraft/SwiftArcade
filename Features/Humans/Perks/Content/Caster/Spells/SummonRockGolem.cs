@@ -1,15 +1,14 @@
-﻿using Footprinting;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Utils.Deployable;
-using SwiftArcadeMode.Utils.Extensions;
-using SwiftArcadeMode.Utils.Sounds;
-using SwiftArcadeMode.Utils.Visuals;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using Footprinting;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerStatsSystem;
+    using SwiftArcadeMode.Utils.Deployable;
+    using SwiftArcadeMode.Utils.Extensions;
+    using SwiftArcadeMode.Utils.Visuals;
+    using UnityEngine;
+
     public class SummonRockGolem : SummonSpell
     {
         public override string Name => "Summon Rock Golem";
@@ -34,9 +33,9 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
             public override float DestroyRange => 20f;
 
-            Vector3 damp;
-            Vector3 vel;
-            Player prevTarget;
+            private Vector3 damp;
+            private Vector3 vel;
+            private Player prevTarget;
 
             public override void Attack(Player target)
             {
@@ -62,6 +61,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
             {
                 public override bool UseGravity => true;
+
                 public override float CollisionRadius => 0.2f;
 
                 public override string SchematicName => "RockProjectile";

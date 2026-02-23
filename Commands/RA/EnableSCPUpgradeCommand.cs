@@ -1,8 +1,8 @@
-﻿using CommandSystem;
-using SwiftArcadeMode.Features.SCPs.Upgrades;
-
-namespace SwiftArcadeMode.Commands.RA
+﻿namespace SwiftArcadeMode.Commands.RA
 {
+    using CommandSystem;
+    using SwiftArcadeMode.Features.SCPs.Upgrades;
+
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class EnableSCPUpgradeCommand : ConfigCommand
     {

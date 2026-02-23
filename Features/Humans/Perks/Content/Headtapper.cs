@@ -1,8 +1,8 @@
-﻿using LabApi.Events.Handlers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Handlers;
+    using PlayerStatsSystem;
+
     [Perk("Headtapper", Rarity.Uncommon)]
     public class Headtapper(PerkInventory inv) : PerkBase(inv)
     {
@@ -11,6 +11,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public override string Description => "Deal bonus damage when headshotting a human, \ntorso and limb shots damage reduced. \nSCP damage unchanged.";
 
         public virtual float HeadMultiplier => 2f;
+
         public virtual float BodyMultiplier => 0.5f;
 
         public override void Init()

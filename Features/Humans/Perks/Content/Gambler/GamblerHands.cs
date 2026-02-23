@@ -1,7 +1,7 @@
-﻿using CustomPlayerEffects;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 {
+    using CustomPlayerEffects;
+
     public class GamblerHands : GamblerStatusEffectBase<SeveredHands>
     {
         public override bool Positive => false;

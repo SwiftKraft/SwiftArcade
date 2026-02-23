@@ -1,35 +1,50 @@
-﻿using SwiftArcadeMode.Utils.Interfaces;
-using System;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Utils.Structures
+﻿namespace SwiftArcadeMode.Utils.Structures
 {
+    using System;
+    using SwiftArcadeMode.Utils.Interfaces;
+    using UnityEngine;
+
     public class Timer : IValue<float>, ITickable
     {
-        [field: SerializeField]
+        public Timer()
+            : this(0F)
+        {
+        }
+
+        public Timer(float time, bool startEnded = true)
+        {
+            if (!startEnded)
+                Reset(time);
+            MaxValue = time;
+            Ended = startEnded;
+        }
+
+        public event Action? OnTimerEnd;
+
         public float MaxValue { get; set; }
 
         public float PrevTickTime { get; private set; }
 
-        public bool StartEnded;
+        public bool StartEnded { get; set; }
 
         public virtual float CurrentValue
         {
             get
             {
-                if (timeRemaining < 0f)
-                    timeRemaining = 0f;
-                return timeRemaining;
+                if (field < 0f)
+                    field = 0f;
+                return field;
             }
+
             set
             {
                 if (value > 0f)
                 {
-                    PrevTickTime = timeRemaining;
-                    timeRemaining = value;
+                    PrevTickTime = field;
+                    field = value;
                 }
                 else
-                    timeRemaining = 0f;
+                    field = 0f;
             }
         }
 
@@ -46,20 +61,6 @@ namespace SwiftArcadeMode.Utils.Structures
             }
         }
 
-        public event Action OnTimerEnd;
-
-        private float timeRemaining;
-
-        public Timer() : this(0f) { }
-
-        public Timer(float time, bool startEnded = true)
-        {
-            if (!startEnded)
-                Reset(time);
-            MaxValue = time;
-            Ended = startEnded;
-        }
-
         public virtual float Tick(float deltaTime)
         {
             if (Ended)
@@ -73,7 +74,7 @@ namespace SwiftArcadeMode.Utils.Structures
             return CurrentValue;
         }
 
-        public bool IsPassingTime(float time) => CurrentValue == time || (PrevTickTime >= time && CurrentValue <= time);
+        public bool IsPassingTime(float time) => Mathf.Approximately(CurrentValue, time) || (PrevTickTime >= time && CurrentValue <= time);
 
         public virtual void Reset(float time)
         {
@@ -83,6 +84,6 @@ namespace SwiftArcadeMode.Utils.Structures
 
         public virtual void Reset() => CurrentValue = MaxValue;
 
-        public float GetPercentage() => Mathf.InverseLerp(0f, MaxValue, CurrentValue);
+        public float GetPercentage() => Mathf.InverseLerp(0F, MaxValue, CurrentValue);
     }
 }

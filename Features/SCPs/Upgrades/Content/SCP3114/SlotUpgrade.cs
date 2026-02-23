@@ -1,7 +1,7 @@
-﻿using SwiftArcadeMode.Features.Humans.Perks.Content;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP3114
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP3114
 {
+    using SwiftArcadeMode.Features.Humans.Perks.Content;
+
     public class SlotUpgrade(UpgradePathPerkBase parent) : UpgradeBase<RandomPerks>(parent)
     {
         public override string Name => $"Slot Upgrade";

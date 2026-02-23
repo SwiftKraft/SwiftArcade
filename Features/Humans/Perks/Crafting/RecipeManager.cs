@@ -1,12 +1,12 @@
-﻿using Hints;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features.Humans.Perks.Content;
-using SwiftArcadeMode.Utils.Interfaces;
-using System;
-using System.Collections.Generic;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Crafting
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Crafting
 {
+    using System;
+    using System.Collections.Generic;
+    using Hints;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features.Humans.Perks.Content;
+    using SwiftArcadeMode.Utils.Interfaces;
+
     public static class RecipeManager
     {
         public static readonly List<Recipe> All = [];
@@ -30,12 +30,14 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Crafting
 
         public static void CheckCrafts(this Player p)
         {
-            if (!p.TryGetPerkInventory(out PerkInventory inv))
+            if (!Player.TryGetPerkInventory(out PerkInventory inv))
                 return;
 
             for (int i = 0; i < All.Count; i++)
+            {
                 if (All[i].ApplyCraft(inv))
                     break;
+            }
         }
 
         public static void AddRecipe(this Recipe rec)
@@ -57,7 +59,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Crafting
 
         int IWeight.Weight => Weight;
 
-        public bool CanCraft(Player p) => p.TryGetPerkInventory(out PerkInventory inv) && CanCraft(inv);
+        public bool CanCraft(Player p) => Player.TryGetPerkInventory(out PerkInventory inv) && CanCraft(inv);
 
         public bool CanCraft(PerkInventory inv)
         {
@@ -65,13 +67,15 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Crafting
                 return false;
 
             for (int i = 0; i < RequiredPerks.Length; i++)
+            {
                 if (!inv.HasPerk(RequiredPerks[i]))
                     return false;
+            }
 
             return true;
         }
 
-        public bool ApplyCraft(Player p) => p.TryGetPerkInventory(out PerkInventory inv) && ApplyCraft(inv);
+        public bool ApplyCraft(Player p) => Player.TryGetPerkInventory(out PerkInventory inv) && ApplyCraft(inv);
 
         public bool ApplyCraft(PerkInventory inv)
         {

@@ -1,18 +1,16 @@
-﻿using Footprinting;
-using LabApi.Features.Console;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Utils.Deployable;
-using SwiftArcadeMode.Utils.Extensions;
-using SwiftArcadeMode.Utils.Structures;
-using System.Collections.Generic;
-using UnityEngine;
-using Logger = LabApi.Features.Console.Logger;
-using Random = UnityEngine.Random;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using System.Collections.Generic;
+    using Footprinting;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerStatsSystem;
+    using SwiftArcadeMode.Utils.Deployable;
+    using SwiftArcadeMode.Utils.Extensions;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+    using Random = UnityEngine.Random;
+
     public class SummonAltar : SummonSpell
     {
         public override string Name => "Summon Altar";
@@ -36,7 +34,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             public float Range = 3f;
             public float MaxHeight = 2f;
 
-            readonly List<Ghoul> spawned = [];
+            private readonly List<Ghoul> spawned = [];
 
             public override float Health => 100f;
 
@@ -81,8 +79,11 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
                 public Altar Parent { get; set; }
 
                 public override float Range => 7f;
+
                 public override float Delay => 1f;
+
                 public override float Health => 25f;
+
                 public override float DestroyRange => 20f;
 
                 public override void Attack(Player target)

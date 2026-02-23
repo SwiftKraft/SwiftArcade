@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Utils.Projectiles
+﻿namespace SwiftArcadeMode.Utils.Projectiles
 {
+    using UnityEngine;
+
     public class ProjectileComponent : MonoBehaviour
     {
-        public ProjectileBase projectile;
+        public ProjectileBase? Projectile { get; set; }
 
-        private void OnCollisionEnter(Collision cols) => projectile.OnCollide(cols);
+        private void OnCollisionEnter(Collision cols) => Projectile?.OnCollide(cols);
     }
 }

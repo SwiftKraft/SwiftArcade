@@ -1,8 +1,8 @@
-﻿using LabApi.Features.Console;
-using System.Collections.Generic;
-
-namespace SwiftArcadeMode.Utils.Deployable
+﻿namespace SwiftArcadeMode.Utils.Deployable
 {
+    using System.Collections.Generic;
+    using LabApi.Features.Console;
+
     public static class DeployableManager
     {
         public static readonly List<DeployableBase> AllDeployables = [];
@@ -10,6 +10,7 @@ namespace SwiftArcadeMode.Utils.Deployable
         public static void Tick()
         {
             for (int i = 0; i < AllDeployables.Count; i++)
+            {
                 try
                 {
                     AllDeployables[i].Tick();
@@ -18,6 +19,7 @@ namespace SwiftArcadeMode.Utils.Deployable
                 {
                     Logger.Error(ex);
                 }
+            }
         }
     }
 }

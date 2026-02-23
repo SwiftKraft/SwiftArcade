@@ -1,37 +1,42 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using PlayerStatsSystem;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     [Perk("Turret", Rarity.Rare)]
     public class Turret(PerkInventory inv) : PerkBase(inv)
     {
+        private readonly Timer timer = new();
+
+        private bool originallyEnsnared;
+
         public override string Name => "Turret";
 
         public override string Description => $"Aiming down sights for at least {Duration} seconds will \nincrease your damage by x{Multiplier}, but you cannot move.";
 
         public virtual float Duration => 0.5f;
+
         public virtual float Multiplier => 2f;
 
         public bool AimStatus { get; private set; }
 
         public bool Effect
         {
-            get => effect;
+            get;
             private set
             {
-                if (effect == value)
+                if (field == value)
                     return;
 
-                effect = value;
+                field = value;
 
-                if (effect)
+                if (field)
                 {
-                    originallyEnsnared = Player.GetEffect<Ensnared>().IsEnabled;
+                    originallyEnsnared = Player.GetEffect<Ensnared>()?.IsEnabled ?? false;
                     Player.EnableEffect<Ensnared>();
                     Player.Position = Player.Position;
                     SendMessage("Damage Boosted!");
@@ -46,10 +51,6 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
                 }
             }
         }
-
-        readonly Timer timer = new();
-        private bool effect;
-        private bool originallyEnsnared;
 
         public override void Init()
         {

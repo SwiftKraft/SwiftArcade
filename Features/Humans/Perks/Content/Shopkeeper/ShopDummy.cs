@@ -1,9 +1,9 @@
-﻿using LabApi.Features.Wrappers;
-using NetworkManagerUtils.Dummies;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 {
+    using LabApi.Features.Wrappers;
+    using NetworkManagerUtils.Dummies;
+    using UnityEngine;
+
     public class ShopDummy(Vector3 offset) : ShopElementOffset(offset)
     {
         public Player Dummy { get; private set; }

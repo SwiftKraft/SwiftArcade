@@ -1,13 +1,13 @@
-﻿using CustomPlayerEffects;
-using Footprinting;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Utils.Projectiles;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using CustomPlayerEffects;
+    using Footprinting;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerStatsSystem;
+    using SwiftArcadeMode.Utils.Projectiles;
+    using UnityEngine;
+
     public class ElementalBolt : SpellBase
     {
         public override string Name => "Elemental Bolt";

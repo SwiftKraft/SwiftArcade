@@ -1,35 +1,24 @@
-﻿using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Utils.Extensions;
-using SwiftArcadeMode.Utils.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ReflectionExtensions = SwiftArcadeMode.Utils.Extensions.ReflectionExtensions;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.SixthSense
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.SixthSense
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using SwiftArcadeMode.Utils.Extensions;
+    using ReflectionExtensions = SwiftArcadeMode.Utils.Extensions.ReflectionExtensions;
+
     [Perk("SixthSense", Rarity.Uncommon)]
     public class SixthSense(PerkInventory inv) : PerkTriggerCooldownBase(inv)
     {
-        public static HashSet<Type> SenseCache
-        {
-            get
-            {
-                _senseCache ??= ReflectionExtensions.GetAllNonAbstractSubclasses<SenseBase>();
-                return _senseCache;
-            }
-        }
+        public static HashSet<Type> SenseCache => field ??= ReflectionExtensions.GetAllNonAbstractSubclasses<SenseBase>();
 
-        private static HashSet<Type> _senseCache;
-
-        public readonly List<SenseBase> Senses = [];
+        public List<SenseBase> Senses { get; } = [];
 
         public override string Name => "Sixth Sense";
 
         public override string Description => "Provides obscure, but useful information regarding enemies.";
 
-        public override string PerkDescription => "";
+        public override string PerkDescription => string.Empty;
 
         public override float Cooldown => 10f;
 
@@ -37,29 +26,18 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.SixthSense
         {
             get
             {
-                checkedBases.Clear();
-                SenseBase get() => Senses.Where((p) => !checkedBases.Contains(p)).ToList().GetRandom();
-                SenseBase sense = get();
-                while (sense != null && !sense.Message(out string msg))
+                List<SenseBase> toCheck = new(Senses);
+
+                SenseBase sense = toCheck.GetRandom();
+                while (!sense.Message(out _))
                 {
-                    checkedBases.Add(sense);
-                    sense = get();
+                    toCheck.Remove(sense);
+                    sense = toCheck.GetRandom();
                 }
 
-                return sense != null && sense.Message(out string m) ? m : "";
+                return sense.Message(out string m) ? m : string.Empty;
             }
         }
-
-        private readonly List<SenseBase> checkedBases = [];
-
-        public override void Init()
-        {
-            base.Init();
-            foreach (Type t in SenseCache)
-                Senses.Add((SenseBase)Activator.CreateInstance(t, this));
-        }
-
-        public override void Effect() { }
 
         public static void RegisterSenses()
         {
@@ -70,19 +48,20 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.SixthSense
                 .Where(t => t.IsClass && !t.IsAbstract && typeof(SenseBase).IsAssignableFrom(t))];
 
             foreach (Type t in types)
-                if (!SenseCache.Contains(t))
-                    SenseCache.Add(t);
+            {
+                SenseCache.Add(t);
+            }
         }
-    }
 
-    public abstract class SenseBase(SixthSense parent) : IWeight
-    {
-        public SixthSense Parent { get; private set; } = parent;
+        public override void Init()
+        {
+            base.Init();
+            foreach (Type t in SenseCache)
+                Senses.Add((SenseBase)Activator.CreateInstance(t, this));
+        }
 
-        public Player Player => Parent.Player;
-
-        public virtual int Weight => 1;
-
-        public abstract bool Message(out string msg);
+        public override void Effect()
+        {
+        }
     }
 }

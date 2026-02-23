@@ -1,20 +1,25 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using MEC;
-using SwiftArcadeMode.Utils.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MEC;
+    using SwiftArcadeMode.Utils.Extensions;
+
     [Perk("Gambler", Rarity.Legendary)]
     public class Gambler(PerkInventory inv) : PerkBase(inv)
     {
-        public static readonly List<GamblerEffectBase> PositiveEffects = [];
-        public static readonly List<GamblerEffectBase> NegativeEffects = [];
+        public static List<GamblerEffectBase> PositiveEffects { get; } = [];
+
+        public static List<GamblerEffectBase> NegativeEffects { get; } = [];
+
+        public override string Name => "Gambler";
+
+        public override string Description => "Flip a coin to gamble... With your life.";
 
         public static void RegisterEffects()
         {
@@ -26,17 +31,14 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 
             foreach (Type t in types)
             {
-                GamblerEffectBase ef = Activator.CreateInstance(t) as GamblerEffectBase;
+                GamblerEffectBase ef = (GamblerEffectBase)Activator.CreateInstance(t);
+
                 if (ef.Positive)
                     PositiveEffects.Add(ef);
                 else
                     NegativeEffects.Add(ef);
             }
         }
-
-        public override string Name => "Gambler";
-
-        public override string Description => "Flip a coin to gamble... With your life.";
 
         public override void Init()
         {
@@ -45,20 +47,9 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
             PlayerEvents.ChangedRole += OnPlayerChangedRole;
 
             if (Player.IsInventoryFull)
-                Pickup.Create(ItemType.Coin, Player.Position).Spawn();
+                Pickup.Create(ItemType.Coin, Player.Position)?.Spawn();
             else
                 Player.AddItem(ItemType.Coin);
-        }
-
-        private void OnPlayerChangedRole(PlayerChangedRoleEventArgs ev)
-        {
-            if (ev.Player != Player || !Player.IsAlive)
-                return;
-
-            if (Player.IsInventoryFull)
-                Pickup.Create(ItemType.Coin, Player.Position).Spawn();
-            else
-                Player.CurrentItem = Player.AddItem(ItemType.Coin);
         }
 
         public override void Remove()
@@ -68,7 +59,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
             PlayerEvents.ChangedRole -= OnPlayerChangedRole;
         }
 
-        private void OnFlippedCoin(LabApi.Events.Arguments.PlayerEvents.PlayerFlippedCoinEventArgs ev)
+        private void OnFlippedCoin(PlayerFlippedCoinEventArgs ev)
         {
             if (ev.Player != Player)
                 return;
@@ -86,6 +77,17 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
                     SendMessage(eff.Explanation, eff.ExplanationDuration);
                 });
             });
+        }
+
+        private void OnPlayerChangedRole(PlayerChangedRoleEventArgs ev)
+        {
+            if (ev.Player != Player || !Player.IsAlive)
+                return;
+
+            if (Player.IsInventoryFull)
+                Pickup.Create(ItemType.Coin, Player.Position)?.Spawn();
+            else
+                Player.CurrentItem = Player.AddItem(ItemType.Coin);
         }
     }
 }

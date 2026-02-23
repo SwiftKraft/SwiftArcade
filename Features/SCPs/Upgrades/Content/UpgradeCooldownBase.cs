@@ -1,8 +1,8 @@
-﻿using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content
 {
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     public abstract class UpgradeCooldownBase<T>(UpgradePathPerkBase parent) : UpgradeBase<T>(parent) where T : UpgradePathPerkBase
     {
         public override string Description => $"{UpgradeDescription}\nCooldown: {Cooldown}s.";
@@ -12,6 +12,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content
         public virtual string ReadyMessage => "Ready!";
 
         public virtual float Cooldown => 10f;
+
         protected Timer CooldownTimer = new();
 
         public override void Init()

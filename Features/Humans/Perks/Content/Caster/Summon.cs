@@ -1,17 +1,19 @@
-﻿using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using SwiftArcadeMode.Utils.Deployable;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 {
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Deployable;
+    using UnityEngine;
+
     public abstract class Summon(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : DeployableBase(name, schematicName, role, colliderScale, position, rotation)
     {
         public Player Owner { get; set; }
+
         public SpellBase Spell { get; private set; } = spell;
 
         public abstract float DestroyRange { get; }
+
         public abstract float Health { get; }
 
         public virtual bool DieOnOwnerDeath => true;

@@ -1,9 +1,8 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-
-namespace SwiftArcadeMode.Features.Scoring.Events
+﻿namespace SwiftArcadeMode.Features.Scoring.Events
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+
     public class EscapeScore : ScoreEventBase
     {
         public override void Disable() => PlayerEvents.Escaped -= OnEscaped;
@@ -12,6 +11,8 @@ namespace SwiftArcadeMode.Features.Scoring.Events
 
         public override void Enable() => PlayerEvents.Escaped += OnEscaped;
 
-        public override void Tick() { }
+        public override void Tick()
+        {
+        }
     }
 }

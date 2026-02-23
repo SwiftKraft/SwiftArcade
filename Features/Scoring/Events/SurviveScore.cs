@@ -1,9 +1,9 @@
-﻿using LabApi.Features.Wrappers;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Scoring.Events
+﻿namespace SwiftArcadeMode.Features.Scoring.Events
 {
+    using System.Collections.Generic;
+    using LabApi.Features.Wrappers;
+    using UnityEngine;
+
     public class SurviveScore : ScoreEventBase
     {
         public readonly Dictionary<Player, float> AliveTime = [];
@@ -11,9 +11,13 @@ namespace SwiftArcadeMode.Features.Scoring.Events
         public static float Timer = 60f;
         public static int Score = 15;
 
-        public override void Disable() { }
+        public override void Disable()
+        {
+        }
 
-        public override void Enable() { }
+        public override void Enable()
+        {
+        }
 
         public override void Tick()
         {

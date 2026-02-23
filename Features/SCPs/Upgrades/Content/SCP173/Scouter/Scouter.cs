@@ -1,8 +1,8 @@
-﻿using PlayerRoles;
-using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
 {
+    using System;
+    using PlayerRoles;
+
     [UpgradePath(RoleTypeId.Scp173)]
     [Perk("173.Scouter", Rarity.Rare, PerkRestriction.SCP)]
     public class Scouter(PerkInventory inv) : UpgradePathPerkBase(inv)

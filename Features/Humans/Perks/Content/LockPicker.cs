@@ -1,8 +1,8 @@
-﻿using Interactables.Interobjects.DoorUtils;
-using LabApi.Features.Enums;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using Interactables.Interobjects.DoorUtils;
+    using LabApi.Features.Enums;
+
     //[Perk("LockPicker", Rarity.Mythic)]
     public class LockPicker(PerkInventory inv) : PerkDoorBase(inv)
     {

@@ -1,12 +1,10 @@
-﻿using Hints;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features.Humans.Perks.Content.SixthSense;
-using SwiftArcadeMode.Utils.Extensions;
-using System;
-using System.Collections.Generic;
-
-namespace SwiftArcadeMode.Features.Scoring
+﻿namespace SwiftArcadeMode.Features.Scoring
 {
+    using System;
+    using System.Collections.Generic;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Utils.Extensions;
+
     public static class ScoringManager
     {
         /// <summary>

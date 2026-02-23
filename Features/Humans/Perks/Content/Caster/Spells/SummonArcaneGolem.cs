@@ -1,11 +1,11 @@
-﻿using LabApi.Features.Wrappers;
-using PlayerRoles;
-using SwiftArcadeMode.Utils.Deployable;
-using SwiftArcadeMode.Utils.Extensions;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Deployable;
+    using SwiftArcadeMode.Utils.Extensions;
+    using UnityEngine;
+
     public class SummonArcaneGolem : SummonSpell
     {
         public override string Name => "Summon Arcane Golem";

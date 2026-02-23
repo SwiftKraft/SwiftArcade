@@ -1,11 +1,11 @@
-﻿using LabApi.Features.Console;
-using LabApi.Features.Wrappers;
-using System;
-using System.IO;
-using System.Text;
-
-namespace SwiftArcadeMode.Features.Scoring.Saving
+﻿namespace SwiftArcadeMode.Features.Scoring.Saving
 {
+    using System;
+    using System.IO;
+    using System.Text;
+    using LabApi.Features.Console;
+    using LabApi.Features.Wrappers;
+
     public static class SaveManager
     {
         public static string GeneralDirectory;

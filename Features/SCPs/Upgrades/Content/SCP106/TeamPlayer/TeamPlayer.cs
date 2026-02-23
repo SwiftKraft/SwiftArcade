@@ -1,8 +1,8 @@
-﻿using PlayerRoles;
-using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.TeamPlayer
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.TeamPlayer
 {
+    using System;
+    using PlayerRoles;
+
     [UpgradePath(RoleTypeId.Scp106)]
     [Perk("106.TeamPlayer", Rarity.Legendary, PerkRestriction.SCP)]
     public class TeamPlayer(PerkInventory inv) : UpgradePathPerkBase(inv)

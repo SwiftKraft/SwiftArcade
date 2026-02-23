@@ -6,8 +6,12 @@
 
         public virtual void Init(Shopkeeper parent) => Parent = parent;
 
-        public virtual void Restock() { }
+        public virtual void Restock()
+        {
+        }
 
-        public virtual void Remove() { }
+        public virtual void Remove()
+        {
+        }
     }
 }

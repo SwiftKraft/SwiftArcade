@@ -1,15 +1,14 @@
-﻿using Hints;
-using InventorySystem.Items.ThrowableProjectiles;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using SwiftArcadeMode.Utils.Deployable;
-using SwiftArcadeMode.Utils.Extensions;
-using SwiftArcadeMode.Utils.Structures;
-using SwiftArcadeMode.Utils.Visuals;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using InventorySystem.Items.ThrowableProjectiles;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Deployable;
+    using SwiftArcadeMode.Utils.Extensions;
+    using SwiftArcadeMode.Utils.Structures;
+    using SwiftArcadeMode.Utils.Visuals;
+    using UnityEngine;
+
     public class SummonPylon : SummonSpell
     {
         public override string Name => "Summon Pylon";
@@ -67,6 +66,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
                     gr.ScpDamageMultiplier = 1f;
                     gr.MaxRadius = 4f;
                 }
+
                 base.Destroy();
             }
         }

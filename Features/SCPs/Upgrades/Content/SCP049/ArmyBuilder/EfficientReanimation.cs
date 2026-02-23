@@ -1,10 +1,10 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+
     public class EfficientReanimation(UpgradePathPerkBase parent) : UpgradeBase<ArmyBuilder>(parent)
     {
         public override string Name => "Efficient Reanimation";
@@ -12,6 +12,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
         public override string Description => $"Revived zombies no longer receive max health debuffs, \nall zombies have {MaxHealth} max HP.\nZombies also heal on kill.";
 
         public virtual float MaxHealth => 600f;
+
         public virtual float Healing => 50f;
 
         public override void Init()

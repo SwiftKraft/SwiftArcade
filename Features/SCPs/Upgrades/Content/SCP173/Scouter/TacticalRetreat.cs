@@ -1,14 +1,12 @@
-﻿using CommandSystem.Commands.RemoteAdmin;
-using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Arguments.Scp173Events;
-using LabApi.Events.Arguments.WarheadEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using MEC;
-using PlayerRoles.FirstPersonControl;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Arguments.Scp173Events;
+    using LabApi.Events.Arguments.WarheadEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MEC;
+
     public class TacticalRetreat(UpgradePathPerkBase parent) : UpgradeCooldownBase<Scouter>(parent)
     {
         public override string Name => "Tactical Retreat";
@@ -19,8 +17,8 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
 
         public virtual float RealHealthDamageThreshold => 400f;
 
-        TantrumHazard latestTantrum;
-        float recordedHealth;
+        private TantrumHazard latestTantrum;
+        private float recordedHealth;
 
         public override void Init()
         {

@@ -1,8 +1,8 @@
-﻿using CommandSystem;
-using SwiftArcadeMode.Features.Humans.Perks;
-
-namespace SwiftArcadeMode.Commands.RA
+﻿namespace SwiftArcadeMode.Commands.RA
 {
+    using CommandSystem;
+    using SwiftArcadeMode.Features.Humans.Perks;
+
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class EnableNaturalSpawningCommand : ConfigCommand
     {

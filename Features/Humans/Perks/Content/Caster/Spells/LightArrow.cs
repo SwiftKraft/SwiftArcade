@@ -1,13 +1,13 @@
-using CustomPlayerEffects;
-using Footprinting;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerRoles.FirstPersonControl;
-using PlayerStatsSystem;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using CustomPlayerEffects;
+    using Footprinting;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerRoles.FirstPersonControl;
+    using PlayerStatsSystem;
+    using UnityEngine;
+
     public class LightArrow : SpellBase
     {
         public override string Name => "Light Arrow";
@@ -28,12 +28,12 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         {
             public override string SchematicName => "LightArrow";
 
-            const int maxBounces = 2;
-            int currentBounces = 0;
-            float speed;
-            float currentDamage = 75f;
-            float currentScpMultiplier = 3f;
-            Vector3 vel;
+            private const int maxBounces = 2;
+            private int currentBounces = 0;
+            private float speed;
+            private float currentDamage = 75f;
+            private float currentScpMultiplier = 3f;
+            private Vector3 vel;
 
             public override bool UseGravity => false;
 

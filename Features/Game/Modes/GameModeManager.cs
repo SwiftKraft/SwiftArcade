@@ -1,22 +1,27 @@
-﻿using LabApi.Events.Handlers;
-using SwiftArcadeMode.Features.Humans.Perks;
-using SwiftArcadeMode.Utils.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Random = UnityEngine.Random;
-
-namespace SwiftArcadeMode.Features.Game.Modes
+﻿namespace SwiftArcadeMode.Features.Game.Modes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using LabApi.Events.Handlers;
+    using SwiftArcadeMode.Features.Humans.Perks;
+    using SwiftArcadeMode.Utils.Extensions;
+    using Random = UnityEngine.Random;
+
     public static class GameModeManager
     {
-        public static float Chance { get; set; } = 0.25f;
-        public static bool Allow { get; set; } = true;
+        private static GameModeBase? current;
 
-        public static readonly List<Type> Registry = [];
+        public static float Chance { get; set; }
 
-        public static GameModeBase Current
+        public static bool GameModesAllowed { get; set; }
+
+        public static bool NextRoundForced { get; set; }
+
+        public static List<Type> Registry { get; } = [];
+
+        public static GameModeBase? Current
         {
             get => current;
             set
@@ -26,18 +31,15 @@ namespace SwiftArcadeMode.Features.Game.Modes
 
                 current?.End();
                 current = value;
-                PerkSpawner.PerkSpawnRules = current != null && current.OverrideSpawnRules != null ? current.OverrideSpawnRules : PerkSpawner.DefaultSpawnRules;
+                PerkSpawner.PerkSpawnRules = current is { OverrideSpawnRules: not null } ? current.OverrideSpawnRules : PerkSpawner.DefaultSpawnRules;
                 current?.Start();
             }
         }
-        private static GameModeBase current;
-
-        public static bool ForcedRound = false;
 
         public static void Enable()
         {
-            Allow = Core.Instance.Config.AllowCustomGameModes;
-            Chance = Core.Instance.Config.CustomGameModeChance;
+            GameModesAllowed = Core.CoreConfig.AllowCustomGameModes;
+            Chance = Core.CoreConfig.CustomGameModeChance;
 
             RegisterModes();
 
@@ -48,12 +50,12 @@ namespace SwiftArcadeMode.Features.Game.Modes
         private static void OnRoundRestarted()
         {
             Current = null;
-            ForcedRound = false;
+            NextRoundForced = false;
         }
 
         private static void OnRoundStarted()
         {
-            if (ForcedRound || !Allow)
+            if (NextRoundForced || !GameModesAllowed)
                 return;
 
             Current = null;
@@ -71,10 +73,10 @@ namespace SwiftArcadeMode.Features.Game.Modes
         {
             Assembly callingAssembly = Assembly.GetCallingAssembly();
 
-            List<Type> types =
-                [.. callingAssembly
+            List<Type> types = callingAssembly
                 .GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract && typeof(GameModeBase).IsAssignableFrom(t))];
+                .Where(t => t.IsClass && !t.IsAbstract && typeof(GameModeBase).IsAssignableFrom(t))
+                .ToList();
 
             foreach (Type t in types)
                 Registry.Add(t);

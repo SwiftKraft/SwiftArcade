@@ -1,16 +1,12 @@
-﻿using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Utils.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 {
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Utils.Extensions;
+
     public class GamblerGiveItem : GamblerEffectBase
     {
-        public static readonly ItemType[] Pool = [
+        public static ItemType[] Pool { get; } =
+        [
             ItemType.SCP500,
             ItemType.SCP330,
             ItemType.SCP268,
@@ -59,7 +55,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
             ItemType.KeycardZoneManager,
             ItemType.KeycardScientist,
             ItemType.KeycardResearchCoordinator,
-            ];
+        ];
 
         public override bool Positive => true;
 
@@ -71,7 +67,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
         {
             ItemType type = Pool.GetRandom();
             if (player.IsInventoryFull)
-                Pickup.Create(type, player.Position).Spawn();
+                Pickup.Create(type, player.Position)?.Spawn();
             else
                 player.AddItem(type);
         }

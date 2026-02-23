@@ -1,12 +1,12 @@
-﻿using Footprinting;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Utils.Projectiles;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using Footprinting;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerStatsSystem;
+    using SwiftArcadeMode.Utils.Projectiles;
+    using UnityEngine;
+
     public class OrbOfNature : SpellBase
     {
         public override string Name => "Orb of Nature";
@@ -22,7 +22,6 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             new Projectile(this, Caster.Player.Camera.position + Caster.Player.Camera.forward * 0.4f, Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 25f, 10f, Caster.Player);
             PlaySound("cast");
         }
-
 
         public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
         {

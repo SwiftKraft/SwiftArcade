@@ -1,14 +1,14 @@
-﻿using SwiftArcadeMode.Utils.Deployable;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 {
+    using System.Collections.Generic;
+    using SwiftArcadeMode.Utils.Deployable;
+    using UnityEngine;
+
     public abstract class SummonSpell : SpellBase
     {
         public virtual int Limit => 1;
 
-        protected readonly List<DeployableBase> spawnedDeployables = [];
+        protected List<DeployableBase> SpawnedDeployables { get; } = [];
 
         public override void Cast()
         {
@@ -23,18 +23,18 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
             Vector3 loc = point + Vector3.up;
 
-            spawnedDeployables.RemoveAll(d => d.Destroyed);
+            SpawnedDeployables.RemoveAll(d => d.Destroyed);
 
-            if (spawnedDeployables.Count < Limit)
-                spawnedDeployables.Add(Create(loc));
+            if (SpawnedDeployables.Count < Limit)
+                SpawnedDeployables.Add(Create(loc));
             else
             {
-                DeployableBase dep = spawnedDeployables[0];
+                DeployableBase dep = SpawnedDeployables[0];
                 dep.Position = loc;
                 if (Limit > 1)
                 {
-                    spawnedDeployables.Remove(dep);
-                    spawnedDeployables.Add(dep);
+                    SpawnedDeployables.Remove(dep);
+                    SpawnedDeployables.Add(dep);
                 }
             }
         }

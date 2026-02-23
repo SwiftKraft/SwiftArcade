@@ -1,8 +1,16 @@
-﻿using SwiftArcadeMode.Utils.Interfaces;
-using System;
-
-namespace SwiftArcadeMode.Features
+﻿namespace SwiftArcadeMode.Features
 {
+    using System;
+    using SwiftArcadeMode.Utils.Interfaces;
+
+    public enum PerkRestriction
+    {
+        None,
+        Human,
+        SCP,
+        DontSpawn,
+    }
+
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class PerkAttribute(string id, Rarity rarity = Rarity.Common, PerkRestriction restriction = PerkRestriction.None, params Type[] conflictPerks) : Attribute, IWeight, IPerkInfo
     {
@@ -19,6 +27,7 @@ namespace SwiftArcadeMode.Features
         public int Weight => (int)Rarity;
 
         Rarity IPerkInfo.Rarity => Rarity;
+
         PerkRestriction IPerkInfo.Restriction => Restriction;
 
         public PerkManager.PerkProfile Profile;
@@ -37,13 +46,5 @@ namespace SwiftArcadeMode.Features
             perk = null;
             return false;
         }
-    }
-
-    public enum PerkRestriction
-    {
-        None,
-        Human,
-        SCP,
-        DontSpawn
     }
 }

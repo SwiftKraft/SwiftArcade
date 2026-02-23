@@ -1,17 +1,17 @@
-﻿using Hints;
-using LabApi.Events.Arguments.Interfaces;
-using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Arguments.ServerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using MEC;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Logger = LabApi.Features.Console.Logger;
-
-namespace SwiftArcadeMode.Features.Humans.Perks
+﻿namespace SwiftArcadeMode.Features.Humans.Perks
 {
+    using System;
+    using System.Collections.Generic;
+    using Hints;
+    using LabApi.Events.Arguments.Interfaces;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Arguments.ServerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MEC;
+    using UnityEngine;
+    using Logger = LabApi.Features.Console.Logger;
+
     public static class PerkSpawner
     {
         public static bool AllowSpawn { get; set; } = true;
@@ -54,7 +54,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks
                 CheckPickupEventArgs chk = new(type, prof, ev);
                 PerkEvents.OnCheckPickup(chk);
 
-                ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {prof.FancyName}\n{prof.Description}{(PerkManager.HasPerk(ev.Player, type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : "")}", [HintEffectPresets.FadeOut()], 5f);
+                ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {prof.FancyName}\n{prof.Description}{(PerkManager.HasPerk(ev.Player, type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : string.Empty)}", [HintEffectPresets.FadeOut()], 5f);
             }
             catch (Exception ex) { Logger.Error(ex); }
         }
@@ -121,6 +121,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks
                 toy.Spawn();
                 LightSources.Add(p.Serial, toy);
             }
+
             return p;
         }
     }
@@ -128,6 +129,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks
     public class PickedUpPerkEventArgs(Player p, PerkAttribute att) : EventArgs, IPlayerEvent
     {
         public Player Player { get; } = p;
+
         public PerkAttribute Perk { get; } = att;
     }
 
@@ -136,7 +138,9 @@ namespace SwiftArcadeMode.Features.Humans.Perks
         public bool IsAllowed { get; set; } = true;
 
         public PerkAttribute Perk { get; } = att;
+
         public Player Player { get; } = ev.Player;
+
         public Item Item { get; } = ev.Item;
     }
 
@@ -145,9 +149,11 @@ namespace SwiftArcadeMode.Features.Humans.Perks
         public string OverrideHint { get; set; } = null;
 
         public Player Player { get; } = ev.Player;
+
         public Pickup Pickup { get; } = ev.Pickup;
 
         public Type Perk { get; } = perk;
+
         public PerkManager.PerkProfile Profile { get; } = prof;
     }
 }

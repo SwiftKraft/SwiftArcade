@@ -1,9 +1,9 @@
-﻿using LabApi.Events.Handlers;
+﻿using System.Collections.Generic;
+using System.Linq;
+using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using MapGeneration;
 using SwiftArcadeMode.Utils.Structures;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper

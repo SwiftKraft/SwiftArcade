@@ -3,6 +3,7 @@
     public interface IPerkInfo
     {
         Rarity Rarity { get; }
+
         PerkRestriction Restriction { get; }
     }
 }

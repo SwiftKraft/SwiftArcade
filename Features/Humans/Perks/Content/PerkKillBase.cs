@@ -1,8 +1,8 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+
     public abstract class PerkKillBase(PerkInventory inv) : PerkBase(inv)
     {
         public override void Init()
@@ -19,7 +19,12 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
             PlayerEvents.Death -= OnPlayerDeath;
         }
 
-        protected virtual void OnPlayerDying(PlayerDyingEventArgs ev) { }
-        protected virtual void OnPlayerDeath(PlayerDeathEventArgs ev) { }
+        protected virtual void OnPlayerDying(PlayerDyingEventArgs ev)
+        {
+        }
+
+        protected virtual void OnPlayerDeath(PlayerDeathEventArgs ev)
+        {
+        }
     }
 }

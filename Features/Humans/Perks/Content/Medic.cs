@@ -1,10 +1,10 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using PlayerRoles;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using PlayerRoles;
+    using UnityEngine;
+
     [Perk("Medic", Rarity.Common)]
     public class Medic(PerkInventory inv) : PerkBase(inv)
     {

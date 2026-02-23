@@ -1,42 +1,40 @@
-﻿using CustomPlayerEffects;
-using InventorySystem.Items.Firearms.Modules;
-using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+    using InventorySystem.Items.Firearms.Modules;
+    using LabApi.Features.Wrappers;
+
     [Perk("FastHands", Rarity.Common)]
     public class FastHands(PerkInventory inv) : PerkBase(inv)
     {
+        private byte originalIntensity;
+
         public override string Name => "Fast Hands";
 
         public override string Description => "Reload and unload weapons faster.";
 
         public bool Reloading
         {
-            get => _reloading;
+            get => field;
             private set
             {
-                if (value == _reloading)
+                if (value == field)
                     return;
 
-                _reloading = value;
+                field = value;
 
-                if (_reloading)
+                if (field)
                 {
-                    originalIntensity = Player.GetEffect<Scp1853>().Intensity;
-                    hasPoison = Player.TryGetEffect(out Poisoned pois) && pois.IsEnabled;
+                    originalIntensity = Player.GetEffect<Scp1853>()!.Intensity;
+                    field = Player.TryGetEffect(out Poisoned? pois) && pois.IsEnabled;
                 }
 
-                Player.EnableEffect<Scp1853>(_reloading ? (byte)50 : originalIntensity);
+                Player.EnableEffect<Scp1853>(field ? (byte)50 : originalIntensity);
 
-                if (!hasPoison)
+                if (!field)
                     Player.DisableEffect<Poisoned>();
             }
         }
-
-        bool hasPoison;
-        bool _reloading;
-        byte originalIntensity;
 
         public override void Tick()
         {

@@ -1,9 +1,9 @@
-﻿using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using System.Collections.Generic;
-
-namespace SwiftArcadeMode.Utils.Effects
+﻿namespace SwiftArcadeMode.Utils.Effects
 {
+    using System.Collections.Generic;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+
     public static class CustomEffectManager
     {
         public static readonly Dictionary<Player, CustomEffectContainer> Containers = [];
@@ -26,6 +26,33 @@ namespace SwiftArcadeMode.Utils.Effects
                 cont?.Tick();
         }
 
+        public static void Register(Player player)
+        {
+            if (!Containers.ContainsKey(player))
+                Containers.Add(player, new CustomEffectContainer(player));
+        }
+
+        extension(Player player)
+        {
+            public void AddCustomEffect(CustomEffectBase effect)
+            {
+                Register(player);
+                Containers[player].AddEffect(effect);
+            }
+
+            public void RemoveCustomEffect(CustomEffectBase effect)
+            {
+                if (Containers.TryGetValue(player, out CustomEffectContainer? container))
+                    container.RemoveEffect(effect);
+            }
+
+            public void ClearCustomEffects()
+            {
+                if (Containers.TryGetValue(player, out CustomEffectContainer? container))
+                    container.ClearEffects();
+            }
+        }
+
         private static void OnLeft(LabApi.Events.Arguments.PlayerEvents.PlayerLeftEventArgs ev)
         {
             if (Containers.ContainsKey(ev.Player))
@@ -36,29 +63,5 @@ namespace SwiftArcadeMode.Utils.Effects
         }
 
         private static void OnDying(LabApi.Events.Arguments.PlayerEvents.PlayerDyingEventArgs ev) => ev.Player.ClearCustomEffects();
-
-        public static void Register(Player player)
-        {
-            if (!Containers.ContainsKey(player))
-                Containers.Add(player, new CustomEffectContainer(player));
-        }
-
-        public static void AddCustomEffect(this Player player, CustomEffectBase effect)
-        {
-            Register(player);
-            Containers[player].AddEffect(effect);
-        }
-
-        public static void RemoveCustomEffect(this Player player, CustomEffectBase effect)
-        {
-            if (Containers.ContainsKey(player))
-                Containers[player].RemoveEffect(effect);
-        }
-
-        public static void ClearCustomEffects(this Player player)
-        {
-            if (Containers.ContainsKey(player))
-                Containers[player].ClearEffects();
-        }
     }
 }

@@ -1,16 +1,17 @@
-﻿using InventorySystem.Items.ThrowableProjectiles;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerRoles.FirstPersonControl;
-using SwiftArcadeMode.Utils.Structures;
-using SwiftArcadeMode.Utils.Voice;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using InventorySystem.Items.ThrowableProjectiles;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Utils.Voice;
+    using UnityEngine;
+
     [Perk("Saiyan", Rarity.Epic)]
     public class Saiyan(PerkInventory inv) : PerkBase(inv)
     {
+        private LightSourceToy toy = null!;
+        private bool ascended = true;
+
         public override string Name => "Saiyan";
 
         public override string Description => "Max out your microphone to power up!\nPlease do this responsibly.";
@@ -18,10 +19,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public float Degree { get; private set; }
 
         public virtual float DecayRate => 0.5f;
-        public virtual float GainRate => 3f;
 
-        LightSourceToy toy;
-        bool ascended = true;
+        public virtual float GainRate => 3f;
 
         public override void Init()
         {
@@ -59,7 +58,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
 
             if (Degree >= 30f && !ascended)
             {
-                (TimedGrenadeProjectile.SpawnActive(Player.Position, ItemType.GrenadeHE, Player, 0f).Base as ExplosionGrenade).ScpDamageMultiplier = 6f;
+                (TimedGrenadeProjectile.SpawnActive(Player.Position, ItemType.GrenadeHE, Player, 0f)?.Base as ExplosionGrenade)?.ScpDamageMultiplier = 6f;
                 ascended = true;
             }
             else if (Degree >= 10f)
@@ -67,8 +66,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
                 Player.StaminaRemaining += Time.fixedDeltaTime;
                 Player.Heal(Time.fixedDeltaTime);
 
-                Room r = Player.Room;
-                if (r != null && !r.LightController.LightsEnabled)
+                Room? r = Player.Room;
+                if (r != null && (!r.LightController?.LightsEnabled ?? false))
                     r.LightController.LightsEnabled = true;
             }
         }
@@ -88,7 +87,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
             if (ev.Player != Player || !Player.IsAlive)
                 return;
 
-            float loudnessDb = VoiceDecoding.CalculateLoudnessDB(ev.Message.ToPcm().Array);
+            double loudnessDb = VoiceDecoding.CalculateLoudnessDB(ev.Message.ToPcm());
             if (loudnessDb > -30f)
                 Degree += Time.fixedDeltaTime * GainRate;
         }

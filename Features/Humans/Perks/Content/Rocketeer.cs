@@ -1,11 +1,11 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using Mirror;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using Mirror;
+    using UnityEngine;
+
     [Perk("Rocketeer", Rarity.Rare)]
     public class Rocketeer(PerkInventory inv) : PerkBase(inv)
     {

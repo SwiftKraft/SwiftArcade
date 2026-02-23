@@ -1,15 +1,15 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Utils.Extensions;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Utils.Extensions;
+    using UnityEngine;
+
     [Perk("Trailblazer", Rarity.Rare)]
     public class Trailblazer(PerkInventory inv) : PerkCooldownBase(inv)
     {
-        public override string Name => "Trailblazer" + (initialized ? " | Tracked Item: " + TrackedType + (!CooldownTimer.Ended ? " | Cooldown: " + Mathf.Round(CooldownTimer.CurrentValue) + "s" : "") : "");
+        public override string Name => "Trailblazer" + (initialized ? " | Tracked Item: " + TrackedType + (!CooldownTimer.Ended ? " | Cooldown: " + Mathf.Round(CooldownTimer.CurrentValue) + "s" : string.Empty) : string.Empty);
 
         public override string PerkDescription => $"Set a teleport point after using an item. \nTeleport to the point after using an item of the same type. \nNo item types will be tracked when a teleport point exists.";
 
@@ -20,7 +20,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public ItemType TrackedType = ItemType.None;
         public Elevator TrackedElevator;
 
-        bool initialized;
+        private bool initialized;
 
         public override void Effect()
         {
@@ -99,7 +99,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
             TeleportPoint = TrackedElevator != null ? Player.Position - TrackedElevator.Base.transform.position : Player.Position;
             TrackedType = ev.UsableItem.Type;
             TeleportExists = true;
-            SendMessage($"Teleport point has been created{(!CooldownTimer.Ended ? " (teleport on cooldown)" : "")}!");
+            SendMessage($"Teleport point has been created{(!CooldownTimer.Ended ? " (teleport on cooldown)" : string.Empty)}!");
         }
     }
 }

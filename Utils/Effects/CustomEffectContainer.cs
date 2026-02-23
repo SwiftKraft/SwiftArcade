@@ -1,18 +1,20 @@
-﻿using LabApi.Features.Wrappers;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using Utils.NonAllocLINQ;
-
-namespace SwiftArcadeMode.Utils.Effects
+﻿namespace SwiftArcadeMode.Utils.Effects
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using LabApi.Features.Wrappers;
+    using UnityEngine;
+
     public class CustomEffectContainer(Player p)
     {
-        public readonly Player Player = p;
+        public CustomEffectContainer(ReferenceHub refHub)
+            : this(Player.Get(refHub))
+        {
+        }
 
-        public readonly List<CustomEffectBase> ActiveEffects = [];
+        public Player Player { get; } = p;
 
-        public CustomEffectContainer(ReferenceHub refHub) : this(Player.Get(refHub)) { }
+        public List<CustomEffectBase> ActiveEffects { get; } = [];
 
         public void Tick()
         {

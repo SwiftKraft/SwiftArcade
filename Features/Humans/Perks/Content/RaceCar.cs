@@ -1,9 +1,9 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Arguments.PlayerEvents;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using UnityEngine;
+
     [Perk("RaceCar", Rarity.Legendary)]
     public class RaceCar(PerkInventory inv) : PerkKillBase(inv)
     {
@@ -12,9 +12,10 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public override string Description => "Every kill increases your speed.";
 
         public virtual byte Amount => (byte)(Player.IsSCP ? 3 : 15);
+
         public virtual byte MaxValue => byte.MaxValue;
 
-        byte currentStack;
+        private byte currentStack;
 
         protected override void OnPlayerDying(PlayerDyingEventArgs ev)
         {

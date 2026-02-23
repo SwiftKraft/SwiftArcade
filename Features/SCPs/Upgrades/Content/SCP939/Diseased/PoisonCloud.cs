@@ -1,14 +1,9 @@
-﻿using CustomPlayerEffects;
-using LabApi.Features.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Diseased
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Diseased
 {
+    using CustomPlayerEffects;
+    using LabApi.Features.Wrappers;
+    using UnityEngine;
+
     public class PoisonCloud(UpgradePathPerkBase parent) : UpgradeBase<Diseased>(parent)
     {
         public override string Name => "Poison Cloud";
@@ -21,8 +16,10 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Diseased
         {
             base.Tick();
             foreach (Player p in Player.List)
+            {
                 if (p.HasEffect<AmnesiaVision>())
                     p.Damage(Damage * Time.fixedDeltaTime, Player, armorPenetration: 100);
+            }
         }
     }
 }

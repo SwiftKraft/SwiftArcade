@@ -1,12 +1,12 @@
-﻿using LabApi.Events.Arguments.Scp049Events;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using Mirror;
-using PlayerRoles;
-using System.Linq;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
 {
+    using System.Linq;
+    using LabApi.Events.Arguments.Scp049Events;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using Mirror;
+    using PlayerRoles;
+
     public class MassOperation(UpgradePathPerkBase parent) : UpgradeBase<ArmyBuilder>(parent)
     {
         public override string Name => "Mass Operation";
@@ -15,7 +15,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
 
         public virtual float Range => 5f;
 
-        bool midMassRevive;
+        private bool midMassRevive;
 
         public override void Init()
         {
@@ -41,6 +41,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
                 NetworkServer.Destroy(rag.Base.gameObject);
                 Scp049Events.OnResurrectedBody(new Scp049ResurrectedBodyEventArgs(rag.Base.Info.OwnerHub, Player.ReferenceHub));
             }
+
             midMassRevive = false;
         }
     }

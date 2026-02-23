@@ -1,10 +1,10 @@
-﻿using InventorySystem.Items.Firearms.Modules;
-using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using InventorySystem.Items.Firearms.Modules;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+
     [Perk("Resupplier", Rarity.Uncommon)]
     public class Resupplier(PerkInventory inv) : PerkBase(inv)
     {

@@ -1,11 +1,11 @@
-﻿using LabApi.Features.Wrappers;
-using PlayerRoles;
-using SwiftArcadeMode.Utils.Deployable;
-using SwiftArcadeMode.Utils.Extensions;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Deployable;
+    using SwiftArcadeMode.Utils.Extensions;
+    using UnityEngine;
+
     public class SummonThornShooter : SummonSpell
     {
         public override string Name => "Summon Thorn Shooter";
@@ -26,8 +26,11 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
         public class Shooter(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
             public override string TypeName => "Thorn Shooter";
+
             public override float Health => 50f;
+
             public override float Range => 5f;
+
             public override float Delay => 0.2f;
 
             public override float DestroyRange => 20f;

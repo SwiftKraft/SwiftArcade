@@ -1,16 +1,16 @@
-﻿using LabApi.Features.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using LabApi.Features.Wrappers;
+    using UnityEngine;
+
     public abstract class UpgradePathPerkBase(PerkInventory inv) : PerkBase(inv)
     {
         public readonly List<UpgradeBase> Path = [];
 
-        public override string Name => PathName + (Progress >= 0 ? " | Level " + (Progress < Path.Count - 1 ? (Progress + 1) : "MAX") : "");
+        public override string Name => PathName + (Progress >= 0 ? " | Level " + (Progress < Path.Count - 1 ? (Progress + 1) : "MAX") : string.Empty);
 
         public abstract string PathName { get; }
 
@@ -67,7 +67,8 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
                 Inventory.OnPerksUpdated();
             }
         }
-        int _progress = -1;
+
+        private int _progress = -1;
 
         public abstract Type[] AllUpgrades { get; }
 
@@ -119,13 +120,20 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
         public Player Player => Parent.Player;
 
         public abstract string Name { get; }
+
         public abstract string Description { get; }
 
-        public virtual void Init() { }
+        public virtual void Init()
+        {
+        }
 
-        public virtual void Tick() { }
+        public virtual void Tick()
+        {
+        }
 
-        public virtual void Remove() { }
+        public virtual void Remove()
+        {
+        }
 
         public virtual void SendMessage(string message) => Parent.SendMessage($"<size=28><b>{Name}</b></size>\n{message}");
     }

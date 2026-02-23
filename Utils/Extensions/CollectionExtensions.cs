@@ -1,22 +1,22 @@
-﻿using SwiftArcadeMode.Utils.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-
-namespace SwiftArcadeMode.Utils.Extensions
+﻿namespace SwiftArcadeMode.Utils.Extensions
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using SwiftArcadeMode.Utils.Interfaces;
+    using UnityEngine;
+    using Random = UnityEngine.Random;
+
     public static class CollectionExtensions
     {
-        public static T GetRandom<T>(this T[] values) => values.Length > 0 ? values[Random.Range(0, values.Length)] : default;
+        public static T GetRandom<T>(this T[] values) => values.Length is 0 ? default! : values[Random.Range(0, values.Length)];
 
-        public static T GetRandom<T>(this List<T> values) => values.Count > 0 ? values[Random.Range(0, values.Count)] : default;
+        public static T GetRandom<T>(this List<T> values) => values.Count is 0 ? default! : values[Random.Range(0, values.Count)];
 
         public static T GetRandom<T>(this T[] values, ref int lastRandom)
         {
-            if (values.Length <= 0)
-                return default;
+            if (values.Length is 0)
+                return default!;
 
             int choice = Random.Range(0, values.Length);
             if (lastRandom == choice)
@@ -27,8 +27,8 @@ namespace SwiftArcadeMode.Utils.Extensions
 
         public static T GetRandom<T>(this List<T> values, ref int lastRandom)
         {
-            if (values.Count <= 0)
-                return default;
+            if (values.Count is 0)
+                return default!;
 
             int choice = Random.Range(0, values.Count);
             if (lastRandom == choice)
@@ -37,10 +37,11 @@ namespace SwiftArcadeMode.Utils.Extensions
             return values[choice];
         }
 
-        public static T GetWeightedRandom<T>(this T[] values) where T : IWeight
+        public static T GetWeightedRandom<T>(this T[] values)
+            where T : IWeight
         {
-            if (values.Length <= 0)
-                return default;
+            if (values.Length is 0)
+                return default!;
 
             int totalWeight = 0;
             foreach (T item in values)
@@ -59,10 +60,11 @@ namespace SwiftArcadeMode.Utils.Extensions
             return values[0];
         }
 
-        public static T GetWeightedRandom<T>(this List<T> values) where T : IWeight
+        public static T GetWeightedRandom<T>(this List<T> values)
+            where T : IWeight
         {
-            if (values.Count <= 0)
-                return default;
+            if (values.Count is 0)
+                return default!;
 
             int totalWeight = 0;
             foreach (T item in values)
@@ -82,14 +84,15 @@ namespace SwiftArcadeMode.Utils.Extensions
         }
 
         public static bool InRange(this Array values, int id) => id >= 0 && id < values.Length;
+
         public static bool InRange(this ICollection values, int id) => id >= 0 && id < values.Count;
 
         public static int WrapIndex(this Array values, int index) => index.Wrap(0, values.Length);
+
         public static int WrapIndex(this ICollection values, int index) => index.Wrap(0, values.Count);
 
         public static T GetWrap<T>(this T[] values, int index) => values[values.WrapIndex(index)];
 
-        public static int Wrap(this int number, int min, int max) => ((number - min) % (max - min) + (max - min)) % (max - min) + min;
+        public static int Wrap(this int number, int min, int max) => ((((number - min) % (max - min)) + (max - min)) % (max - min)) + min;
     }
 }
-

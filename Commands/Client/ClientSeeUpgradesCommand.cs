@@ -1,11 +1,11 @@
-﻿using CommandSystem;
-using Hints;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features;
-using System;
-
-namespace SwiftArcadeMode.Commands.Client
+﻿namespace SwiftArcadeMode.Commands.Client
 {
+    using System;
+    using CommandSystem;
+    using Hints;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features;
+
     [CommandHandler(typeof(ClientCommandHandler))]
     public class ClientSeeUpgradesCommand : ICommand
     {
@@ -17,9 +17,14 @@ namespace SwiftArcadeMode.Commands.Client
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            Player p = Player.Get(sender);
+            Player? p = Player.Get(sender);
+            if (p is null)
+            {
+                response = "You must be a player to use this command!";
+                return false;
+            }
 
-            if (p.TryGetPerkInventory(out PerkInventory inv))
+            if (Player.TryGetPerkInventory(out PerkInventory inv))
             {
                 response = inv.UpgradeQueue.Peek(out string brief);
                 p.SendHint("<align=\"left\">" + brief + "</align>", [HintEffectPresets.FadeOut()], 10f);

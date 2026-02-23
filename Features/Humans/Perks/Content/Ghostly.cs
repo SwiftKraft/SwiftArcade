@@ -1,30 +1,29 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Handlers;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+    using LabApi.Events.Handlers;
+    using UnityEngine;
+
     [Perk("Ghostly", Rarity.Legendary)]
     public class Ghostly(PerkInventory inv) : PerkBase(inv)
     {
+        private Vector3 lastCheckedPosition;
+
         public override string Name => "Ghostly";
 
         public override string Description => "Phase through doors, you get more transparent the lower your health is.\nStanding still will make you invisible.";
 
         public float HealthPercentage => Player.Health / Player.MaxHealth;
 
-        Vector3 lastCheckedPosition;
-        private byte currentDegree;
-
         public byte CurrentDegree
         {
-            get => currentDegree;
+            get;
             private set
             {
-                if (currentDegree != value)
+                if (field != value)
                     Player.EnableEffect<Fade>(value);
 
-                currentDegree = value;
+                field = value;
             }
         }
 
@@ -34,15 +33,6 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         {
             base.Init();
             PlayerEvents.ChangedRole += OnChangedRole;
-            Player.EnableEffect<CustomPlayerEffects.Ghostly>();
-            lastCheckedPosition = Player.Position;
-        }
-
-        private void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
-        {
-            if (ev.Player != Player)
-                return;
-
             Player.EnableEffect<CustomPlayerEffects.Ghostly>();
             lastCheckedPosition = Player.Position;
         }
@@ -63,6 +53,15 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
             base.Remove();
             PlayerEvents.ChangedRole -= OnChangedRole;
             Player.DisableEffect<CustomPlayerEffects.Ghostly>();
+        }
+
+        private void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
+        {
+            if (ev.Player != Player)
+                return;
+
+            Player.EnableEffect<CustomPlayerEffects.Ghostly>();
+            lastCheckedPosition = Player.Position;
         }
     }
 }

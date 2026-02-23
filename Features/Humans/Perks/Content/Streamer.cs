@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using UnityEngine;
+
     [Perk("Streamer", Rarity.Secret)]
     public class Streamer(PerkInventory inv) : PerkBase(inv)
     {

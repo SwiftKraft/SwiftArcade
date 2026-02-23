@@ -1,13 +1,11 @@
-﻿using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Utils.Effects;
-using SwiftArcadeMode.Utils.Projectiles;
-using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Effects;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     public class CurseOfPain : SpellBase
     {
         public static readonly LayerMask CastMask = LayerMask.GetMask("Default", "Door", "Glass", "Hitbox");
@@ -72,7 +70,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
         public class Effect(float duration) : CustomEffectBase(duration)
         {
-            LightSourceToy light;
+            private LightSourceToy light;
 
             public override int StackCount => 1;
 

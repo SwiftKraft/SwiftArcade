@@ -1,16 +1,16 @@
-﻿using Hints;
-using InventorySystem.Items.Firearms;
-using InventorySystem.Items.Firearms.Modules;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using MEC;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Utils.Extensions;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using System.Collections.Generic;
+    using Hints;
+    using InventorySystem.Items.Firearms;
+    using InventorySystem.Items.Firearms.Modules;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MEC;
+    using PlayerStatsSystem;
+    using SwiftArcadeMode.Utils.Extensions;
+    using UnityEngine;
+
     [Perk("NaughtyHunter", Rarity.Epic)]
     public class NaughtyHunter(PerkInventory inv) : PerkTriggerCooldownBase(inv)
     {
@@ -89,6 +89,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
 
                 yield return Timing.WaitForSeconds(1f);
             }
+
             p.Position = trackedElevator == null ? original : original + trackedElevator.Base.transform.position;
         }
 
@@ -103,6 +104,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
                     mod.ServerModifyAmmo(-mod.AmmoMax);
             }
         }
+
         private void OnReloadingWeapon(LabApi.Events.Arguments.PlayerEvents.PlayerReloadingWeaponEventArgs ev)
         {
             if (ev.FirearmItem.Serial != CurrentGun)

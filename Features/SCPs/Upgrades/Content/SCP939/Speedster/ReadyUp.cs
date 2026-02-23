@@ -1,10 +1,10 @@
-﻿using CustomPlayerEffects;
-using PlayerRoles.PlayableScps.Scp939;
-using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Speedster
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Speedster
 {
+    using CustomPlayerEffects;
+    using PlayerRoles.PlayableScps.Scp939;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     public class ReadyUp(UpgradePathPerkBase parent) : UpgradeBase<Speedster>(parent)
     {
         public override string Name => "Ready Up";
@@ -18,8 +18,8 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Speedster
         public bool CrouchState => role != null && role.SubroutineModule.TryGetSubroutine(out Scp939FocusAbility focus) && focus.State > 0.5f;
 
         private readonly Timer timer = new();
-        Scp939Role role;
-        bool trigger;
+        private Scp939Role role;
+        private bool trigger;
 
         public override void Init()
         {

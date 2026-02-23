@@ -1,9 +1,9 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Handlers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.EndlessDecay
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.EndlessDecay
 {
+    using CustomPlayerEffects;
+    using LabApi.Events.Handlers;
+    using PlayerStatsSystem;
+
     public class LimbBreak(UpgradePathPerkBase parent) : UpgradeBase<EndlessDecay>(parent)
     {
         public override string Name => "Limb Break";
@@ -12,7 +12,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.EndlessDecay
 
         public virtual float Duration => 1f;
 
-        int counter;
+        private int counter;
 
         public override void Init()
         {

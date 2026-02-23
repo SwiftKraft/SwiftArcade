@@ -1,11 +1,11 @@
-﻿using CustomPlayerEffects;
-using Hints;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using System.Collections.Generic;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using System.Collections.Generic;
+    using CustomPlayerEffects;
+    using Hints;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+
     [Perk("PizzaMan", Rarity.Uncommon)]
     public class PizzaMan(PerkInventory inv) : PerkItemReceiveBase(inv)
     {

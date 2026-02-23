@@ -1,9 +1,9 @@
-﻿using CustomPlayerEffects;
-using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     [Perk("Ninjutsu", Rarity.Rare)]
     public class Ninjutsu(PerkInventory inv) : PerkCooldownBase(inv)
     {

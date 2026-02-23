@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace SwiftArcadeMode.Utils.Extensions
+﻿namespace SwiftArcadeMode.Utils.Extensions
 {
+    using UnityEngine;
+
     public static class VectorExtensions
     {
         public static Vector3 PredictPosition(this Vector3 position, Vector3 targetPos, Vector3 targetVel, float projectileSpeed, float timer = 0f)
@@ -17,18 +17,18 @@ namespace SwiftArcadeMode.Utils.Extensions
             else
                 requiredTime = 0f;
 
-            return targetPos + targetVel * (requiredTime + timer);
+            return targetPos + (targetVel * (requiredTime + timer));
         }
 
         /// <summary>
         /// Calculates the initial velocity needed to hit a target with a gravity-affected projectile.
         /// </summary>
-        /// <param name="origin">Start position</param>
-        /// <param name="target">Target position</param>
-        /// <param name="speed">Projectile launch speed</param>
-        /// <param name="useHighArc">True = high arc, False = low arc</param>
-        /// <param name="velocity">Resulting initial velocity</param>
-        /// <returns>False if the target is unreachable at the given speed</returns>
+        /// <param name="origin">Start position.</param>
+        /// <param name="target">Target position.</param>
+        /// <param name="speed">Projectile launch speed.</param>
+        /// <param name="useHighArc">True = high arc, False = low arc.</param>
+        /// <param name="velocity">Resulting initial velocity.</param>
+        /// <returns>False if the target is unreachable at the given speed.</returns>
         public static bool SolveBallisticArc(
             Vector3 origin,
             Vector3 target,
@@ -49,7 +49,7 @@ namespace SwiftArcadeMode.Utils.Extensions
             float speed4 = speed2 * speed2;
 
             float discriminant =
-                speed4 - gravity * (gravity * distanceXZ * distanceXZ + 2f * height * speed2);
+                speed4 - (gravity * ((gravity * distanceXZ * distanceXZ) + (2f * height * speed2)));
 
             // No valid solution (target too far or too high)
             if (discriminant < 0f)
@@ -60,14 +60,13 @@ namespace SwiftArcadeMode.Utils.Extensions
             float angle =
                 Mathf.Atan2(
                     speed2 + (useHighArc ? sqrt : -sqrt),
-                    gravity * distanceXZ
-                );
+                    gravity * distanceXZ);
 
             Vector3 directionXZ = deltaXZ.normalized;
 
             velocity =
-                directionXZ * Mathf.Cos(angle) * speed +
-                Vector3.up * Mathf.Sin(angle) * speed;
+                (directionXZ * Mathf.Cos(angle) * speed) +
+                (Vector3.up * Mathf.Sin(angle) * speed);
 
             return true;
         }

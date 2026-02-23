@@ -1,10 +1,10 @@
-﻿using CommandSystem;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features;
-using System;
-
-namespace SwiftArcadeMode.Commands.Client
+﻿namespace SwiftArcadeMode.Commands.Client
 {
+    using System;
+    using CommandSystem;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features;
+
     [CommandHandler(typeof(ClientCommandHandler))]
     public class ClientChooseUpgradeCommand : ICommand
     {
@@ -16,19 +16,24 @@ namespace SwiftArcadeMode.Commands.Client
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            Player p = Player.Get(sender);
+            Player? p = Player.Get(sender);
+            if (p is null)
+            {
+                response = "You must be a player to use this command!";
+                return false;
+            }
 
-            if (arguments.Array.Length < 2 || !int.TryParse(arguments.Array[1], out int num))
+            if (arguments.Count < 1 || !int.TryParse(arguments.At(0), out int num))
             {
                 response = "Please input a number!";
                 return false;
             }
 
-            if (p.TryGetPerkInventory(out PerkInventory inv) && inv.UpgradeQueue.Upgrades.Count > 0)
+            if (Player.TryGetPerkInventory(out PerkInventory inv) && inv.UpgradeQueue.Upgrades.Count > 0)
             {
                 bool success = inv.UpgradeQueue.Choose(num - 1, out string name);
 
-                response = success ? ("Upgrade chosen: " + name + (inv.UpgradeQueue.Upgrades.Count > 0 ? ", " + inv.UpgradeQueue.Upgrades.Count + " more upgrade choices remain." : "")) : "Invalid index.";
+                response = success ? ("Upgrade chosen: " + name + (inv.UpgradeQueue.Upgrades.Count > 0 ? ", " + inv.UpgradeQueue.Upgrades.Count + " more upgrade choices remain." : string.Empty)) : "Invalid index.";
                 return success;
             }
 

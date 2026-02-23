@@ -1,11 +1,11 @@
-﻿using CommandSystem;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features;
-using SwiftArcadeMode.Features.Humans.Perks;
-using System;
-
-namespace SwiftArcadeMode.Commands.RA
+﻿namespace SwiftArcadeMode.Commands.RA
 {
+    using System;
+    using CommandSystem;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features;
+    using SwiftArcadeMode.Features.Humans.Perks;
+
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class DropPerkCommand : ICommand
     {
@@ -23,9 +23,14 @@ namespace SwiftArcadeMode.Commands.RA
                 return false;
             }
 
-            Player p = Player.Get(sender);
+            Player? p = Player.Get(sender);
+            if (p is null)
+            {
+                response = "You must be a player to use this command!";
+                return false;
+            }
 
-            if (arguments.Array.Length < 2 || !PerkManager.TryGetPerk(arguments.Array[1].ToLower(), out PerkAttribute t))
+            if (arguments.Count < 1 || !PerkManager.TryGetPerk(arguments.At(0).ToLower(), out PerkAttribute t))
             {
                 response = "Unknown perk! ";
                 return false;

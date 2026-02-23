@@ -1,23 +1,22 @@
-﻿using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using MEC;
-using Mirror;
-using NetworkManagerUtils.Dummies;
-using PlayerRoles;
-using PlayerRoles.FirstPersonControl;
-using PlayerRoles.Spectating;
-using SwiftArcadeMode.Utils.Interfaces;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
 {
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MEC;
+    using Mirror;
+    using NetworkManagerUtils.Dummies;
+    using PlayerRoles;
+    using PlayerRoles.FirstPersonControl;
+    using PlayerRoles.Spectating;
+    using UnityEngine;
+
     public class Phantom(UpgradePathPerkBase parent) : UpgradeBase<Scouter>(parent)
     {
         public override string Name => "Phantom";
 
         public override string Description => "Spawns a phantom 173 when you start breakneck speeds.";
 
-        ReferenceHub phantom;
+        private ReferenceHub phantom;
 
         public override void Init()
         {
@@ -81,7 +80,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Scouter
 
             if (phantom.roleManager.CurrentRole.RoleTypeId == RoleTypeId.Scp173)
             {
-                SendMessage("Phantom destroyed! " + (attacker == null ? "" : "Attacker: " + attacker.DisplayName));
+                SendMessage("Phantom destroyed! " + (attacker == null ? string.Empty : "Attacker: " + attacker.DisplayName));
                 TimedGrenadeProjectile.SpawnActive(phantom.GetPosition(), ItemType.GrenadeFlash, Player, 0.1f);
 
                 if (Room.TryGetRoomAtPosition(phantom.GetPosition(), out Room room))

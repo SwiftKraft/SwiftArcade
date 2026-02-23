@@ -1,8 +1,8 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Features.Wrappers;
+
     [Perk("Telefragger", Rarity.Rare)]
     public class Telefragger(PerkInventory inv) : PerkKillBase(inv)
     {

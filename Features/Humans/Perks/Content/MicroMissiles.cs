@@ -1,9 +1,8 @@
-﻿using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+
     [Perk("MicroMissiles", Rarity.Secret)]
     public class MicroMissiles(PerkInventory inv) : PerkBase(inv)
     {
@@ -13,7 +12,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
 
         public virtual int Amount => 10;
 
-        int counter = 0;
+        private int counter = 0;
 
         public override void Init()
         {

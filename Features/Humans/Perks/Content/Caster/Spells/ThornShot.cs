@@ -1,13 +1,12 @@
-﻿using Footprinting;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerRoles.FirstPersonControl;
-using PlayerStatsSystem;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using System.Collections.Generic;
+    using Footprinting;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerStatsSystem;
+    using UnityEngine;
+
     public class ThornShot : SpellBase
     {
         public override string Name => "Thorn Shot";
@@ -18,8 +17,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
         public override float CastTime => 1.3f;
 
-        const float spreadAngle = 65f;
-        const int projectileCount = 10;
+        private const float spreadAngle = 65f;
+        private const int projectileCount = 10;
 
         public override void Cast()
         {
@@ -37,8 +36,10 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             }
 
             for (int i = 0; i < colliders.Count; i++)
+            {
                 for (int j = 0; j < colliders.Count; j++)
                     Physics.IgnoreCollision(colliders[i], colliders[j], true);
+            }
 
             PlaySound("cast");
         }
@@ -50,7 +51,9 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             public bool Sticked { get; private set; }
 
             public ReferenceHub StuckPlayer { get; private set; }
+
             public Vector3 StuckOffset { get; private set; }
+
             public Quaternion StuckRotation { get; private set; }
 
             public override bool UseGravity => true;

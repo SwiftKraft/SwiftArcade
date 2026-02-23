@@ -1,14 +1,14 @@
-﻿using CustomPlayerEffects;
-using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using SwiftArcadeMode.Utils.Extensions;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using CustomPlayerEffects;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Extensions;
+
     [Perk("Mitosis", Rarity.Mythic)]
     public class Mitosis(PerkInventory inv) : PerkBase(inv)
     {

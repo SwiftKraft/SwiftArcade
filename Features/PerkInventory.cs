@@ -1,40 +1,36 @@
-﻿using CustomPlayerEffects;
-using Hints;
-using LabApi.Features.Wrappers;
-using PlayerStatsSystem;
-using SwiftArcadeMode.Features.Humans.Perks.Crafting;
-using SwiftArcadeMode.Features.SCPs.Upgrades;
-using SwiftArcadeMode.Utils.Extensions;
-using SwiftArcadeMode.Utils.Structures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Utils.NonAllocLINQ;
-
-namespace SwiftArcadeMode.Features
+﻿namespace SwiftArcadeMode.Features
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using Hints;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features.Humans.Perks.Crafting;
+    using SwiftArcadeMode.Features.SCPs.Upgrades;
+    using SwiftArcadeMode.Utils.Extensions;
+
     public class PerkInventory(Player targetPlayer)
     {
-        public readonly Player Parent = targetPlayer;
-        public readonly List<PerkBase> Perks = [];
-        public readonly UpgradeQueue UpgradeQueue = new(targetPlayer);
+        public Player Parent { get; } = targetPlayer;
 
-        public readonly List<LimitAdditive> LimitAdditives = [];
+        public List<PerkBase> Perks { get; } = [];
 
-        public int BaseLimit = 5;
+        public UpgradeQueue UpgradeQueue { get; } = new(targetPlayer);
 
-        public class LimitAdditive
-        {
-            public int Additive;
+        public List<LimitAdditive> LimitAdditives { get; } = [];
 
-            public static implicit operator int(LimitAdditive add) => add.Additive;
-        }
+        public int BaseLimit { get; set; } = 5;
+
+        public int Limit => BaseLimit + LimitAdditives.Select(limit => limit.Additive).Sum();
+
+        public int LimitUsage => Perks.Sum(perk => perk.SlotUsage);
 
         public LimitAdditive CreateLimitAdditive(int value = 0)
         {
             LimitAdditive additive = new()
             {
-                Additive = value
+                Additive = value,
             };
 
             LimitAdditives.Add(additive);
@@ -42,30 +38,6 @@ namespace SwiftArcadeMode.Features
         }
 
         public void RemoveLimitAdditive(LimitAdditive adder) => LimitAdditives.Remove(adder);
-
-        public int Limit
-        {
-            get
-            {
-                int b = BaseLimit;
-
-                foreach (int add in LimitAdditives)
-                    b += add;
-
-                return b;
-            }
-        }
-
-        public int LimitUsage
-        {
-            get
-            {
-                int total = 0;
-                foreach (PerkBase perk in Perks)
-                    total += perk.SlotUsage;
-                return total;
-            }
-        }
 
         public void OnPerksUpdated()
         {
@@ -75,7 +47,7 @@ namespace SwiftArcadeMode.Features
 
         public bool AddPerk(PerkAttribute type)
         {
-            if (type == null || type.Perk.IsAbstract || type.Perk != typeof(PerkBase) && !type.Perk.IsSubclassOf(typeof(PerkBase)))
+            if (type.Perk.IsAbstract || (type.Perk != typeof(PerkBase) && !type.Perk.IsSubclassOf(typeof(PerkBase))))
                 return false;
 
             PerkManager.PerkProfile prof = type.Profile;
@@ -92,7 +64,7 @@ namespace SwiftArcadeMode.Features
                 return false;
             }
 
-            PerkBase perk = Perks.FirstOrDefault((p) => p.GetType() == type.Perk);
+            PerkBase? perk = Perks.FirstOrDefault(p => p.GetType() == type.Perk);
 
             if (perk != null)
             {
@@ -121,10 +93,7 @@ namespace SwiftArcadeMode.Features
 
         public void RemovePerk(Type type)
         {
-            if (type == null)
-                return;
-
-            PerkBase perk = Perks.FirstOrDefault((p) => p.GetType() == type);
+            PerkBase? perk = Perks.FirstOrDefault(p => p.GetType() == type);
 
             if (perk == null)
                 return;
@@ -134,13 +103,13 @@ namespace SwiftArcadeMode.Features
 
         public bool HasPerk(Type t) => GetPerk(t) != null;
 
-        public bool TryGetPerk(Type t, out PerkBase perk)
+        public bool TryGetPerk(Type t, [NotNullWhen(true)] out PerkBase? perk)
         {
             perk = GetPerk(t);
             return perk != null;
         }
 
-        public PerkBase GetPerk(Type t) => Perks.FirstOrDefault((p) => p.GetType() == t);
+        public PerkBase? GetPerk(Type t) => Perks.FirstOrDefault(p => p.GetType() == t);
 
         public void ClearPerks()
         {
@@ -152,15 +121,12 @@ namespace SwiftArcadeMode.Features
 
         public void RemovePerk(PerkBase perk)
         {
-            if (perk == null)
-                return;
-
             Perks.Remove(perk);
             perk.Remove();
             Parent.SendHint($"Removed Perk: {perk.FancyName}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
         }
 
-        public PerkBase RemoveRandom()
+        public PerkBase? RemoveRandom()
         {
             if (Perks.Count <= 0)
                 return null;
@@ -177,6 +143,13 @@ namespace SwiftArcadeMode.Features
 
             for (int i = 0; i < Perks.Count; i++)
                 Perks[i]?.Tick();
+        }
+
+        public class LimitAdditive
+        {
+            public int Additive { get; set; }
+
+            public static implicit operator int(LimitAdditive add) => add.Additive;
         }
     }
 }

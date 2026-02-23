@@ -2,6 +2,6 @@
 {
     public static class StringExtensions
     {
-        public static string ApplySchematicPrefix(this string schematicName) => Core.Instance.Config.SchematicPrefix + schematicName;
+        public static string ApplySchematicPrefix(this string schematicName) => Core.CoreConfig.SchematicPrefix + schematicName;
     }
 }

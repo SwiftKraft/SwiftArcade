@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Perks
 {
+    using System;
+    using SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells;
+
     [Perk("Druid", Rarity.Epic)]
     public class Druid(PerkInventory inv) : CasterBase(inv)
     {

@@ -1,7 +1,7 @@
-﻿using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 {
+    using LabApi.Features.Wrappers;
+
     public class GamblerHeal : GamblerEffectBase
     {
         public override bool Positive => true;

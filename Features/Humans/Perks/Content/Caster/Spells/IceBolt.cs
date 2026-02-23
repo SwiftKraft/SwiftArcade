@@ -1,12 +1,12 @@
-﻿using CustomPlayerEffects;
-using Footprinting;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
-using PlayerStatsSystem;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using CustomPlayerEffects;
+    using Footprinting;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles;
+    using PlayerStatsSystem;
+    using UnityEngine;
+
     public class IceBolt : SpellBase
     {
         public override string Name => "Ice Bolt";

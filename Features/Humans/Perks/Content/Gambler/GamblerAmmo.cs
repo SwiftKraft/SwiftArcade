@@ -1,12 +1,7 @@
-﻿using LabApi.Features.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Gambler
 {
+    using LabApi.Features.Wrappers;
+
     public class GamblerAmmo : GamblerEffectBase
     {
         public override bool Positive => true;

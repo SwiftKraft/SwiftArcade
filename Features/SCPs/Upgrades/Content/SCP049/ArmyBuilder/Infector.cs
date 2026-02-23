@@ -1,11 +1,11 @@
-﻿using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using MEC;
-using PlayerRoles;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.ArmyBuilder
 {
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using MEC;
+    using PlayerRoles;
+    using UnityEngine;
+
     public class Infector(UpgradePathPerkBase parent) : UpgradeBase<ArmyBuilder>(parent)
     {
         public override string Name => "Infector";

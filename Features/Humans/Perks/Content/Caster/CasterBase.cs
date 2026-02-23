@@ -1,50 +1,59 @@
-﻿using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using MEC;
-using SwiftArcadeMode.Utils.Projectiles;
-using SwiftArcadeMode.Utils.Structures;
-using System;
-using System.Linq;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 {
+    using System;
+    using System.Linq;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MEC;
+    using SwiftArcadeMode.Utils.Projectiles;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     public abstract class CasterBase(PerkInventory inv) : PerkItemReceiveBase(inv)
     {
-        public abstract Type[] ListSpells();
+        private readonly Timer castDuration = new();
+
+        private bool casting;
 
         public override ItemType ItemType => ItemType.KeycardCustomTaskForce;
+
         public override string PerkDescription => $"Allows you to cast {Name} spells.\nDrop the keycard to change spell, inspect to cast.";
 
         public virtual float KillCooldownReduction => 4f;
+
         public virtual float LessItemsCooldown => 3f;
+
         public abstract float RegularCooldown { get; }
+
         public override float Cooldown => Player == null || Player.Items.Count() < 3 ? LessItemsCooldown : RegularCooldown;
+
         public override int Limit => int.MaxValue;
 
         public override string ReadyMessage => Player.IsInventoryFull ? "Failed to refresh, no space in inventory." : "Spells refreshed!";
 
         public SpellBase CurrentSpell { get; private set; }
+
         public SpellBase[] Spells { get; private set; }
-        public Item CurrentSpellItem { get; private set; }
+
+        public Item? CurrentSpellItem { get; private set; }
+
         public ushort CurrentSpellItemSerial { get; private set; }
+
         public int CurrentSpellIndex
         {
-            get => currentSpellIndex;
+            get;
             set
             {
                 if (value < 0 || Spells.Length <= 0)
                     return;
 
-                currentSpellIndex = value % Spells.Length;
-                CurrentSpell = Spells[currentSpellIndex];
+                field = value % Spells.Length;
+                CurrentSpell = Spells[field];
                 CurrentSpell?.Init(this);
             }
         }
-        int currentSpellIndex;
 
-        bool casting;
-        readonly Timer castDuration = new();
+        public abstract Type[] ListSpells();
 
         public override void Init()
         {
@@ -82,7 +91,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 
         public override void Tick()
         {
-            if (CurrentSpellItem == null || !Player.Items.Any(i => i.Serial == CurrentSpellItemSerial))
+            if (CurrentSpellItem == null || Player.Items.All(i => i.Serial != CurrentSpellItemSerial))
                 base.Tick();
 
             if (!castDuration.Ended)
@@ -188,7 +197,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             return CurrentSpellItem;
         }
 
-        public abstract class MagicProjectileBase(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10, Player owner = null) : ProjectileBase(initialPosition, initialRotation, initialVelocity, lifetime, owner)
+        public abstract class MagicProjectileBase(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10, Player? owner = null) : ProjectileBase(initialPosition, initialRotation, initialVelocity, lifetime, owner)
         {
             public readonly SpellBase Spell = spell;
 

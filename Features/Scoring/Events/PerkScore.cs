@@ -1,8 +1,7 @@
-﻿using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features.Humans.Perks;
-
-namespace SwiftArcadeMode.Features.Scoring.Events
+﻿namespace SwiftArcadeMode.Features.Scoring.Events
 {
+    using SwiftArcadeMode.Features.Humans.Perks;
+
     public class PerkScore : ScoreEventBase
     {
         public override void Disable() => PerkEvents.PickedUpPerk -= OnPickedUpPerk;
@@ -21,6 +20,8 @@ namespace SwiftArcadeMode.Features.Scoring.Events
             _ => 1,
         });
 
-        public override void Tick() { }
+        public override void Tick()
+        {
+        }
     }
 }

@@ -11,7 +11,7 @@
 
         public override int SlotUsage => 0;
 
-        PerkInventory.LimitAdditive additive;
+        private PerkInventory.LimitAdditive additive;
 
         public override void Init()
         {

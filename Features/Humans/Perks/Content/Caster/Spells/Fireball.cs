@@ -1,10 +1,10 @@
-﻿using InventorySystem.Items.ThrowableProjectiles;
-using LabApi.Features.Wrappers;
-using PlayerRoles.FirstPersonControl;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
+    using InventorySystem.Items.ThrowableProjectiles;
+    using LabApi.Features.Wrappers;
+    using PlayerRoles.FirstPersonControl;
+    using UnityEngine;
+
     public class Fireball : SpellBase
     {
         public override string Name => "Fireball";
@@ -22,7 +22,6 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
             new Projectile(this, Caster.Player.Camera.position + (Caster.Player.Camera.forward * 0.5f), Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 11f, 15f, Caster.Player);
             PlaySound("cast");
         }
-
 
         public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
         {

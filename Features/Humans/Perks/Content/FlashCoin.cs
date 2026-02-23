@@ -1,7 +1,7 @@
-﻿using CustomPlayerEffects;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using CustomPlayerEffects;
+
     [Perk("FlashCoin", Rarity.Legendary)]
     public class FlashCoin(PerkInventory inv) : PerkBase(inv)
     {

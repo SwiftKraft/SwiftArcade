@@ -1,7 +1,7 @@
-﻿using LabApi.Events.Handlers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Handlers;
+
     [Perk("SuperRegeneration", Rarity.Epic)]
     public class SuperRegeneration(PerkInventory inv) : Regeneration(inv)
     {
@@ -10,10 +10,12 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public override string Description => $"{base.Description} \nHowever, max HP is decreased by {DecreasePercentage * 100f}%.";
 
         public override float HealthThresholdPercentage => 0.35f;
+
         public override float Rate => 9f;
+
         public virtual float DecreasePercentage => 0.1f;
 
-        float originalHealth;
+        private float originalHealth;
 
         public override void Init()
         {

@@ -1,10 +1,10 @@
-﻿using CommandSystem;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Features;
-using System;
-
-namespace SwiftArcadeMode.Commands.RA
+﻿namespace SwiftArcadeMode.Commands.RA
 {
+    using System;
+    using CommandSystem;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Features;
+
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class AddPerkCommand : ICommand
     {
@@ -22,16 +22,27 @@ namespace SwiftArcadeMode.Commands.RA
                 return false;
             }
 
-            Player p = Player.Get(sender);
+            Player? p = Player.Get(sender);
+            if (p is null)
+            {
+                response = "You must be a player to use this command!";
+                return false;
+            }
 
-            if (arguments.Array.Length < 2 || !PerkManager.TryGetPerk(arguments.Array[1].ToLower(), out PerkAttribute t))
+            if (arguments.Count < 1 || !PerkManager.TryGetPerk(arguments.At(0).ToLower(), out PerkAttribute t))
             {
                 response = "Unknown perk! ";
                 return false;
             }
 
-            if (arguments.Array.Length > 2)
-                p = int.TryParse(arguments.Array[2], out int id) ? Player.Get(id) : Player.Get(arguments.Array[2]);
+            if (arguments.Count > 1)
+                p = int.TryParse(arguments.At(1), out int id) ? Player.Get(id) : Player.Get(arguments.At(1));
+
+            if (p is null)
+            {
+                response = "Could not find target player from second argument";
+                return false;
+            }
 
             p.GivePerk(t);
 

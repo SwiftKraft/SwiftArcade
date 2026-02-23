@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Speedster
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Speedster
 {
+    using System;
+
     [UpgradePath(PlayerRoles.RoleTypeId.Scp939)]
     [Perk("939.Speedster", Rarity.Uncommon, PerkRestriction.SCP)]
     public class Speedster(PerkInventory inv) : UpgradePathPerkBase(inv)

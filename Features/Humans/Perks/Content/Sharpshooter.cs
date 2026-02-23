@@ -1,13 +1,13 @@
-﻿using InventorySystem.Items;
-using InventorySystem.Items.Firearms.Attachments;
-using InventorySystem.Items.Firearms.Modules;
-using LabApi.Events.Arguments.PlayerEvents;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using InventorySystem.Items;
+    using InventorySystem.Items.Firearms.Attachments;
+    using InventorySystem.Items.Firearms.Modules;
+    using LabApi.Events.Arguments.PlayerEvents;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using PlayerStatsSystem;
+
     [Perk("Sharpshooter", Rarity.Uncommon)]
     public class Sharpshooter(PerkInventory inv) : PerkKillBase(inv)
     {
@@ -16,6 +16,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content
         public override string Description => "Every firearm you pick up turns into a revolver. \nKills with the revolver grant you AHP and 1 ammo in the chamber.\n2x damage when damaging SCPs with the Revolver.";
 
         public virtual float Amount => 20f;
+
         public virtual float Efficacy => 1f;
 
         public override void Init()

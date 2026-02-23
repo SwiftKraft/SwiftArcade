@@ -1,10 +1,10 @@
-﻿using CustomPlayerEffects;
-using LabApi.Features.Wrappers;
-using System.Linq;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.TeamPlayer
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.TeamPlayer
 {
+    using System.Linq;
+    using CustomPlayerEffects;
+    using LabApi.Features.Wrappers;
+    using UnityEngine;
+
     public class LifeConsumption(UpgradePathPerkBase parent) : UpgradeCooldownTriggerBase<TeamPlayer>(parent)
     {
         public override string Name => "Life Consumption";
@@ -13,9 +13,9 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP106.TeamPlayer
 
         public virtual float Amount => 5f;
 
-        public override string UpgradeDescription => "";
+        public override string UpgradeDescription => string.Empty;
 
-        public override string ReadyMessage => "";
+        public override string ReadyMessage => string.Empty;
 
         public override float Cooldown => 1f;
 

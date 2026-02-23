@@ -1,9 +1,9 @@
-﻿using PlayerRoles;
-using SwiftArcadeMode.Utils.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using PlayerRoles;
+using SwiftArcadeMode.Utils.Extensions;
 
 namespace SwiftArcadeMode.Features.SCPs.Upgrades
 {
@@ -32,8 +32,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
             foreach (KeyValuePair<Type, UpgradePathAttribute> attr in atts)
             {
                 attr.Value.Perk = PerkManager.GetPerk(attr.Key);
-                if (!RegisteredUpgrades.Contains(attr.Value))
-                    RegisteredUpgrades.Add(attr.Value);
+                RegisteredUpgrades.Add(attr.Value);
             }
         }
 

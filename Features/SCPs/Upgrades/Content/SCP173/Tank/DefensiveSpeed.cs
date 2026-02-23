@@ -1,8 +1,8 @@
-﻿using LabApi.Events.Handlers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Tank
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Tank
 {
+    using LabApi.Events.Handlers;
+    using PlayerStatsSystem;
+
     public class DefensiveSpeed(UpgradePathPerkBase parent) : UpgradeBase<Tank>(parent)
     {
         public override string Name => "Defensive Speed";
@@ -11,7 +11,7 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Tank
 
         public virtual float Percentage => 0.25f;
 
-        bool enabled;
+        private bool enabled;
 
         public override void Init()
         {

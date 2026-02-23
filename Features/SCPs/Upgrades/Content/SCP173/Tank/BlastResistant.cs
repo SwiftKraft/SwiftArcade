@@ -1,8 +1,8 @@
-﻿using LabApi.Events.Handlers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Tank
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Tank
 {
+    using LabApi.Events.Handlers;
+    using PlayerStatsSystem;
+
     public class BlastResistant(UpgradePathPerkBase parent) : UpgradeBase<Tank>(parent)
     {
         public override string Name => "Blast Resistant";

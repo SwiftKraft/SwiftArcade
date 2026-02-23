@@ -1,10 +1,10 @@
-﻿using System;
-
-namespace SwiftArcadeMode.Utils.Structures
+﻿namespace SwiftArcadeMode.Utils.Structures
 {
-    public class PlayerStat(Action<float> setValue) : ModifiableStatistic()
+    using System;
+
+    public class PlayerStat(Action<float>? setValue = null) : ModifiableStatistic
     {
-        public readonly Action<float> SetValue = setValue;
+        public Action<float>? SetValue { get; } = setValue;
 
         public override void UpdateValue()
         {

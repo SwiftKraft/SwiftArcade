@@ -1,17 +1,21 @@
-﻿using ProjectMER.Features;
-using ProjectMER.Features.Objects;
-using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Utils.Visuals
+﻿namespace SwiftArcadeMode.Utils.Visuals
 {
+    using ProjectMER.Features;
+    using ProjectMER.Features.Objects;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     public class SchematicEffect : MonoBehaviour
     {
-        public static SchematicEffect Create(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale, float lifetime)
+        private readonly Timer lifetime = new();
+
+        public SchematicObject Schematic { get; set; } = null!;
+
+        public static SchematicEffect? Create(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale, float lifetime)
         {
             SchematicObject obj = ObjectSpawner.SpawnSchematic(schematicName, position, rotation, scale);
 
-            if (obj == null)
+            if (!obj)
                 return null;
 
             SchematicEffect effect = obj.gameObject.AddComponent<SchematicEffect>();
@@ -19,10 +23,6 @@ namespace SwiftArcadeMode.Utils.Visuals
             effect.lifetime.Reset(lifetime);
             return effect;
         }
-
-        public SchematicObject Schematic;
-
-        private readonly Timer lifetime = new();
 
         private void FixedUpdate()
         {

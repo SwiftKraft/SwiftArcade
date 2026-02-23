@@ -1,15 +1,17 @@
-﻿using LabApi.Events.Handlers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Handlers;
+    using PlayerStatsSystem;
+
     [Perk("Resilience", Rarity.Uncommon)]
     public class Resilience(PerkInventory inv) : PerkBase(inv)
     {
         public override string Name => "Resilience";
+
         public override string Description => "What doesn't kill you makes you stronger.\nTaking damage increases your max health.\nResets on death.";
 
         public virtual float Percentage => 0.1f;
+
         public virtual float Cap => 400f;
 
         public override void Init()

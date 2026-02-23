@@ -1,11 +1,11 @@
-﻿using CommandSystem;
-using SwiftArcadeMode.Features.Scoring;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SwiftArcadeMode.Commands.RA
+﻿namespace SwiftArcadeMode.Commands.RA
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using CommandSystem;
+    using SwiftArcadeMode.Features.Scoring;
+
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class ShowScoresCommand : ICommand
     {

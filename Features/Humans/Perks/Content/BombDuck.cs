@@ -1,8 +1,8 @@
-﻿using LabApi.Events.Handlers;
-using PlayerStatsSystem;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Events.Handlers;
+    using PlayerStatsSystem;
+
     [Perk("BombDuck", Rarity.Legendary, PerkRestriction.DontSpawn)]
     public class BombDuck(PerkInventory inv) : PerkBase(inv)
     {

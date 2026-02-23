@@ -1,8 +1,8 @@
-﻿using PlayerRoles;
-using System;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Tank
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP173.Tank
 {
+    using System;
+    using PlayerRoles;
+
     [UpgradePath(RoleTypeId.Scp173)]
     [Perk("173.Tank", Rarity.Rare, PerkRestriction.SCP)]
     public class Tank(PerkInventory inv) : UpgradePathPerkBase(inv)
