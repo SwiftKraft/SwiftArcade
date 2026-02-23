@@ -2,6 +2,8 @@
 using LabApi.Features.Wrappers;
 using System.Collections.Generic;
 using System.Text;
+using MEC;
+using Random = UnityEngine.Random;
 
 namespace SwiftArcadeMode.Features.SCPs.Upgrades
 {
@@ -11,9 +13,33 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
 
         public readonly Queue<Item> Upgrades = [];
 
-        public struct Item(params UpgradePathAttribute[] choices)
+        public class Item
         {
-            public UpgradePathAttribute[] Choices = choices;
+            public Item(UpgradeQueue queue, params UpgradePathAttribute[] choices)
+            {
+                Choices = choices;
+
+                if (Core.Instance.Config.ScpUpgradeAutopickTime is 0)
+                    return;
+
+                Timing.CallDelayed(Core.Instance.Config.ScpUpgradeAutopickTime, () =>
+                {
+                    if (queue.Upgrades.Peek() != this)
+                        return;
+                    queue.Upgrades.Dequeue();
+
+                    int len = choices.Length;
+                    if (len > 0)
+                    {
+                        if (queue.Choose(Random.Range(0, len), out string name))
+                        {
+                            queue.Parent.SendHint("<align=\"left\">Chosen: " + name + "</align>", [HintEffectPresets.FadeOut()], 10f);
+                        }
+                    }
+                });
+            }
+
+            public UpgradePathAttribute[] Choices { get; }
         }
 
         public void Create(int amount, List<UpgradePathAttribute> maxed)
@@ -28,8 +54,8 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
 
             if (paths.Count > 0)
             {
-                Upgrades.Enqueue(new([.. paths]));
-                Parent.SendHint("<color=#00FF00><b>Upgrades available!</b></color>\nPress \"~\" and type \".su\" (for more detail) to see available choices, type \".c <number>\" to choose an upgrade. \nOR bind a key in <b>Server Specific Settings</b>", [HintEffectPresets.FadeOut()], 15f);
+                Upgrades.Enqueue(new Item(this, [.. paths]));
+                Parent.SendHint("<color=#00FF00><b>Upgrades available!</b></color>\nPress \"~\" and type \".su\" (for more detail) to see available choices, type \".c <number>\" to choose an upgrade. \nOR bind a key in <b>Server Specific Settings</b>\n<size=0.3em>An upgrade will be automatically chosen in 30s</size>", [HintEffectPresets.FadeOut()], 15f);
                 Parent.SendConsoleMessage(Peek(), "white");
             }
         }

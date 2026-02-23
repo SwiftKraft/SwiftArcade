@@ -12,5 +12,6 @@
         public bool Replace096 { get; set; } = true;
         public string SchematicPrefix { get; set; } = "SAM-";
         public float CustomGameModeChance { get; set; } = 0.25f;
+        public float ScpUpgradeAutopickTime { get; set; } = 30f;
     }
 }
