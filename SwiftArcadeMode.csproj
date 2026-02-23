@@ -10,51 +10,21 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<Reference Include="Assembly-CSharp-firstpass">
-			<HintPath>$(SCPSLREFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
-		</Reference>
-		<Reference Include="Assembly-CSharp">
-			<HintPath>$(SCPSLREFERENCES)\Assembly-CSharp-Publicized.dll</HintPath>
-		</Reference>
-		<Reference Include="AudioPlayerApi">
-		  <HintPath>C:\Users\shifu\AppData\Roaming\SCP Secret Laboratory\LabAPI\dependencies\global\AudioPlayerApi.dll</HintPath>
-		</Reference>
-		<Reference Include="CommandSystem.Core">
-			<HintPath>$(SCPSLREFERENCES)\CommandSystem.Core.dll</HintPath>
-		</Reference>
-		<Reference Include="LabApi">
-			<HintPath>$(SCPSLREFERENCES)\LabApi.dll</HintPath>
-		</Reference>
-		<Reference Include="Mirror">
-			<HintPath>$(SCPSLREFERENCES)\Mirror-Publicized.dll</HintPath>
-		</Reference>
-		<Reference Include="Pooling">
-			<HintPath>$(SCPSLREFERENCES)\Pooling.dll</HintPath>
-		</Reference>
-		<Reference Include="ProjectMER">
-		  <HintPath>C:\Users\shifu\AppData\Roaming\SCP Secret Laboratory\LabAPI\plugins\7777\ProjectMER.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine">
-			<HintPath>$(SCPSLREFERENCES)\UnityEngine.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.AIModule">
-			<HintPath>$(SCPSLREFERENCES)\UnityEngine.AIModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.AnimationModule">
-		  <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>$(SCPSLREFERENCES)\UnityEngine.CoreModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.PhysicsModule">
-			<HintPath>$(SCPSLREFERENCES)\UnityEngine.PhysicsModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.TerrainModule">
-			<HintPath>$(SCPSLREFERENCES)\UnityEngine.TerrainModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.TerrainPhysicsModule">
-			<HintPath>$(SCPSLREFERENCES)\UnityEngine.TerrainPhysicsModule.dll</HintPath>
-		</Reference>
+		<Reference Include="Assembly-CSharp-firstpass" HintPath="$(SCPSLREFERENCES)\Assembly-CSharp-firstpass.dll" />
+		<Reference Include="Assembly-CSharp" HintPath="$(SCPSLREFERENCES)\Assembly-CSharp-Publicized.dll" />
+		<Reference Include="AudioPlayerApi" HintPath="$(SCPSLREFERENCES)\AudioPlayerApi.dll" />
+		<Reference Include="CommandSystem.Core" HintPath="$(SCPSLREFERENCES)\CommandSystem.Core.dll" />
+		<Reference Include="LabApi" HintPath="$(SCPSLREFERENCES)\LabApi.dll" />
+		<Reference Include="Mirror" HintPath="$(SCPSLREFERENCES)\Mirror-Publicized.dll" />
+		<Reference Include="Pooling" HintPath="$(SCPSLREFERENCES)\Pooling.dll" />
+		<Reference Include="ProjectMER" HintPath="$(SCPSLREFERENCES)\ProjectMER.dll" />
+		<Reference Include="UnityEngine" HintPath="$(SCPSLREFERENCES)\UnityEngine.dll" />
+		<Reference Include="UnityEngine.AIModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AIModule.dll" />
+		<Reference Include="UnityEngine.AnimationModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AnimationModule.dll" />
+		<Reference Include="UnityEngine.CoreModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.CoreModule.dll" />
+		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.PhysicsModule.dll" />
+		<Reference Include="UnityEngine.TerrainModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.TerrainModule.dll" />
+		<Reference Include="UnityEngine.TerrainPhysicsModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.TerrainPhysicsModule.dll" />
 	</ItemGroup>
 
 	<ItemGroup>
