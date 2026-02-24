@@ -88,7 +88,7 @@
 
                     // obsolete PerkProfile support
 #pragma warning disable CS0618 // Type or member is obsolete
-                    if (attr.Value.Profile.Name == string.Empty && attr.Value.Profile.Description == string.Empty)
+                    if (attr.Value.Profile.Name == default && attr.Value.Profile.Description == default)
                         attr.Value.Profile = new PerkProfile(attr.Value.Profile.Rarity, p.Name, p.Description);
 #pragma warning restore CS0618 // Type or member is obsolete
                 }

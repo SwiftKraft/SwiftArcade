@@ -2,7 +2,7 @@
 {
     using LabApi.Events;
 
-    using static SCPs.Upgrades.UpgradePathGiver;
+    using static SwiftArcadeMode.Features.SCPs.Upgrades.UpgradePathGiver;
 
     public static class PerkEvents
     {

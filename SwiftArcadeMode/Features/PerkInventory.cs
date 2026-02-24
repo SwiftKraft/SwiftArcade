@@ -82,7 +82,7 @@
 
             Perks.Add(p);
             p.Init();
-            Parent.SendHint($"Acquired Perk ({LimitUsage}/{Limit}): {fancyName}\n{fancyName}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
+            Parent.SendHint($"Acquired Perk ({LimitUsage}/{Limit}): {fancyName}\n{attribute.HollowInstance.GetDescription(Parent)}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
             OnPerksUpdated();
 
             Parent.CheckCrafts();

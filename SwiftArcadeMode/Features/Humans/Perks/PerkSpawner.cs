@@ -92,7 +92,7 @@
 
                 PerkEvents.OnCheckPickup(chk);
 
-                ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {attribute.HollowInstance.GetFancyName(ev.Player)}\n{prof.Description}{(ev.Player.HasPerk(type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : string.Empty)}", [HintEffectPresets.FadeOut()], 5f);
+                ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {attribute.HollowInstance.GetFancyName(ev.Player)}\n{attribute.HollowInstance.GetDescription(ev.Player)}{(ev.Player.HasPerk(type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : string.Empty)}", [HintEffectPresets.FadeOut()], 5f);
             }
             catch (Exception ex)
             {
