@@ -45,26 +45,26 @@
                 spec.UpdateSpectatorDisplay(Parent);
         }
 
-        public bool AddPerk(PerkAttribute type)
+        public bool AddPerk(PerkAttribute attribute)
         {
-            if (type.Perk.IsAbstract || (type.Perk != typeof(PerkBase) && !type.Perk.IsSubclassOf(typeof(PerkBase))))
+            if (attribute.Perk.IsAbstract || (attribute.Perk != typeof(PerkBase) && !attribute.Perk.IsSubclassOf(typeof(PerkBase))))
                 return false;
 
-            string fancyName = type.HollowInstance.GetFancyName(Parent);
+            string fancyName = attribute.HollowInstance.GetFancyName(Parent);
 
-            if (Parent.HasRestrictions(type))
+            if (Parent.HasRestrictions(attribute))
             {
                 Parent.SendHint($"{fancyName} cannot be obtained by your role!", [HintEffectPresets.FadeOut()], 5f);
                 return false;
             }
 
-            if (type.HasConflicts(this, out PerkBase? conf))
+            if (attribute.HasConflicts(this, out PerkBase? conf))
             {
                 Parent.SendHint($"{fancyName} conflicts with {conf.GetFancyName(Parent)}!", [HintEffectPresets.FadeOut()], 5f);
                 return false;
             }
 
-            PerkBase? perk = Perks.FirstOrDefault(p => p.GetType() == type.Perk);
+            PerkBase? perk = Perks.FirstOrDefault(p => p.GetType() == attribute.Perk);
 
             if (perk != null)
             {
@@ -72,7 +72,7 @@
                 return true;
             }
 
-            PerkBase p = (PerkBase)Activator.CreateInstance(type.Perk, this);
+            PerkBase p = PerkManager.CreatePerkInstance(attribute.Perk, this);
 
             if (LimitUsage >= Limit && p.SlotUsage > 0)
             {
@@ -80,8 +80,6 @@
                 return false;
             }
 
-            p.Rarity = type.Rarity;
-            p.Restriction = type.Restriction;
             Perks.Add(p);
             p.Init();
             Parent.SendHint($"Acquired Perk ({LimitUsage}/{Limit}): {fancyName}\n{fancyName}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
