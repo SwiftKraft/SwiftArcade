@@ -31,9 +31,13 @@
                 if (r == null || r.Base == null || (Random.Range(0f, 1f) > Mathf.Lerp(0.3f, 0.6f, Mathf.InverseLerp(5, 25, Server.PlayerCount)) && !CachedSpawnRooms.Contains(r.Name)))
                     continue;
 
-                Pickup pick = PerkSpawner.SpawnPerk(PerkManager.GetRandomPerk(Criteria), r.Position + Vector3.up * 2f);
+                PerkAttribute? perk = PerkManager.GetRandomPerk(Criteria);
+                if (perk is null)
+                    return;
 
-                if (pick != null && pick.Rigidbody != null)
+                Pickup? pick = PerkSpawner.SpawnPerk(perk, r.Position + (Vector3.up * 2f));
+
+                if (pick != null && pick.Rigidbody)
                     pick.Rigidbody.AddForce(Random.insideUnitSphere * 3f);
             }
         }

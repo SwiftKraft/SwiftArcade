@@ -8,23 +8,15 @@
     public static class ScoringManager
     {
         /// <summary>
-        /// User ID (Steam ID) to score number.
+        /// Gets a dictionary containing all player scores. The key represents User ID (Steam ID) and the value represents score number.
         /// </summary>
-        public static readonly Dictionary<string, int> Scores = [];
-        public static readonly Dictionary<string, string> IDToName = [];
+        public static Dictionary<string, int> Scores { get; } = [];
 
-        public static readonly HashSet<ScoreEventBase> Events = [];
+        public static Dictionary<string, string> IDToName { get; } = [];
 
-        public static HashSet<Type> ScoreEventsCache
-        {
-            get
-            {
-                _scoreEventsCache ??= ReflectionExtensions.GetAllNonAbstractSubclasses<ScoreEventBase>();
-                return _scoreEventsCache;
-            }
-        }
+        public static HashSet<ScoreEventBase> Events { get; } = [];
 
-        private static HashSet<Type> _scoreEventsCache;
+        public static HashSet<Type> ScoreEventsCache => field ??= ReflectionExtensions.GetAllNonAbstractSubclasses<ScoreEventBase>();
 
         public static void Enable()
         {
@@ -48,22 +40,23 @@
                 b.Disable();
         }
 
-        public static void AddScore(this Player p, int amount)
+        extension(Player p)
         {
-            if (p.IsDummy || string.IsNullOrWhiteSpace(p.UserId) || p.DoNotTrack)
-                return;
+            public void AddScore(int amount)
+            {
+                if (p.IsDummy || string.IsNullOrWhiteSpace(p.UserId) || p.DoNotTrack)
+                    return;
 
-            if (!IDToName.ContainsKey(p.UserId))
-                IDToName.Add(p.UserId, p.Nickname);
-            else if (p.Nickname != IDToName[p.UserId])
-                IDToName[p.UserId] = p.Nickname;
+                if (!IDToName.ContainsKey(p.UserId))
+                    IDToName.Add(p.UserId, p.Nickname);
+                else if (p.Nickname != IDToName[p.UserId])
+                    IDToName[p.UserId] = p.Nickname;
 
-            if (!Scores.ContainsKey(p.UserId))
-                Scores.Add(p.UserId, amount);
-            else
-                Scores[p.UserId] += amount;
+                if (!Scores.TryAdd(p.UserId, amount))
+                    Scores[p.UserId] += amount;
+            }
+
+            public int GetScore() => Scores.ContainsKey(p.UserId) ? Scores[p.UserId] : 0;
         }
-
-        public static int GetScore(this Player p) => Scores.ContainsKey(p.UserId) ? Scores[p.UserId] : 0;
     }
 }

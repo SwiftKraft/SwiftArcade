@@ -22,6 +22,7 @@
 		<Reference Include="LabApi" HintPath="$(SCPSLREFERENCES)\LabApi.dll" />
 		<Reference Include="Mirror" HintPath="$(SCPSLREFERENCES)\Mirror-Publicized.dll" />
 		<Reference Include="mscorlib" HintPath="$(SCPSLREFERENCES)\mscorlib.dll" />
+		<Reference Include="System" HintPath="$(SCPSLREFERENCES)\System.dll" />
 		<Reference Include="Pooling" HintPath="$(SCPSLREFERENCES)\Pooling.dll" />
 		<Reference Include="ProjectMER" HintPath="$(SCPSLREFERENCES)\ProjectMER.dll" />
 		<Reference Include="UnityEngine" HintPath="$(SCPSLREFERENCES)\UnityEngine.dll" />

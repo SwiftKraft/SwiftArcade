@@ -3,12 +3,12 @@
     using System;
     using System.Collections.Generic;
     using Hints;
-    using LabApi.Events.Arguments.Interfaces;
     using LabApi.Events.Arguments.PlayerEvents;
     using LabApi.Events.Arguments.ServerEvents;
     using LabApi.Events.Handlers;
     using LabApi.Features.Wrappers;
     using MEC;
+    using SwiftArcadeMode.Features.Events;
     using UnityEngine;
     using Logger = LabApi.Features.Console.Logger;
 
@@ -16,8 +16,13 @@
     {
         public static bool AllowSpawn { get; set; } = true;
 
-        public static readonly Dictionary<ushort, PerkAttribute> PerkPickups = [];
-        public static readonly Dictionary<ushort, LightSourceToy> LightSources = [];
+        public static Dictionary<ushort, PerkAttribute> PerkPickups { get; } = [];
+
+        public static Dictionary<ushort, LightSourceToy> LightSources { get; } = [];
+
+        public static PerkSpawnRulesBase DefaultSpawnRules { get; } = new PerkSpawnRulesBasic();
+
+        public static PerkSpawnRulesBase PerkSpawnRules { get; set; } = DefaultSpawnRules;
 
         public static void Enable()
         {
@@ -27,7 +32,7 @@
             PlayerEvents.PickedUpItem += OnPickedUpItem;
             PlayerEvents.SearchingPickup += OnSearchingPickup;
 
-            AllowSpawn = Core.Instance.Config.AllowPerkSpawning;
+            AllowSpawn = Core.CoreConfig.AllowPerkSpawning;
         }
 
         public static void Disable()
@@ -39,6 +44,35 @@
             PlayerEvents.SearchingPickup -= OnSearchingPickup;
         }
 
+        public static void SpawnPerks()
+        {
+            if (!AllowSpawn)
+                return;
+
+            PerkSpawnRules.SpawnPerks();
+        }
+
+        public static Pickup? SpawnPerk(PerkAttribute ty, Vector3 location)
+        {
+            Pickup? p = Pickup.Create(ItemType.Coin, location, Quaternion.identity, new Vector3(4f, 4f, 4f));
+
+            if (p == null)
+                return p;
+
+            PerkPickups.Add(p.Serial, ty);
+            p.Weight *= 5f;
+            p.Spawn();
+
+            LightSourceToy toy = LightSourceToy.Create(p.Transform, false);
+            toy.Intensity = 0.5f;
+            if (ColorUtility.TryParseHtmlString(ty.Rarity.GetColor(), out Color col))
+                toy.Color = col;
+            toy.Spawn();
+            LightSources.Add(p.Serial, toy);
+
+            return p;
+        }
+
         private static void OnGeneratorActivated(GeneratorActivatedEventArgs ev) => SpawnPerks();
 
         private static void OnSearchingPickup(PlayerSearchingPickupEventArgs ev)
@@ -48,15 +82,22 @@
 
             try
             {
-                Type type = PerkPickups[ev.Pickup.Serial].Perk;
-                PerkManager.PerkProfile prof = PerkPickups[ev.Pickup.Serial].Profile;
+                PerkAttribute attribute = PerkPickups[ev.Pickup.Serial];
+                Type type = attribute.Perk;
 
-                CheckPickupEventArgs chk = new(type, prof, ev);
+#pragma warning disable CS0618 // Type or member is obsolete
+                PerkProfile prof = PerkPickups[ev.Pickup.Serial].Profile;
+                CheckPickupEventArgs chk = new(type, attribute, prof, ev);
+#pragma warning restore CS0618 // Type or member is obsolete
+
                 PerkEvents.OnCheckPickup(chk);
 
-                ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {prof.FancyName}\n{prof.Description}{(PerkManager.HasPerk(ev.Player, type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : string.Empty)}", [HintEffectPresets.FadeOut()], 5f);
+                ev.Player.SendHint(!string.IsNullOrWhiteSpace(chk.OverrideHint) ? chk.OverrideHint : $"Picking Up Perk: {attribute.HollowInstance.GetFancyName(ev.Player)}\n{prof.Description}{(ev.Player.HasPerk(type) ? "\n\n<color=#FF0000><b>WARNING: Picking this up will remove the perk of the same type.</b></color>" : string.Empty)}", [HintEffectPresets.FadeOut()], 5f);
             }
-            catch (Exception ex) { Logger.Error(ex); }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private static void OnPickedUpItem(PlayerPickedUpItemEventArgs ev)
@@ -71,13 +112,13 @@
                 AttemptAddEventArgs pick = new(ev, PerkPickups[ev.Item.Serial]);
                 PerkEvents.OnAttemptAdd(pick);
 
-                if (!pick.IsAllowed || !PerkManager.GivePerk(ev.Player, PerkPickups[ev.Item.Serial]))
+                if (!pick.IsAllowed || !ev.Player.GivePerk(PerkPickups[ev.Item.Serial]))
                 {
                     SpawnPerk(PerkPickups[ev.Item.Serial], ev.Player.Position);
                     return;
                 }
 
-                PerkEvents.OnPickedUpPerk(new(ev.Player, PerkPickups[ev.Item.Serial]));
+                PerkEvents.OnPickedUpPerk(new PickedUpPerkEventArgs(ev.Player, PerkPickups[ev.Item.Serial]));
 
                 PerkPickups.Remove(ev.Item.Serial);
 
@@ -87,73 +128,14 @@
                     LightSources.Remove(ev.Item.Serial);
                 }
             }
-            catch (Exception ex) { Logger.Error(ex); }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private static void OnRoundStarted() => Timing.CallDelayed(0.1f, SpawnPerks);
 
         private static void OnWaveRespawned(WaveRespawnedEventArgs ev) => SpawnPerks();
-
-        public static PerkSpawnRulesBase DefaultSpawnRules = new PerkSpawnRulesBasic();
-        public static PerkSpawnRulesBase PerkSpawnRules = DefaultSpawnRules;
-
-        public static void SpawnPerks()
-        {
-            if (!AllowSpawn)
-                return;
-
-            PerkSpawnRules.SpawnPerks();
-        }
-
-        public static Pickup SpawnPerk(PerkAttribute ty, Vector3 location)
-        {
-            Pickup p = Pickup.Create(ItemType.Coin, location, Quaternion.identity, new(4f, 4f, 4f));
-            if (p != null)
-            {
-                PerkPickups.Add(p.Serial, ty);
-                p.Weight *= 5f;
-                p.Spawn();
-
-                LightSourceToy toy = LightSourceToy.Create(p.Transform, false);
-                toy.Intensity = 0.5f;
-                if (ColorUtility.TryParseHtmlString(ty.Rarity.GetColor(), out Color col))
-                    toy.Color = col;
-                toy.Spawn();
-                LightSources.Add(p.Serial, toy);
-            }
-
-            return p;
-        }
-    }
-
-    public class PickedUpPerkEventArgs(Player p, PerkAttribute att) : EventArgs, IPlayerEvent
-    {
-        public Player Player { get; } = p;
-
-        public PerkAttribute Perk { get; } = att;
-    }
-
-    public class AttemptAddEventArgs(PlayerPickedUpItemEventArgs ev, PerkAttribute att) : EventArgs, IPlayerEvent, IItemEvent, ICancellableEvent
-    {
-        public bool IsAllowed { get; set; } = true;
-
-        public PerkAttribute Perk { get; } = att;
-
-        public Player Player { get; } = ev.Player;
-
-        public Item Item { get; } = ev.Item;
-    }
-
-    public class CheckPickupEventArgs(Type perk, PerkManager.PerkProfile prof, PlayerSearchingPickupEventArgs ev) : EventArgs, IPlayerEvent, IPickupEvent
-    {
-        public string OverrideHint { get; set; } = null;
-
-        public Player Player { get; } = ev.Player;
-
-        public Pickup Pickup { get; } = ev.Pickup;
-
-        public Type Perk { get; } = perk;
-
-        public PerkManager.PerkProfile Profile { get; } = prof;
     }
 }

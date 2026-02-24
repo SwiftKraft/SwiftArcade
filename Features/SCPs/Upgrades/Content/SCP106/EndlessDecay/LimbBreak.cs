@@ -6,13 +6,13 @@
 
     public class LimbBreak(UpgradePathPerkBase parent) : UpgradeBase<EndlessDecay>(parent)
     {
+        private int counter;
+
         public override string Name => "Limb Break";
 
         public override string Description => $"Every third hit, slow your target for {Duration}s.";
 
         public virtual float Duration => 1f;
-
-        private int counter;
 
         public override void Init()
         {

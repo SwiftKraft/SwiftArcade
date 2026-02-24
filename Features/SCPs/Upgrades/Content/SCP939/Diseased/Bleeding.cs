@@ -10,7 +10,7 @@
 
     public class Bleeding(UpgradePathPerkBase parent) : UpgradeBase<Diseased>(parent)
     {
-        public readonly Dictionary<Player, Timer> Players = [];
+        public Dictionary<Player, Timer> Players { get; } = [];
 
         public override string Name => "Bleeding";
 
@@ -61,14 +61,14 @@
             if (ev.Attacker != Player || ev.DamageHandler is not Scp939DamageHandler)
                 return;
 
-            if (!Players.ContainsKey(ev.Player))
+            if (!Players.TryGetValue(ev.Player, out Timer? timer))
             {
-                Timer timer = new(Duration);
+                timer = new Timer(Duration);
                 timer.Reset();
                 Players.Add(ev.Player, timer);
             }
             else
-                Players[ev.Player].Reset();
+                timer.Reset();
         }
     }
 }

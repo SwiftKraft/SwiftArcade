@@ -1,13 +1,11 @@
-﻿using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
     using System;
     using LabApi.Events.Handlers;
     using UnityEngine;
     using Random = UnityEngine.Random;
 
-    [Perk("AdvSlotUpgrade", Rarity.Mythic)]
+    [Perk("AdvSlotUpgrade", "Advanced Perk Slot Upgrade", "", Rarity.Mythic)]
     public class AdvancedPerkSlotUpgrade(PerkInventory inv) : PerkSlotUpgrade(inv)
     {
         public override string Name => "Advanced Perk Slot Upgrade";

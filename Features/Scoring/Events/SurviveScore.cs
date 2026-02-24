@@ -6,10 +6,11 @@
 
     public class SurviveScore : ScoreEventBase
     {
-        public readonly Dictionary<Player, float> AliveTime = [];
+        public static float Timer { get; set; } = 60f;
 
-        public static float Timer = 60f;
-        public static int Score = 15;
+        public static int Score { get; set; } = 15;
+
+        public Dictionary<Player, float> AliveTime { get; } = [];
 
         public override void Disable()
         {

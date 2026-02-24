@@ -7,10 +7,11 @@
 
     public class GunMelter(UpgradePathPerkBase parent) : UpgradeCooldownTriggerBase<EndlessDecay>(parent)
     {
-        public static List<ItemType> BannedTypes = [
+        public static List<ItemType> BannedTypes { get; } =
+        [
             ItemType.GunSCP127,
             ItemType.ParticleDisruptor
-            ];
+        ];
 
         public override string Name => "Gun Melter";
 

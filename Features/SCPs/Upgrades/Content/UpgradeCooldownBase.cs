@@ -3,7 +3,8 @@
     using SwiftArcadeMode.Utils.Structures;
     using UnityEngine;
 
-    public abstract class UpgradeCooldownBase<T>(UpgradePathPerkBase parent) : UpgradeBase<T>(parent) where T : UpgradePathPerkBase
+    public abstract class UpgradeCooldownBase<T>(UpgradePathPerkBase parent) : UpgradeBase<T>(parent)
+        where T : UpgradePathPerkBase
     {
         public override string Description => $"{UpgradeDescription}\nCooldown: {Cooldown}s.";
 
@@ -13,7 +14,7 @@
 
         public virtual float Cooldown => 10f;
 
-        protected Timer CooldownTimer = new();
+        protected Timer CooldownTimer { get; } = new();
 
         public override void Init()
         {
@@ -36,18 +37,18 @@
             CooldownTimer.Reset(Cooldown);
         }
 
-        protected virtual void OnCooldownEnd()
-        {
-            if (!string.IsNullOrWhiteSpace(ReadyMessage))
-                SendMessage(ReadyMessage);
-        }
-
         public abstract void Effect();
 
         public override void Tick()
         {
             base.Tick();
             CooldownTimer.Tick(Time.fixedDeltaTime);
+        }
+
+        protected virtual void OnCooldownEnd()
+        {
+            if (!string.IsNullOrWhiteSpace(ReadyMessage))
+                SendMessage(ReadyMessage);
         }
     }
 }

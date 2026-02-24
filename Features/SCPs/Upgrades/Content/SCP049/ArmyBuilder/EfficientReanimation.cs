@@ -37,7 +37,7 @@
 
         private void OnPlayerDying(PlayerDyingEventArgs ev)
         {
-            if (ev.Attacker == null || ev.Attacker.Role != RoleTypeId.Scp0492 || !Parent.OwnedZombies.Contains(ev.Attacker))
+            if (ev.Attacker is not { Role: RoleTypeId.Scp0492 } || !Parent.OwnedZombies.Contains(ev.Attacker))
                 return;
 
             ev.Attacker.Heal(Healing);

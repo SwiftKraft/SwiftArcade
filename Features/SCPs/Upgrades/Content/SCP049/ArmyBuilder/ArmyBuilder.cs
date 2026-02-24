@@ -12,7 +12,11 @@
     [Perk("049.ArmyBuilder", Rarity.Uncommon, PerkRestriction.SCP)]
     public class ArmyBuilder(PerkInventory inv) : UpgradePathPerkBase(inv)
     {
-        public readonly List<Player> OwnedZombies = [];
+        public event Action<Player>? OnAddedZombie;
+
+        public event Action<Player>? OnLostZombie;
+
+        public event Action<Player>? OnZombieKilled;
 
         public override Type[] AllUpgrades => [
             typeof(EfficientReanimation),
@@ -20,15 +24,11 @@
             typeof(MassOperation)
             ];
 
+        public List<Player> OwnedZombies { get; } = [];
+
         public override string PathName => "Army Builder";
 
         public override string PathDescription => "Focuses on zombie buffs.";
-
-        public event Action<Player> OnAddedZombie;
-
-        public event Action<Player> OnLostZombie;
-
-        public event Action<Player> OnZombieKilled;
 
         public override void Init()
         {
@@ -36,6 +36,21 @@
             Scp049Events.ResurrectedBody += OnResurrected;
             PlayerEvents.ChangedRole += OnChangedRole;
             PlayerEvents.Dying += OnDying;
+        }
+
+        public void AddZombie(Player p)
+        {
+            OnAddedZombie?.Invoke(p);
+            OwnedZombies.Add(p);
+            SendMessage("Added Zombie: " + p.DisplayName);
+        }
+
+        public override void Remove()
+        {
+            base.Remove();
+            Scp049Events.ResurrectedBody -= OnResurrected;
+            PlayerEvents.ChangedRole -= OnChangedRole;
+            PlayerEvents.Dying -= OnDying;
         }
 
         private void OnDying(PlayerDyingEventArgs ev)
@@ -62,21 +77,6 @@
                 return;
 
             AddZombie(ev.Target);
-        }
-
-        public void AddZombie(Player p)
-        {
-            OnAddedZombie?.Invoke(p);
-            OwnedZombies.Add(p);
-            SendMessage("Added Zombie: " + p.DisplayName);
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            Scp049Events.ResurrectedBody -= OnResurrected;
-            PlayerEvents.ChangedRole -= OnChangedRole;
-            PlayerEvents.Dying -= OnDying;
         }
     }
 }

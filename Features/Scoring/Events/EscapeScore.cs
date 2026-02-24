@@ -7,12 +7,12 @@
     {
         public override void Disable() => PlayerEvents.Escaped -= OnEscaped;
 
-        protected virtual void OnEscaped(PlayerEscapedEventArgs ev) => ev.Player.AddScore(12);
-
         public override void Enable() => PlayerEvents.Escaped += OnEscaped;
 
         public override void Tick()
         {
         }
+
+        protected virtual void OnEscaped(PlayerEscapedEventArgs ev) => ev.Player.AddScore(12);
     }
 }

@@ -20,14 +20,14 @@
             PlayerEvents.ChangedRole += OnChangedRole;
         }
 
-        private void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
+        public override void Tick()
+        {
+        }
+
+        private static void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
         {
             ev.Player.MaxHealth *= 2.5f;
             ev.Player.Health = ev.Player.MaxHealth;
-        }
-
-        public override void Tick()
-        {
         }
 
         public class PerkRules : PerkSpawnRulesBasic

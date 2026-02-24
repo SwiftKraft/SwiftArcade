@@ -20,9 +20,15 @@
             PlayerEvents.Dying += OnPlayerDying;
         }
 
+        public override void Remove()
+        {
+            base.Remove();
+            PlayerEvents.Dying -= OnPlayerDying;
+        }
+
         private void OnPlayerDying(PlayerDyingEventArgs ev)
         {
-            if (ev.Attacker == null || ev.Attacker.Role != RoleTypeId.Scp0492 || !Parent.OwnedZombies.Contains(ev.Attacker) || Random.Range(0f, 1f) <= Chance)
+            if (ev.Attacker is not { Role: RoleTypeId.Scp0492 } || !Parent.OwnedZombies.Contains(ev.Attacker) || Random.Range(0f, 1f) <= Chance)
                 return;
 
             Timing.CallDelayed(0.2f, () => 
@@ -31,12 +37,6 @@
                 Parent.AddZombie(ev.Player); 
                 ev.Player.SendHint("You've been infected!"); 
             });
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            PlayerEvents.Dying -= OnPlayerDying;
         }
     }
 }

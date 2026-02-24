@@ -50,17 +50,17 @@
             if (type.Perk.IsAbstract || (type.Perk != typeof(PerkBase) && !type.Perk.IsSubclassOf(typeof(PerkBase))))
                 return false;
 
-            PerkManager.PerkProfile prof = type.Profile;
+            string fancyName = type.HollowInstance.GetFancyName(Parent);
 
             if (Parent.HasRestrictions(type))
             {
-                Parent.SendHint($"{prof.FancyName} cannot be obtained by your role!", [HintEffectPresets.FadeOut()], 5f);
+                Parent.SendHint($"{fancyName} cannot be obtained by your role!", [HintEffectPresets.FadeOut()], 5f);
                 return false;
             }
 
-            if (type.HasConflicts(this, out PerkBase conf))
+            if (type.HasConflicts(this, out PerkBase? conf))
             {
-                Parent.SendHint($"{prof.FancyName} conflicts with {conf.FancyName}!", [HintEffectPresets.FadeOut()], 5f);
+                Parent.SendHint($"{fancyName} conflicts with {conf.GetFancyName(Parent)}!", [HintEffectPresets.FadeOut()], 5f);
                 return false;
             }
 
@@ -84,7 +84,7 @@
             p.Restriction = type.Restriction;
             Perks.Add(p);
             p.Init();
-            Parent.SendHint($"Acquired Perk ({LimitUsage}/{Limit}): {prof.FancyName}\n{prof.Description}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
+            Parent.SendHint($"Acquired Perk ({LimitUsage}/{Limit}): {fancyName}\n{fancyName}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
             OnPerksUpdated();
 
             Parent.CheckCrafts();
@@ -123,15 +123,15 @@
         {
             Perks.Remove(perk);
             perk.Remove();
-            Parent.SendHint($"Removed Perk: {perk.FancyName}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
+            Parent.SendHint($"Removed Perk: {perk.GetFancyName(Parent)}\n\nPress \"~\" and type \".sp\" (for more detail) \nOR bind a key in <b>Server Specific Settings</b> to see what perks you have!", [HintEffectPresets.FadeOut()], 10f);
         }
 
         public PerkBase? RemoveRandom()
         {
-            if (Perks.Count <= 0)
+            if (Perks.Count is 0)
                 return null;
 
-            PerkBase perk = Perks.GetRandom();
+            PerkBase perk = Perks.GetRandom()!;
             RemovePerk(perk);
             return perk;
         }

@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using PlayerRoles;
-using SwiftArcadeMode.Utils.Extensions;
-
-namespace SwiftArcadeMode.Features.SCPs.Upgrades
+﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using PlayerRoles;
+    using SwiftArcadeMode.Utils.Extensions;
+
     public static class UpgradePathManager
     {
         public static readonly HashSet<UpgradePathAttribute> RegisteredUpgrades = [];
 
         public static void Enable()
         {
-            if (Core.Instance.Config.AllowBaseContent)
+            if (Core.CoreConfig.AllowBaseContent)
                 RegisterUpgrades();
         }
 
-        public static void Disable() { }
+        public static void Disable()
+        {
+        }
 
         public static void RegisterUpgrades()
         {
@@ -31,12 +33,19 @@ namespace SwiftArcadeMode.Features.SCPs.Upgrades
 
             foreach (KeyValuePair<Type, UpgradePathAttribute> attr in atts)
             {
-                attr.Value.Perk = PerkManager.GetPerk(attr.Key);
+                if (!PerkManager.TryGetPerk(attr.Key, out PerkAttribute? attribute))
+                    continue;
+
+                attr.Value.Perk = attribute;
                 RegisteredUpgrades.Add(attr.Value);
             }
         }
 
-        public static UpgradePathAttribute GetRandomUpgradePath(this RoleTypeId role) => RegisteredUpgrades.Where((t) => t.Roles.Contains(role)).ToArray().GetWeightedRandom();
-        public static UpgradePathAttribute GetRandomUpgradePath(this RoleTypeId role, ICollection<UpgradePathAttribute> noRep) => RegisteredUpgrades.Where((t) => t.Roles.Contains(role) && !noRep.Contains(t)).ToArray().GetWeightedRandom();
+        extension(RoleTypeId role)
+        {
+            public UpgradePathAttribute? GetRandomUpgradePath() => RegisteredUpgrades.Where(t => t.Roles.Contains(role)).ToArray().GetWeightedRandom();
+
+            public UpgradePathAttribute? GetRandomUpgradePath(ICollection<UpgradePathAttribute> noRep) => RegisteredUpgrades.Where(t => t.Roles.Contains(role) && !noRep.Contains(t)).ToArray().GetWeightedRandom();
+        }
     }
 }

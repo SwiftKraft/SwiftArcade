@@ -14,8 +14,8 @@
         public override void Init()
         {
             base.Init();
-            PerkAttribute att = PerkManager.GetRandomPerk(p => p.Rarity == Rarity);
-            if (!Player.HasPerk(att.Perk))
+            PerkAttribute? att = PerkManager.GetRandomPerk(p => p.Rarity == Rarity);
+            if (att != null && !Player.HasPerk(att.Perk))
                 Player.GivePerk(att);
         }
     }

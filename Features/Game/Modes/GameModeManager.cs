@@ -11,8 +11,6 @@
 
     public static class GameModeManager
     {
-        private static GameModeBase? current;
-
         public static float Chance { get; set; }
 
         public static bool GameModesAllowed { get; set; }
@@ -23,16 +21,18 @@
 
         public static GameModeBase? Current
         {
-            get => current;
+            get;
             set
             {
-                if (current == value)
+                if (field == value)
                     return;
 
-                current?.End();
-                current = value;
-                PerkSpawner.PerkSpawnRules = current is { OverrideSpawnRules: not null } ? current.OverrideSpawnRules : PerkSpawner.DefaultSpawnRules;
-                current?.Start();
+                field?.End();
+                field = value;
+                PerkSpawner.PerkSpawnRules = field is { OverrideSpawnRules: not null }
+                    ? field.OverrideSpawnRules
+                    : PerkSpawner.DefaultSpawnRules;
+                field?.Start();
             }
         }
 
@@ -45,22 +45,6 @@
 
             ServerEvents.RoundStarted += OnRoundStarted;
             ServerEvents.RoundRestarted += OnRoundRestarted;
-        }
-
-        private static void OnRoundRestarted()
-        {
-            Current = null;
-            NextRoundForced = false;
-        }
-
-        private static void OnRoundStarted()
-        {
-            if (NextRoundForced || !GameModesAllowed)
-                return;
-
-            Current = null;
-            if (Random.Range(0f, 1f) <= Chance && Registry.Count > 0)
-                Current = (GameModeBase)Activator.CreateInstance(Registry.GetRandom());
         }
 
         public static void Disable()
@@ -83,5 +67,21 @@
         }
 
         public static void Tick() => Current?.Tick();
+
+        private static void OnRoundRestarted()
+        {
+            Current = null;
+            NextRoundForced = false;
+        }
+
+        private static void OnRoundStarted()
+        {
+            if (NextRoundForced || !GameModesAllowed)
+                return;
+
+            Current = null;
+            if (Random.Range(0f, 1f) <= Chance && Registry.Count > 0)
+                Current = (GameModeBase)Activator.CreateInstance(Registry.GetRandom()!);
+        }
     }
 }

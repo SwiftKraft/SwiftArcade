@@ -1,6 +1,4 @@
-﻿using LabApi.Features.Wrappers;
-
-namespace SwiftArcadeMode
+﻿namespace SwiftArcadeMode
 {
     using System;
     using System.IO;
@@ -140,7 +138,7 @@ namespace SwiftArcadeMode
 
         private static void OnLeft(LabApi.Events.Arguments.PlayerEvents.PlayerLeftEventArgs ev)
         {
-            if (Player.TryGetPerkInventory(out PerkInventory inv))
+            if (ev.Player.TryGetPerkInventory(out PerkInventory inv))
                 inv.ClearPerks();
         }
 

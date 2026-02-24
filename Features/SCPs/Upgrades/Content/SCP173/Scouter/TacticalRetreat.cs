@@ -9,6 +9,9 @@
 
     public class TacticalRetreat(UpgradePathPerkBase parent) : UpgradeCooldownBase<Scouter>(parent)
     {
+        private TantrumHazard? latestTantrum;
+        private float recordedHealth;
+
         public override string Name => "Tactical Retreat";
 
         public override string UpgradeDescription => "Teleports you back to your latest tantrum location when taking heavy damage after hume shield breaks. ";
@@ -16,9 +19,6 @@
         public override float Cooldown => 100f;
 
         public virtual float RealHealthDamageThreshold => 400f;
-
-        private TantrumHazard latestTantrum;
-        private float recordedHealth;
 
         public override void Init()
         {
@@ -34,6 +34,14 @@
             Scp173Events.CreatedTantrum -= OnCreatedTantrum;
             WarheadEvents.Detonated -= OnWarheadDetonated;
             PlayerEvents.Hurt -= OnHurt;
+        }
+
+        public override void Effect()
+        {
+            if (latestTantrum is not { IsActive: true } || latestTantrum.IsDestroyed)
+                return;
+
+            Timing.CallDelayed(0.2f, () => { Player.Position = latestTantrum.SyncedPosition; });
         }
 
         private void OnWarheadDetonated(WarheadDetonatedEventArgs ev)
@@ -61,14 +69,6 @@
                 return;
 
             latestTantrum = ev.Tantrum;
-        }
-
-        public override void Effect()
-        {
-            if (latestTantrum == null || !latestTantrum.IsActive || latestTantrum.IsDestroyed)
-                return;
-
-            Timing.CallDelayed(0.2f, () => { Player.Position = latestTantrum.SyncedPosition; });
         }
     }
 }

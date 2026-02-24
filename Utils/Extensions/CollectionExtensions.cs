@@ -9,14 +9,14 @@
 
     public static class CollectionExtensions
     {
-        public static T GetRandom<T>(this T[] values) => values.Length is 0 ? default! : values[Random.Range(0, values.Length)];
+        public static T? GetRandom<T>(this T[] values) => values.Length is 0 ? default : values[Random.Range(0, values.Length)];
 
-        public static T GetRandom<T>(this List<T> values) => values.Count is 0 ? default! : values[Random.Range(0, values.Count)];
+        public static T? GetRandom<T>(this List<T> values) => values.Count is 0 ? default : values[Random.Range(0, values.Count)];
 
-        public static T GetRandom<T>(this T[] values, ref int lastRandom)
+        public static T? GetRandom<T>(this T[] values, ref int lastRandom)
         {
             if (values.Length is 0)
-                return default!;
+                return default;
 
             int choice = Random.Range(0, values.Length);
             if (lastRandom == choice)
@@ -25,10 +25,10 @@
             return values[choice];
         }
 
-        public static T GetRandom<T>(this List<T> values, ref int lastRandom)
+        public static T? GetRandom<T>(this List<T> values, ref int lastRandom)
         {
             if (values.Count is 0)
-                return default!;
+                return default;
 
             int choice = Random.Range(0, values.Count);
             if (lastRandom == choice)
@@ -37,11 +37,11 @@
             return values[choice];
         }
 
-        public static T GetWeightedRandom<T>(this T[] values)
+        public static T? GetWeightedRandom<T>(this T[] values)
             where T : IWeight
         {
             if (values.Length is 0)
-                return default!;
+                return default;
 
             int totalWeight = 0;
             foreach (T item in values)
@@ -60,11 +60,11 @@
             return values[0];
         }
 
-        public static T GetWeightedRandom<T>(this List<T> values)
+        public static T? GetWeightedRandom<T>(this List<T> values)
             where T : IWeight
         {
             if (values.Count is 0)
-                return default!;
+                return default;
 
             int totalWeight = 0;
             foreach (T item in values)

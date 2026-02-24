@@ -1,7 +1,7 @@
 ﻿namespace SwiftArcadeMode.Features
 {
     using LabApi.Events;
-    using SwiftArcadeMode.Features.Humans.Perks;
+    using SwiftArcadeMode.Features.Events;
     using static SwiftArcadeMode.Features.SCPs.Upgrades.UpgradePathGiver;
 
     public static class PerkEvents

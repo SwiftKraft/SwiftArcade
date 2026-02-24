@@ -7,10 +7,11 @@
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class UpgradePathAttribute(params RoleTypeId[] roles) : Attribute, IWeight
     {
-        public readonly RoleTypeId[] Roles = roles;
+        public RoleTypeId[] Roles { get; } = roles;
 
-        public PerkAttribute Perk { get; set; }
+        // Initialized in UpgradePathManager before this perk can be accessed through arcade mode.
+        public PerkAttribute Perk { get; set; } = null!;
 
-        public int Weight => Perk == null ? 0 : Perk.Weight;
+        public int Weight => Perk.Weight;
     }
 }

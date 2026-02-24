@@ -5,19 +5,26 @@
 
     public class DefensiveSpeed(UpgradePathPerkBase parent) : UpgradeBase<Tank>(parent)
     {
+        private bool enabled;
+
         public override string Name => "Defensive Speed";
 
         public override string Description => "Take reduced damage when in breakneck speeds.";
 
         public virtual float Percentage => 0.25f;
 
-        private bool enabled;
-
         public override void Init()
         {
             base.Init();
             Scp173Events.BreakneckSpeedChanged += OnBreakneckSpeedsChanged;
             PlayerEvents.Hurting += OnPlayerHurting;
+        }
+
+        public override void Remove()
+        {
+            base.Remove();
+            Scp173Events.BreakneckSpeedChanged -= OnBreakneckSpeedsChanged;
+            PlayerEvents.Hurting -= OnPlayerHurting;
         }
 
         private void OnPlayerHurting(LabApi.Events.Arguments.PlayerEvents.PlayerHurtingEventArgs ev)
@@ -35,13 +42,6 @@
                 return;
 
             enabled = ev.Active;
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            Scp173Events.BreakneckSpeedChanged -= OnBreakneckSpeedsChanged;
-            PlayerEvents.Hurting -= OnPlayerHurting;
         }
     }
 }

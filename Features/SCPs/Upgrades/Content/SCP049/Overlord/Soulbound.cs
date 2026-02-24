@@ -40,11 +40,11 @@
 
         private void OnHurting(LabApi.Events.Arguments.PlayerEvents.PlayerHurtingEventArgs ev)
         {
-            if (ev.Player != Player || Player.HumeShield > 0f || ev.DamageHandler is not StandardDamageHandler stand)
+            if (ev.Player != Player || ev.Attacker is null || Player.HumeShield > 0f || ev.DamageHandler is not StandardDamageHandler stand)
                 return;
 
-            IEnumerable<Player> zombies = Player.List.Where(p => p.IsSCP && p.Role == PlayerRoles.RoleTypeId.Scp0492 && (p.Position - Player.Position).sqrMagnitude <= Range * Range);
-            int count = zombies.Count();
+            Player[] zombies = Player.List.Where(p => p.IsSCP && p.Role == PlayerRoles.RoleTypeId.Scp0492 && (p.Position - Player.Position).sqrMagnitude <= Range * Range).ToArray();
+            int count = zombies.Length;
 
             if (count <= 0)
                 return;
@@ -54,7 +54,7 @@
             foreach (Player zombie in zombies)
                 zombie.Damage(dmg, ev.Attacker, (Player.Position - zombie.Position).normalized * 100f, 100);
 
-            ev.Attacker?.SendHitMarker();
+            ev.Attacker.SendHitMarker();
 
             ev.IsAllowed = false;
         }

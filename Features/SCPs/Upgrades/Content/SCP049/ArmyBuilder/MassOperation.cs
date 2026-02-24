@@ -9,13 +9,13 @@
 
     public class MassOperation(UpgradePathPerkBase parent) : UpgradeBase<ArmyBuilder>(parent)
     {
+        private bool midMassRevive;
+
         public override string Name => "Mass Operation";
 
         public override string Description => $"Reviving a dead human also revives every available dead human in a {Range}m radius around it.";
 
         public virtual float Range => 5f;
-
-        private bool midMassRevive;
 
         public override void Init()
         {

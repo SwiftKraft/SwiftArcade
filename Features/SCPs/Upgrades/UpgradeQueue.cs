@@ -9,52 +9,22 @@
 
     public class UpgradeQueue(Player p)
     {
-        public readonly Player Parent = p;
+        public Player Parent { get; } = p;
 
-        public readonly Queue<Item> Upgrades = [];
-
-        public class Item
-        {
-            public Item(UpgradeQueue queue, params UpgradePathAttribute[] choices)
-            {
-                Choices = choices;
-
-                if (Core.Instance.Config.ScpUpgradeAutopickTime is 0)
-                    return;
-
-                Timing.CallDelayed(Core.Instance.Config.ScpUpgradeAutopickTime, () =>
-                {
-                    if (queue.Upgrades.Peek() != this)
-                        return;
-                    queue.Upgrades.Dequeue();
-
-                    int len = choices.Length;
-                    if (len > 0)
-                    {
-                        if (queue.Choose(Random.Range(0, len), out string name))
-                        {
-                            queue.Parent.SendHint("<align=\"left\">Chosen: " + name + "</align>", [HintEffectPresets.FadeOut()], 10f);
-                        }
-                    }
-                });
-            }
-
-            public UpgradePathAttribute[] Choices { get; }
-        }
+        public Queue<Item> Upgrades { get; } = [];
 
         public void Create(int amount, List<UpgradePathAttribute> maxed)
         {
-            List<UpgradePathAttribute> paths = maxed;
             for (int i = 0; i < amount; i++)
             {
-                UpgradePathAttribute att = Parent.Role.GetRandomUpgradePath(paths);
+                UpgradePathAttribute? att = Parent.Role.GetRandomUpgradePath(maxed);
                 if (att != null)
-                    paths.Add(att);
+                    maxed.Add(att);
             }
 
-            if (paths.Count > 0)
+            if (maxed.Count > 0)
             {
-                Upgrades.Enqueue(new Item(this, [.. paths]));
+                Upgrades.Enqueue(new Item(this, maxed.ToArray()));
                 Parent.SendHint("<color=#00FF00><b>Upgrades available!</b></color>\nPress \"~\" and type \".su\" (for more detail) to see available choices, type \".c <number>\" to choose an upgrade. \nOR bind a key in <b>Server Specific Settings</b>\n<size=0.3em>An upgrade will be automatically chosen in 30s</size>", [HintEffectPresets.FadeOut()], 15f);
                 Parent.SendConsoleMessage(Peek(), "white");
             }
@@ -80,15 +50,17 @@
 
             for (int i = 0; i < t.Choices.Length; i++)
             {
+                string fancyName = t.Choices[i].Perk.HollowInstance.GetFancyName(Parent);
+
                 sb.Append(i + 1);
                 sb.Append(" - ");
-                sb.Append(t.Choices[i].Perk.Profile.FancyName);
+                sb.Append(fancyName);
                 sb.AppendLine();
                 br.Append(i + 1);
                 br.Append(" - ");
-                br.Append(t.Choices[i].Perk.Profile.FancyName);
+                br.Append(fancyName);
                 br.AppendLine(string.Empty);
-                sb.AppendLine(t.Choices[i].Perk.Profile.Description);
+                sb.AppendLine(t.Choices[i].Perk.HollowInstance.GetDescription(Parent));
                 sb.AppendLine();
             }
 
@@ -112,7 +84,7 @@
                 return false;
             }
 
-            if (Player.TryGetPerkInventory(out PerkInventory inv) && inv.TryGetPerk(t.Choices[index].Perk.Perk, out PerkBase perkBase) && perkBase is UpgradePathPerkBase b)
+            if (Parent.TryGetPerkInventory(out PerkInventory inv) && inv.TryGetPerk(t.Choices[index].Perk.Perk, out PerkBase? perkBase) && perkBase is UpgradePathPerkBase b)
             {
                 if (b.Maxed)
                 {
@@ -127,8 +99,37 @@
 
             Upgrades.Dequeue();
 
-            name = t.Choices[index].Perk.Profile.FancyName;
+            name = t.Choices[index].Perk.HollowInstance.GetFancyName(Parent);
             return true;
+        }
+
+        public class Item
+        {
+            public Item(UpgradeQueue queue, params UpgradePathAttribute[] choices)
+            {
+                Choices = choices;
+
+                if (Core.CoreConfig.ScpUpgradeAutopickTime is 0)
+                    return;
+
+                Timing.CallDelayed(Core.CoreConfig.ScpUpgradeAutopickTime, () =>
+                {
+                    if (queue.Upgrades.Peek() != this)
+                        return;
+                    queue.Upgrades.Dequeue();
+
+                    int len = choices.Length;
+                    if (len > 0)
+                    {
+                        if (queue.Choose(Random.Range(0, len), out string name))
+                        {
+                            queue.Parent.SendHint("<align=\"left\">Chosen: " + name + "</align>", [HintEffectPresets.FadeOut()], 10f);
+                        }
+                    }
+                });
+            }
+
+            public UpgradePathAttribute[] Choices { get; }
         }
     }
 }

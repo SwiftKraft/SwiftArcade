@@ -13,43 +13,47 @@
 
         public static int SCPTeamExperience
         {
-            get => _scpTeamExperience;
+            get;
             set
             {
-                if (_scpTeamExperience == value || !AllowLeveling)
+                if (field == value || !AllowLeveling)
                     return;
 
-                _scpTeamExperience = value;
+                field = value;
 
-                while (_scpTeamExperience >= Requirement)
+                while (field >= Requirement)
                 {
-                    _scpTeamExperience -= Requirement;
+                    field -= Requirement;
                     SCPLevel++;
                 }
             }
         }
 
-        private static int _scpTeamExperience;
-
         public static int Requirement => SCPLevel * 4;
 
         public static int SCPLevel
         {
-            get => _scpLevel;
+            get;
             set
             {
-                if (_scpLevel == value)
+                if (field == value)
                     return;
 
-                if (_scpLevel < value)
+                if (field < value)
                 {
-                    for (int i = 0; i < value - _scpLevel; i++)
+                    for (int i = 0; i < value - field; i++)
                     {
                         foreach (Player p in Player.List)
                         {
-                            if (p.IsSCP && Player.TryGetPerkInventory(out PerkInventory inv))
+                            if (p.IsSCP && p.TryGetPerkInventory(out PerkInventory inv))
                             {
-                                inv.UpgradeQueue.Create(3, [.. UpgradePathManager.RegisteredUpgrades.Where((u) => inv.TryGetPerk(u.Perk.Perk, out PerkBase ba) && ba is UpgradePathPerkBase b && b.Maxed)]);
+                                inv.UpgradeQueue.Create(
+                                    3,
+                                    UpgradePathManager.RegisteredUpgrades
+                                        .Where(u => inv.TryGetPerk(u.Perk.Perk, out PerkBase? perkBase) &&
+                                                    perkBase is UpgradePathPerkBase { Maxed: true })
+                                        .ToList());
+
                                 p.SendBroadcast("SCP Team Leveled Up! \nCurrent Level: " + value, 5);
                                 p.Heal(p.MaxHealth * 0.2f);
                             }
@@ -57,25 +61,26 @@
                     }
                 }
 
-                PerkEvents.OnScpTeamLevelUp(new(_scpLevel, value));
-                _scpLevel = value;
+                PerkEvents.OnScpTeamLevelUp(new ScpTeamLevelUpEventArgs(field, value));
+                field = value;
             }
         }
 
-        private static int _scpLevel = 1;
-
-        public class ScpTeamLevelUpEventArgs(int prevLevel, int newLevel) : EventArgs
-        {
-            public int PreviousLevel { get; } = prevLevel;
-            public int NewLevel { get; } = newLevel;
-        }
+        = 1;
 
         public static void Enable()
         {
             PlayerEvents.Dying += OnPlayerDying;
             ServerEvents.WaveRespawned += OnWaveRespawned;
             ServerEvents.RoundStarted += OnRoundStarted;
-            AllowLeveling = Core.Instance.Config.AllowScpLeveling;
+            AllowLeveling = Core.CoreConfig.AllowScpLeveling;
+        }
+
+        public static void Disable()
+        {
+            PlayerEvents.Dying -= OnPlayerDying;
+            ServerEvents.WaveRespawned -= OnWaveRespawned;
+            ServerEvents.RoundStarted -= OnRoundStarted;
         }
 
         private static void OnRoundStarted()
@@ -90,13 +95,6 @@
                 SCPLevel++;
         }
 
-        public static void Disable()
-        {
-            PlayerEvents.Dying -= OnPlayerDying;
-            ServerEvents.WaveRespawned -= OnWaveRespawned;
-            ServerEvents.RoundStarted -= OnRoundStarted;
-        }
-
         private static void OnPlayerDying(PlayerDyingEventArgs ev)
         {
             if (ev.Player.IsHuman && ((ev.Attacker != null && ev.Attacker.IsSCP) || (ev.DamageHandler is UniversalDamageHandler dmg && dmg.TranslationId == DeathTranslations.PocketDecay.Id)))
@@ -104,6 +102,13 @@
                 SCPTeamExperience++;
                 ev.Attacker?.SendHitMarker(2f);
             }
+        }
+
+        public class ScpTeamLevelUpEventArgs(int prevLevel, int newLevel) : EventArgs
+        {
+            public int PreviousLevel { get; } = prevLevel;
+
+            public int NewLevel { get; } = newLevel;
         }
     }
 }

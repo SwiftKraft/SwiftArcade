@@ -1,5 +1,6 @@
 ﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP939.Speedster
 {
+    using System;
     using CustomPlayerEffects;
     using PlayerRoles.PlayableScps.Scp939;
     using SwiftArcadeMode.Utils.Structures;
@@ -7,6 +8,10 @@
 
     public class ReadyUp(UpgradePathPerkBase parent) : UpgradeBase<Speedster>(parent)
     {
+        private readonly Timer timer = new();
+        private Scp939Role role = null!;
+        private bool trigger;
+
         public override string Name => "Ready Up";
 
         public override string Description => $"Crouching for {Requirement}s will grant you a speed boost for {Duration}s after standing up.";
@@ -15,25 +20,17 @@
 
         public virtual float Requirement => 3f;
 
-        public bool CrouchState => role != null && role.SubroutineModule.TryGetSubroutine(out Scp939FocusAbility focus) && focus.State > 0.5f;
-
-        private readonly Timer timer = new();
-        private Scp939Role role;
-        private bool trigger;
+        public bool CrouchState => role && role.SubroutineModule.TryGetSubroutine(out Scp939FocusAbility focus) && focus.State > 0.5f;
 
         public override void Init()
         {
             base.Init();
             if (Player.RoleBase is Scp939Role r)
                 role = r;
+            else
+                throw new InvalidOperationException("ReadyUp perk was applied to a non-939 player!");
 
             timer.OnTimerEnd += OnTimerEnd;
-        }
-
-        private void OnTimerEnd()
-        {
-            SendMessage("Speed boost available!");
-            trigger = true;
         }
 
         public override void Tick()
@@ -63,6 +60,12 @@
         {
             base.Remove();
             timer.OnTimerEnd -= OnTimerEnd;
+        }
+
+        private void OnTimerEnd()
+        {
+            SendMessage("Speed boost available!");
+            trigger = true;
         }
     }
 }

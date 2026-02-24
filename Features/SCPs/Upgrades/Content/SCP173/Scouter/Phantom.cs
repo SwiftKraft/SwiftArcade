@@ -12,11 +12,11 @@
 
     public class Phantom(UpgradePathPerkBase parent) : UpgradeBase<Scouter>(parent)
     {
+        private ReferenceHub? phantom;
+
         public override string Name => "Phantom";
 
         public override string Description => "Spawns a phantom 173 when you start breakneck speeds.";
-
-        private ReferenceHub phantom;
 
         public override void Init()
         {
@@ -34,6 +34,26 @@
             PlayerEvents.ChangedRole -= OnChangedRole;
 
             DeletePhantom(true);
+        }
+
+        public void DeletePhantom(bool destroy = false, Player? attacker = null)
+        {
+            if (!phantom)
+                return;
+
+            if (phantom.roleManager.CurrentRole.RoleTypeId == RoleTypeId.Scp173)
+            {
+                SendMessage("Phantom destroyed! " + (attacker == null ? string.Empty : "Attacker: " + attacker.DisplayName));
+                TimedGrenadeProjectile.SpawnActive(phantom.GetPosition(), ItemType.GrenadeFlash, Player, 0.1f);
+
+                if (Room.TryGetRoomAtPosition(phantom.GetPosition(), out Room? room))
+                    room.LightController?.FlickerLights(5f);
+
+                phantom.roleManager.ServerSetRole(RoleTypeId.Filmmaker, RoleChangeReason.RemoteAdmin);
+            }
+
+            if (destroy)
+                Timing.CallDelayed(0.1f, () => NetworkServer.Destroy(phantom.gameObject));
         }
 
         private void OnHurt(LabApi.Events.Arguments.PlayerEvents.PlayerHurtEventArgs ev)
@@ -59,7 +79,7 @@
 
             Vector3 pos = Player.Position;
 
-            if (phantom == null)
+            if (!phantom)
             {
                 phantom = DummyUtils.SpawnDummy(Player.DisplayName + " (Phantom)");
                 phantom.serverRoles.NetworkHideFromPlayerList = true;
@@ -71,26 +91,6 @@
                 phantom.roleManager.ServerSetRole(RoleTypeId.Scp173, RoleChangeReason.RemoteAdmin);
                 phantom.TryOverridePosition(pos);
             });
-        }
-
-        public void DeletePhantom(bool destroy = false, Player attacker = null)
-        {
-            if (phantom == null)
-                return;
-
-            if (phantom.roleManager.CurrentRole.RoleTypeId == RoleTypeId.Scp173)
-            {
-                SendMessage("Phantom destroyed! " + (attacker == null ? string.Empty : "Attacker: " + attacker.DisplayName));
-                TimedGrenadeProjectile.SpawnActive(phantom.GetPosition(), ItemType.GrenadeFlash, Player, 0.1f);
-
-                if (Room.TryGetRoomAtPosition(phantom.GetPosition(), out Room room))
-                    room.LightController.FlickerLights(5f);
-
-                phantom.roleManager.ServerSetRole(RoleTypeId.Filmmaker, RoleChangeReason.RemoteAdmin);
-            }
-
-            if (destroy)
-                Timing.CallDelayed(0.1f, () => NetworkServer.Destroy(phantom.gameObject));
         }
     }
 }

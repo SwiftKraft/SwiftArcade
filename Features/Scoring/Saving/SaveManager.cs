@@ -1,6 +1,7 @@
 ﻿namespace SwiftArcadeMode.Features.Scoring.Saving
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Text;
     using LabApi.Features.Console;
@@ -8,24 +9,27 @@
 
     public static class SaveManager
     {
-        public static string GeneralDirectory;
-        public static string SavePath;
-        public static string SaveFileName;
-        public static string SaveDirectory;
+        public static string GeneralDirectory { get; set; } = string.Empty;
 
-        public static Player IDToPlayer(string id) => Player.Get(id);
+        public static string SavePath { get; set; } = string.Empty;
+
+        public static string SaveFileName { get; set; } = string.Empty;
+
+        public static string SaveDirectory { get; set; } = string.Empty;
+
+        public static Player? IDToPlayer(string id) => Player.Get(id);
 
         public static void SaveScores()
         {
             StringBuilder stringBuilder = new();
 
-            foreach (var s in ScoringManager.Scores)
+            foreach (KeyValuePair<string, int> kvp in ScoringManager.Scores)
             {
-                stringBuilder.Append(s.Key);
+                stringBuilder.Append(kvp.Key);
                 stringBuilder.Append(';');
-                stringBuilder.Append(s.Value);
+                stringBuilder.Append(kvp.Value);
                 stringBuilder.Append(';');
-                stringBuilder.Append(ScoringManager.IDToName[s.Key]);
+                stringBuilder.Append(ScoringManager.IDToName[kvp.Key]);
                 stringBuilder.Append('\n');
             }
 
@@ -36,7 +40,11 @@
 
                 File.WriteAllText(SavePath, stringBuilder.ToString());
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
+
             Logger.Info("Saved all scores!");
         }
 
@@ -45,20 +53,23 @@
             if (!File.Exists(SavePath))
                 return;
 
-            string[] str = File.ReadAllLines(SavePath);
+            string[] lines = File.ReadAllLines(SavePath);
 
             ScoringManager.Scores.Clear();
             ScoringManager.IDToName.Clear();
 
-            foreach (var s in str)
+            foreach (string line in lines)
             {
                 try
                 {
-                    string[] split = s.Split(';');
+                    string[] split = line.Split(';');
                     ScoringManager.Scores.Add(split[0], int.Parse(split[1]));
                     ScoringManager.IDToName.Add(split[0], split[2]);
                 }
-                catch (Exception e) { Logger.Error(e); }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
             }
 
             Logger.Info("Loaded all scores!");

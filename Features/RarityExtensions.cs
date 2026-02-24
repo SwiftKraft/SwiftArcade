@@ -1,8 +1,5 @@
 ﻿namespace SwiftArcadeMode.Features
 {
-    using Hints;
-    using LabApi.Features.Wrappers;
-
     public static class RarityExtensions
     {
         public static string GetColor(this Rarity rarity) =>

@@ -18,9 +18,9 @@
     {
         public const string PerkNameSpace = "base";
 
-        public static Dictionary<Player, PerkInventory> Inventories { get; } = [];
+        public static Dictionary<Player, PerkInventory> Inventories { get; } = new();
 
-        public static Dictionary<string, PerkAttribute> RegisteredPerks { get; } = [];
+        public static Dictionary<string, PerkAttribute> RegisteredPerks { get; } = new();
 
         public static void Enable()
         {
@@ -64,9 +64,26 @@
                     attr.Value.Perk = attr.Key;
                     RegisteredPerks.Add((RegisteredPerks.ContainsKey(attr.Value.ID) ? nameSpace.ToLower() + "." : string.Empty) + attr.Value.ID.ToLower(), attr.Value);
 
-                    // TODO: WHAT IS THIS??????????????????
-                    PerkBase p = (PerkBase)Activator.CreateInstance(attr.Key, null);
-                    attr.Value.Profile = new PerkProfile(attr.Value.Rarity, p.Name, p.Description);
+                    PerkBase p;
+
+                    try
+                    {
+                        p = (PerkBase)Activator.CreateInstance(attr.Key, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Exception created when registering perk \"{attr.Value.ID}\"! Please ensure you do not define a custom constructor for your perks as an instance of all perks with a null Inventory and Owner are required.");
+                        Logger.Error(ex);
+                        continue;
+                    }
+
+                    attr.Value.HollowInstance = p;
+
+                    // obsolete PerkProfile support
+#pragma warning disable CS0618 // Type or member is obsolete
+                    if (attr.Value.Profile.Name == string.Empty && attr.Value.Profile.Description == string.Empty)
+                        attr.Value.Profile = new PerkProfile(attr.Value.Profile.Rarity, p.Name, p.Description);
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
                 catch (Exception ex)
                 {
@@ -75,7 +92,7 @@
             }
         }
 
-        public static PerkAttribute GetRandomPerk(Func<PerkAttribute, bool> f) => RegisteredPerks.Values.Where(f).ToArray().GetWeightedRandom();
+        public static PerkAttribute? GetRandomPerk(Func<PerkAttribute, bool> f) => RegisteredPerks.Values.Where(f).ToArray().GetWeightedRandom();
 
         public static PerkAttribute? GetPerk(string id) => RegisteredPerks.ContainsKey(id) ? RegisteredPerks[id] : null;
 
@@ -104,7 +121,7 @@
                 if (Inventories.TryGetValue(target, out PerkInventory? inventory))
                 {
                     foreach (PerkBase perk in inventory.Perks)
-                        builder.AppendLine($"- {perk.FancyName}");
+                        builder.AppendLine($"- {perk.GetFancyName(target)}");
                 }
 
                 builder.Append("</align>");
@@ -156,17 +173,6 @@
         {
             foreach (PerkInventory inv in Inventories.Values)
                 inv.Tick();
-        }
-
-        public readonly struct PerkProfile(Rarity r, string name, string desc)
-        {
-            public Rarity Rarity { get; } = r;
-
-            public string Name { get; } = name;
-
-            public string Description { get; } = desc;
-
-            public string FancyName => Name.FancifyPerkName(Rarity);
         }
 
         private static void OnChangedRole(PlayerChangedRoleEventArgs ev)
