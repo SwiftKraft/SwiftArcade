@@ -1,15 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>net48</TargetFramework>
-	<LangVersion>14</LangVersion>
-	<ImplicitUsings>disable</ImplicitUsings>
-	<Nullable>enable</Nullable>
-	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-	<AssemblyName>SwiftArcade</AssemblyName>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<OutputPath>../bin/$(Configuration)/</OutputPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>14</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<AssemblyName>SwiftArcade</AssemblyName>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<OutputPath>../bin/$(Configuration)/</OutputPath>
+		
+		<PlatformTarget>x64</PlatformTarget>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<IncludeCopyLocalFilesOutputGroup>false</IncludeCopyLocalFilesOutputGroup>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(Configuration) == 'Release'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" IncludeAssets="all" PrivateAssets="all" />
@@ -27,7 +36,7 @@
 		<Reference Include="Pooling" HintPath="$(SCPSLREFERENCES)\Pooling.dll" Private="false" />
 		<Reference Include="ProjectMER" HintPath="$(SCPSLREFERENCES)\ProjectMER.dll" Private="false" />
 		<Reference Include="UnityEngine" HintPath="$(SCPSLREFERENCES)\UnityEngine.dll" Private="false" />
-		<Reference Include="UnityEngine.AIModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AIModule.dll" />
+		<Reference Include="UnityEngine.AIModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AIModule.dll" Private="false" />
 		<Reference Include="UnityEngine.AnimationModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AnimationModule.dll" Private="false" />
 		<Reference Include="UnityEngine.CoreModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.CoreModule.dll" Private="false" />
 		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.PhysicsModule.dll" Private="false" />
