@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using LabApi.Features.Wrappers;
     using SwiftArcadeMode.Utils.Extensions;
     using ReflectionExtensions = SwiftArcadeMode.Utils.Extensions.ReflectionExtensions;
 
@@ -19,8 +20,6 @@
         public override string Description => "Provides obscure, but useful information regarding enemies.";
 
         public override string PerkDescription => string.Empty;
-
-        public override float Cooldown => 10f;
 
         public override string ReadyMessage
         {
@@ -57,6 +56,8 @@
                 SenseCache.Add(t);
             }
         }
+
+        public override float GetCooldown(Player player) => 10F;
 
         public override void Init()
         {

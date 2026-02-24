@@ -22,11 +22,11 @@
 
         public override string ReadyMessage => "Recharged!";
 
-        public override float Cooldown => 120f;
-
         public int Duration => 10;
 
         public ushort CurrentGun { get; set; }
+
+        public override float GetCooldown(Player player) => 120f;
 
         public override void Init()
         {

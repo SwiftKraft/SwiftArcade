@@ -19,7 +19,7 @@
 
         public override int Limit => 2;
 
-        public override float Cooldown => 30f;
+        public override float GetCooldown(Player player) => 30f;
 
         public override Item? GiveItem()
         {

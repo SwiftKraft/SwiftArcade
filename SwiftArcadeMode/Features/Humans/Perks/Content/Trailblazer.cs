@@ -15,8 +15,6 @@
 
         public override string PerkDescription => $"Set a teleport point after using an item. \nTeleport to the point after using an item of the same type. \nNo item types will be tracked when a teleport point exists.";
 
-        public override float Cooldown => 80f;
-
         public Vector3 TeleportPoint { get; set; }
 
         public bool TeleportExists { get; set; }
@@ -24,6 +22,8 @@
         public ItemType TrackedType { get; set; } = ItemType.None;
 
         public Elevator? TrackedElevator { get; set; }
+
+        public override float GetCooldown(Player player) => 80f;
 
         public override void Effect()
         {

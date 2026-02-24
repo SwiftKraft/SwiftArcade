@@ -1,19 +1,20 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
+    using LabApi.Features.Wrappers;
     using SwiftArcadeMode.Utils.Structures;
     using UnityEngine;
 
     public abstract class PerkCooldownBase(PerkInventory inv) : PerkBase(inv)
     {
-        public override string Description => $"{PerkDescription}\nCooldown: {Cooldown}s.";
+        public override string Description => $"{PerkDescription}\nCooldown: {{0}}s.";
 
         public abstract string PerkDescription { get; }
 
         public virtual string ReadyMessage => "Ready!";
 
-        public virtual float Cooldown => 10f;
-
         protected Timer CooldownTimer { get; } = new();
+
+        public override string GetDescription(Player player) => string.Format(Description, GetCooldown(player));
 
         public override void Init()
         {
@@ -27,13 +28,15 @@
             CooldownTimer.OnTimerEnd -= OnCooldownEnd;
         }
 
+        public virtual float GetCooldown(Player player) => 10f;
+
         public virtual void Trigger()
         {
             if (!CooldownTimer.Ended)
                 return;
 
             Effect();
-            CooldownTimer.Reset(Cooldown);
+            CooldownTimer.Reset(GetCooldown(Player));
         }
 
         public abstract void Effect();

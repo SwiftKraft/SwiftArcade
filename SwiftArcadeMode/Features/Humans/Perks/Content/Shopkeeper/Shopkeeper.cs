@@ -79,9 +79,9 @@
 
         public virtual bool CanRestock => Shop != null && Player.Room == Shop;
 
-        public override float Cooldown => Mathf.Clamp(45f / Mathf.Max(CustomerCount / 5, 1), 5f, Mathf.Infinity);
-
         public Room? Shop { get; private set; }
+
+        public override float GetCooldown(Player player) => Mathf.Clamp(45f / Mathf.Max(CustomerCount / 5, 1), 5f, Mathf.Infinity);
 
         public override void Init()
         {

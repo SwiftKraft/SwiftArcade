@@ -25,8 +25,6 @@
 
         public abstract float RegularCooldown { get; }
 
-        public override float Cooldown => Player.Items.Count() < 3 ? LessItemsCooldown : RegularCooldown;
-
         public override int Limit => int.MaxValue;
 
         public override string ReadyMessage => Player.IsInventoryFull ? "Failed to refresh, no space in inventory." : "Spells refreshed!";
@@ -51,6 +49,8 @@
                 CurrentSpell = Spells[field];
             }
         }
+
+        public override float GetCooldown(Player player) => player.Items.Count() < 3 ? LessItemsCooldown : RegularCooldown;
 
         public abstract Type[] ListSpells();
 

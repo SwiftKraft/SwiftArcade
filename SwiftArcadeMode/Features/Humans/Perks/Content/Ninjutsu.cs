@@ -1,6 +1,7 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content
 {
     using CustomPlayerEffects;
+    using LabApi.Features.Wrappers;
     using SwiftArcadeMode.Utils.Structures;
     using UnityEngine;
 
@@ -17,7 +18,7 @@
 
         public virtual float Duration => 5f;
 
-        public override float Cooldown => 120f;
+        public override float GetCooldown(Player player) => 120f;
 
         public override void Init()
         {

@@ -9,8 +9,8 @@
 
         public override string PerkDescription => "Flash enemies around you. ";
 
-        public override float Cooldown => 20f;
-
         public override void Effect() => TimedGrenadeProjectile.SpawnActive(Player.Position, ItemType.GrenadeFlash, Player, 0.1f);
+
+        public override float GetCooldown(Player player) => 20f;
     }
 }

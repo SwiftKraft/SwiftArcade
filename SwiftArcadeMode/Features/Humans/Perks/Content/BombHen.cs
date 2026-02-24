@@ -9,8 +9,8 @@
 
         public override string PerkDescription => "Lay an explosive egg (it can also kill you). ";
 
-        public override float Cooldown => 35f;
-
         public override void Effect() => TimedGrenadeProjectile.SpawnActive(Player.Position, ItemType.GrenadeHE, Player, 5f);
+
+        public override float GetCooldown(Player player) => 35f;
     }
 }
