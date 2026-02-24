@@ -30,7 +30,7 @@
                 return false;
             }
 
-            if (arguments.Count < 1 || !PerkManager.TryGetPerk(arguments.At(0).ToLower(), out PerkAttribute t))
+            if (arguments.Count < 1 || !PerkManager.TryGetPerk(arguments.At(0).ToLower(), out PerkAttribute? t))
             {
                 response = "Unknown perk! ";
                 return false;
@@ -45,7 +45,7 @@
                 return false;
             }
 
-            if (!Player.TryGetPerkInventory(out PerkInventory inv) || !inv.TryGetPerk(t.Perk, out PerkBase perk) || perk is not UpgradePathPerkBase upg)
+            if (!p.TryGetPerkInventory(out PerkInventory inv) || !inv.TryGetPerk(t.Perk, out PerkBase? perk) || perk is not UpgradePathPerkBase upg)
             {
                 response = "Couldn't find the upgrade path!";
                 return false;

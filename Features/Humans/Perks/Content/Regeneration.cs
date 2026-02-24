@@ -18,7 +18,7 @@
             base.Tick();
 
             if (Player.Health / Player.MaxHealth >= HealthThresholdPercentage && Player.Health < Player.MaxHealth)
-                Player.Heal((Player.IsSCP ? 0.5f : 1f) * (Rate / (Player.Room.Name == MapGeneration.RoomName.Pocket ? 3f : 1f)) * Time.fixedDeltaTime);
+                Player.Heal((Player.IsSCP ? 0.5f : 1f) * (Rate / (Player.Room?.Name == MapGeneration.RoomName.Pocket ? 3f : 1f)) * Time.fixedDeltaTime);
         }
     }
 }

@@ -6,7 +6,7 @@
 
     public class ShopDummy(Vector3 offset) : ShopElementOffset(offset)
     {
-        public Player Dummy { get; private set; }
+        public Player? Dummy { get; private set; }
 
         public override void Init(Shopkeeper parent)
         {

@@ -18,13 +18,20 @@
 
         public virtual int Limit => 2;
 
-        public readonly List<Player> Spawned = [];
+        public List<Player> Spawned { get; } = [];
 
         public override void Init()
         {
             base.Init();
             PlayerEvents.UsedItem += OnUsedItem;
             PlayerEvents.ChangedRole += OnChangedRole;
+        }
+
+        public override void Remove()
+        {
+            base.Remove();
+            PlayerEvents.UsedItem -= OnUsedItem;
+            PlayerEvents.ChangedRole -= OnChangedRole;
         }
 
         private void OnChangedRole(PlayerChangedRoleEventArgs ev)
@@ -38,7 +45,7 @@
             if (ev.Player != Player || Spawned.Count >= Limit || Player.HasEffect<PocketCorroding>() || ev.UsableItem.Category != ItemCategory.Medical || Player.Health < Player.MaxHealth)
                 return;
 
-            Player target = Player.List.Where(p => p.Role == RoleTypeId.Spectator).ToArray().GetRandom();
+            Player? target = Player.List.Where(p => p.Role == RoleTypeId.Spectator).ToArray().GetRandom();
 
             if (target == null)
                 return;
@@ -53,13 +60,6 @@
                 target.AddAmmo(bullet, Player.Ammo[bullet]);
 
             Spawned.Add(target);
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            PlayerEvents.UsedItem -= OnUsedItem;
-            PlayerEvents.ChangedRole -= OnChangedRole;
         }
     }
 }

@@ -15,7 +15,7 @@
         {
             base.Tick();
 
-            if (Player.CurrentSpectators.Count > 0 && Player.Room.Name != MapGeneration.RoomName.Pocket)
+            if (Player.CurrentSpectators.Count > 0 && Player.Room?.Name != MapGeneration.RoomName.Pocket)
                 Player.Heal(RatePerPlayer * Time.fixedDeltaTime * Player.CurrentSpectators.Count);
         }
     }

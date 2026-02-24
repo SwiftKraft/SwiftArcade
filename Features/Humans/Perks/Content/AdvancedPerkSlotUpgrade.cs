@@ -5,7 +5,7 @@
     using UnityEngine;
     using Random = UnityEngine.Random;
 
-    [Perk("AdvSlotUpgrade", "Advanced Perk Slot Upgrade", "", Rarity.Mythic)]
+    [Perk("AdvSlotUpgrade", Rarity.Mythic)]
     public class AdvancedPerkSlotUpgrade(PerkInventory inv) : PerkSlotUpgrade(inv)
     {
         public override string Name => "Advanced Perk Slot Upgrade";
@@ -42,8 +42,8 @@
             {
                 Type removed = type.GetType();
                 inv.RemovePerk(removed);
-                if (Random.Range(0f, 1f) <= DropChance || type == this)
-                    PerkSpawner.SpawnPerk(PerkManager.GetPerk(removed), pos);
+                if ((Random.Range(0f, 1f) <= DropChance || type == this) && PerkManager.TryGetPerk(removed, out PerkAttribute? attribute))
+                    PerkSpawner.SpawnPerk(attribute, pos);
             }
         }
     }

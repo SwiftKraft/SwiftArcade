@@ -1,25 +1,26 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using MapGeneration;
-using SwiftArcadeMode.Utils.Structures;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MapGeneration;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
     [Perk("Shopkeeper", Rarity.Legendary)]
     public class Shopkeeper(PerkInventory inv) : PerkTriggerCooldownBase(inv)
     {
-        public static readonly Dictionary<Room, Player> ClaimStatus = [];
+        private readonly Timer claimTimer = new(10f);
+        private bool initialized;
 
-        public override string Name => "Shopkeeper" + (initialized ? " | Shop Level " + ShopLevel : "");
+        public static Dictionary<Room, Player> ClaimStatus { get; } = [];
+
+        public override string Name => "Shopkeeper" + (initialized ? " | Shop Level " + ShopLevel : string.Empty);
 
         public override string PerkDescription => "Claim an entrance checkpoint to trade items. \nRestocks when you are in the room.";
 
         public int CustomerCount => Player.List.Count((p) => p.Room == Shop);
-
-        bool initialized;
 
         public virtual ShopElement[] PresetElements => [
             new ShopItem(new(-5.5f, 1f, -5.25f), ShopItem.PresetTiers),
@@ -36,21 +37,21 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
             new ShopItem(new(-2.22f, 0.3f, -4.13f), ShopItem.PresetTiers),
             ];
 
-        public ShopElement[] Elements { get; private set; }
+        public ShopElement[] Elements { get; private set; } = [];
 
         public int ShopExperience
         {
-            get => shopExperience;
+            get;
             set
             {
-                if (shopExperience == value)
+                if (field == value)
                     return;
 
-                shopExperience = value;
+                field = value;
 
-                while (shopExperience >= RequiredExperience)
+                while (field >= RequiredExperience)
                 {
-                    shopExperience -= RequiredExperience;
+                    field -= RequiredExperience;
                     ShopLevel++;
                 }
             }
@@ -58,17 +59,19 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 
         public int ShopLevel
         {
-            get => shopLevel;
+            get;
             set
             {
-                if (shopLevel == value)
+                if (field == value)
                     return;
 
-                shopLevel = value;
-                SendMessage("Shop is now Level " + shopLevel);
+                field = value;
+                SendMessage("Shop is now Level " + field);
                 Inventory.OnPerksUpdated();
             }
         }
+
+        = 1;
 
         public int RequiredExperience => ShopLevel * Mathf.Max(Server.PlayerCount / 2, 4);
 
@@ -78,11 +81,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 
         public override float Cooldown => Mathf.Clamp(45f / Mathf.Max(CustomerCount / 5, 1), 5f, Mathf.Infinity);
 
-        readonly Timer claimTimer = new(10f);
-        private int shopExperience;
-        private int shopLevel = 1;
-
-        public Room Shop { get; private set; }
+        public Room? Shop { get; private set; }
 
         public override void Init()
         {
@@ -92,24 +91,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 
             claimTimer.Reset();
 
-            if (Inventory != null)
-                initialized = true;
-        }
-
-        private void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
-        {
-            if (ev.Player != Player)
-                return;
-
-            UnclaimRoom();
-        }
-
-        private void OnDeath(LabApi.Events.Arguments.PlayerEvents.PlayerDeathEventArgs ev)
-        {
-            if (ev.Player != Player)
-                return;
-
-            UnclaimRoom();
+            initialized = true;
         }
 
         public override void Effect() => Restock();
@@ -121,8 +103,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
             if (Shop != null)
                 return;
 
-            Room curRoom = Player.Room;
-            if (curRoom.Name == RoomName.HczCheckpointToEntranceZone && curRoom.Zone == FacilityZone.HeavyContainment && (!ClaimStatus.ContainsKey(curRoom) || ClaimStatus[curRoom] == null))
+            Room? curRoom = Player.Room;
+            if (curRoom is { Name: RoomName.HczCheckpointToEntranceZone, Zone: FacilityZone.HeavyContainment } && !ClaimStatus.ContainsKey(curRoom))
             {
                 claimTimer.Tick(Time.fixedDeltaTime);
 
@@ -139,16 +121,18 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
         {
             UnclaimRoom();
 
-            if (!ClaimStatus.ContainsKey(room))
-                ClaimStatus.Add(room, Player);
-            else
-                ClaimStatus[room] = Player;
+            ClaimStatus[room] = Player;
 
             Elements = PresetElements;
             Shop = room;
 
             foreach (ShopElement element in Elements)
+            {
+                if (element is ShopElementOffset offset)
+                    offset.UpdatePosition(room);
+
                 element.Init(this);
+            }
 
             SendMessage("Claimed checkpoint! Stay in the room to restock your shop.");
         }
@@ -163,8 +147,8 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
                 foreach (ShopElement element in Elements)
                     element.Remove();
 
-                Elements = null;
-                ClaimStatus[Shop] = null;
+                Elements = [];
+                ClaimStatus.Remove(Shop);
                 Shop = null;
                 SendMessage("You have lost your shop. ");
                 claimTimer.Reset();
@@ -177,7 +161,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
                 return;
 
             foreach (ShopElement element in Elements)
-                element?.Restock();
+                element.Restock();
         }
 
         public override void Remove()
@@ -186,6 +170,22 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 
             PlayerEvents.Death -= OnDeath;
             PlayerEvents.ChangedRole -= OnChangedRole;
+            UnclaimRoom();
+        }
+
+        private void OnChangedRole(LabApi.Events.Arguments.PlayerEvents.PlayerChangedRoleEventArgs ev)
+        {
+            if (ev.Player != Player)
+                return;
+
+            UnclaimRoom();
+        }
+
+        private void OnDeath(LabApi.Events.Arguments.PlayerEvents.PlayerDeathEventArgs ev)
+        {
+            if (ev.Player != Player)
+                return;
+
             UnclaimRoom();
         }
     }

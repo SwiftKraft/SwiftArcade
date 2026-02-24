@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Text;
     using CommandSystem;
+    using LabApi.Features.Wrappers;
     using SwiftArcadeMode.Features;
 
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
@@ -17,14 +18,23 @@
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            StringBuilder builder = new("All available perks: \n");
+            Player? user = Player.Get(sender);
+
+            StringBuilder builder = new();
+
+            if (user is null)
+            {
+                builder.AppendLine("<color=red>You are running this command as the server, there can be an error!</color>");
+            }
+
+            builder.AppendLine("All available perks:");
 
             foreach (KeyValuePair<string, PerkAttribute> att in PerkManager.RegisteredPerks)
             {
                 builder.Append("  ");
                 builder.Append(att.Key);
                 builder.Append(" - ");
-                builder.Append(att.Value.Profile.FancyName);
+                builder.Append(att.Value.HollowInstance.GetFancyName(user!));
                 builder.Append("\n");
             }
 

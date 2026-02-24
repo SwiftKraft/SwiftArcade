@@ -24,7 +24,7 @@
                 return false;
             }
 
-            if (Player.TryGetPerkInventory(out PerkInventory inv))
+            if (p.TryGetPerkInventory(out PerkInventory inv))
             {
                 response = inv.UpgradeQueue.Peek(out string brief);
                 p.SendHint("<align=\"left\">" + brief + "</align>", [HintEffectPresets.FadeOut()], 10f);

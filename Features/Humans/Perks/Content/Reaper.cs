@@ -18,18 +18,18 @@
             PlayerEvents.Hurt += OnPlayerHurt;
         }
 
+        public override void Remove()
+        {
+            base.Remove();
+            PlayerEvents.Hurt -= OnPlayerHurt;
+        }
+
         private void OnPlayerHurt(LabApi.Events.Arguments.PlayerEvents.PlayerHurtEventArgs ev)
         {
             if (ev.Attacker != Player || ev.DamageHandler is not StandardDamageHandler dmg)
                 return;
 
             Player.Heal(dmg.Damage * Percentage);
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            PlayerEvents.Hurt -= OnPlayerHurt;
         }
     }
 }

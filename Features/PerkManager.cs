@@ -129,6 +129,7 @@
                 player.SendHint(builder.ToString(), 120f);
             }
 
+            // Note: The previous version of this was literally just GetPerkInventory with extra steps so expect stuff breaking (will obsolete if necessary)
             public bool TryGetPerkInventory(out PerkInventory inventory) => Inventories.TryGetValue(player, out inventory);
 
             public PerkInventory GetPerkInventory() => Inventories.ContainsKey(player) ? Inventories[player] : Register(player);

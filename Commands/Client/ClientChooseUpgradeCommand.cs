@@ -29,7 +29,7 @@
                 return false;
             }
 
-            if (Player.TryGetPerkInventory(out PerkInventory inv) && inv.UpgradeQueue.Upgrades.Count > 0)
+            if (p.TryGetPerkInventory(out PerkInventory inv) && inv.UpgradeQueue.Upgrades.Count > 0)
             {
                 bool success = inv.UpgradeQueue.Choose(num - 1, out string name);
 

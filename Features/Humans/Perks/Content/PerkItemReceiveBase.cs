@@ -18,7 +18,7 @@
 
         public virtual int GetCount() => Player.Items.Count((i) => i.Type == ItemType && AdditionalCondition(i));
 
-        public virtual Item GiveItem() => Player.AddItem(ItemType, ItemAddReason.PickedUp);
+        public virtual Item? GiveItem() => Player.AddItem(ItemType, ItemAddReason.PickedUp);
 
         public virtual bool AdditionalCondition(Item i) => true;
     }

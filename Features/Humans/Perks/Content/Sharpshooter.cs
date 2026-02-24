@@ -37,14 +37,6 @@
             PlayerEvents.Hurting -= OnHurting;
         }
 
-        private void OnHurting(PlayerHurtingEventArgs ev)
-        {
-            if (ev.Attacker != Player || Player.CurrentItem == null || Player.CurrentItem.Type != ItemType.GunRevolver || !ev.Player.IsSCP || ev.DamageHandler is not FirearmDamageHandler handler)
-                return;
-
-            handler.Damage *= 2f;
-        }
-
         protected override void OnPlayerDying(PlayerDyingEventArgs ev)
         {
             if (ev.Attacker != Player || Player.CurrentItem == null || Player.CurrentItem.Type != ItemType.GunRevolver)
@@ -56,13 +48,25 @@
                 mod.ServerModifyAmmo(1);
         }
 
+        private void OnHurting(PlayerHurtingEventArgs ev)
+        {
+            if (ev.Attacker != Player || Player.CurrentItem == null || Player.CurrentItem.Type != ItemType.GunRevolver || !ev.Player.IsSCP || ev.DamageHandler is not FirearmDamageHandler handler)
+                return;
+
+            handler.Damage *= 2f;
+        }
+
         private void OnPickedUpItem(PlayerPickedUpItemEventArgs ev)
         {
             if (ev.Player != Player || ev.Item.Category != ItemCategory.Firearm || ev.Item.Type == ItemType.GunRevolver)
                 return;
 
             Player.RemoveItem(ev.Item);
-            FirearmItem it = Player.AddItem(ItemType.GunRevolver, ItemAddReason.PickedUp) as FirearmItem;
+            FirearmItem? it = Player.AddItem(ItemType.GunRevolver, ItemAddReason.PickedUp) as FirearmItem;
+
+            if (it is null)
+                return;
+
             Player.AddAmmo(ItemType.Ammo44cal, 30);
             it.Base.ApplyAttachmentsCode(AttachmentsServerHandler.PlayerPreferences[Player.ReferenceHub][ItemType.GunRevolver], true);
         }

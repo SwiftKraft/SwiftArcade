@@ -9,7 +9,7 @@
     [Perk("PizzaMan", Rarity.Uncommon)]
     public class PizzaMan(PerkInventory inv) : PerkItemReceiveBase(inv)
     {
-        public readonly List<ushort> Pizzas = [];
+        public List<ushort> Pizzas { get; } = [];
 
         public override ItemType ItemType => ItemType.Medkit;
 
@@ -21,9 +21,9 @@
 
         public override float Cooldown => 30f;
 
-        public override Item GiveItem()
+        public override Item? GiveItem()
         {
-            Item item = base.GiveItem();
+            Item? item = base.GiveItem();
             if (item == null)
                 return null;
 

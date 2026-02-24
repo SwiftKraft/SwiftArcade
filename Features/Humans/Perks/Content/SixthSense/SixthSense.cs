@@ -28,14 +28,19 @@
             {
                 List<SenseBase> toCheck = new(Senses);
 
-                SenseBase sense = toCheck.GetRandom();
+                SenseBase? sense = toCheck.GetRandom();
+                if (sense is null)
+                    return string.Empty;
+
                 while (!sense.Message(out _))
                 {
                     toCheck.Remove(sense);
                     sense = toCheck.GetRandom();
+                    if (sense is null)
+                        return string.Empty;
                 }
 
-                return sense.Message(out string m) ? m : string.Empty;
+                return sense.Message(out string? m) ? m : string.Empty;
             }
         }
 

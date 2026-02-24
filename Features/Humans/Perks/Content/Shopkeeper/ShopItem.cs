@@ -1,14 +1,22 @@
-﻿using Hints;
-using LabApi.Events.Handlers;
-using LabApi.Features.Wrappers;
-using SwiftArcadeMode.Utils.Extensions;
-using UnityEngine;
-
-namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 {
-    public class ShopItem(Vector3 offset) : ShopElementOffset(offset)
+    using Hints;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using SwiftArcadeMode.Utils.Extensions;
+    using UnityEngine;
+
+    public class ShopItem : ShopElementOffset
     {
-        public static readonly ItemType[][] PresetTiers =
+        private int lastRandom;
+
+        public ShopItem(Vector3 offset, params ItemType[][] pools)
+            : base(offset)
+        {
+            Items = pools;
+        }
+
+        public static ItemType[][] PresetTiers { get; } =
         [
             [ItemType.Painkillers, ItemType.Medkit, ItemType.Radio, ItemType.Flashlight],
             [ItemType.KeycardZoneManager, ItemType.Adrenaline, ItemType.Medkit, ItemType.Flashlight, ItemType.GunCOM15],
@@ -19,13 +27,9 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
             [ItemType.KeycardFacilityManager, ItemType.SCP500, ItemType.Adrenaline, ItemType.Medkit, ItemType.GunRevolver, ItemType.GunAK, ItemType.GunE11SR, ItemType.GunCrossvec, ItemType.GunLogicer, ItemType.GunFRMG0, ItemType.ArmorHeavy, ItemType.GunCom45, ItemType.SCP207, ItemType.AntiSCP207],
         ];
 
-        public readonly ItemType[][] Items;
+        public ItemType[][] Items { get; }
 
-        public Pickup Item { get; private set; }
-
-        int lastRandom;
-
-        public ShopItem(Vector3 offset, params ItemType[][] pools) : this(offset) => Items = pools;
+        public Pickup? Item { get; private set; }
 
         public override void Init(Shopkeeper parent)
         {
@@ -47,7 +51,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
             if (pool.Length <= 0)
                 return;
 
-            if (Item != null && Item.Base != null)
+            if (Item != null && Item.Base)
                 Item?.Destroy();
             Item = Pickup.Create(pool.GetRandom(ref lastRandom), Position, Rotation);
             Item?.Spawn();
@@ -55,7 +59,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 
         public override void Remove()
         {
-            if (Item != null && Item.Base != null)
+            if (Item != null && Item.Base)
                 Item?.Destroy();
         }
 
@@ -65,7 +69,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
                 return;
 
             Parent.ShopExperience++;
-            ev.Player.SendHint("Traded " + Translations.Get(ev.Player.CurrentItem.Type) + " for " + Translations.Get(Item.Type), [HintEffectPresets.FadeOut()], 3f);
+            ev.Player.SendHint("Traded " + Translations.Get(ev.Player.CurrentItem.Type) + " for " + Translations.Get(Item.Type), [HintEffectPresets.FadeOut()]);
             ev.Player.RemoveItem(ev.Player.CurrentItem);
             Item = null;
         }
@@ -82,7 +86,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
                 return;
             }
 
-            ev.Player.SendHint("Trading " + Translations.Get(ev.Player.CurrentItem.Type) + " for " + Translations.Get(Item.Type), [HintEffectPresets.FadeOut()], 3f);
+            ev.Player.SendHint("Trading " + Translations.Get(ev.Player.CurrentItem.Type) + " for " + Translations.Get(Item.Type), [HintEffectPresets.FadeOut()]);
         }
     }
 }

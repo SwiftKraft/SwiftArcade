@@ -30,8 +30,8 @@
             foreach (PerkBase perk in PerkManager.Inventories[p].Perks)
             {
                 stringBuilder.AppendLine();
-                stringBuilder.Append(perk.FancyName);
-                hint.Append(perk.FancyName);
+                stringBuilder.Append(perk.GetFancyName(p));
+                hint.Append(perk.GetFancyName(p));
                 hint.AppendLine();
                 stringBuilder.Append(" - ");
                 stringBuilder.AppendLine(perk.Description);

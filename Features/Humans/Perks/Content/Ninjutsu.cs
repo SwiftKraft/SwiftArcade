@@ -7,6 +7,8 @@
     [Perk("Ninjutsu", Rarity.Rare)]
     public class Ninjutsu(PerkInventory inv) : PerkCooldownBase(inv)
     {
+        private readonly Timer activationTimer = new();
+
         public override string Name => "Ninjutsu";
 
         public override string PerkDescription => $"Turns you invisible at <{HealthThreshold} HP for {Duration}s.";
@@ -16,8 +18,6 @@
         public virtual float Duration => 5f;
 
         public override float Cooldown => 120f;
-
-        private readonly Timer activationTimer = new();
 
         public override void Init()
         {
@@ -30,8 +30,6 @@
             base.Remove();
             activationTimer.OnTimerEnd -= OnTimerEnd;
         }
-
-        protected virtual void OnTimerEnd() => Player.DisableEffect<Invisible>();
 
         public override void Effect()
         {
@@ -52,5 +50,7 @@
 
             activationTimer.Tick(Time.fixedDeltaTime);
         }
+
+        protected virtual void OnTimerEnd() => Player.DisableEffect<Invisible>();
     }
 }

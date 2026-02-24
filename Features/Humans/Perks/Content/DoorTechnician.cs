@@ -17,7 +17,7 @@
             base.Tick();
 
             Door d = GetClosestDoor();
-            if ((d.Position - Player.Position).sqrMagnitude <= Range * Range && d.Base is IDamageableDoor door && door.IsDestroyed)
+            if ((d.Position - Player.Position).sqrMagnitude <= Range * Range && d.Base is IDamageableDoor { IsDestroyed: true } door)
             {
                 door.ServerRepair();
                 d.IsOpened = true;

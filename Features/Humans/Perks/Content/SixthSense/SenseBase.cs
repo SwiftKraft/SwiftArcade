@@ -1,5 +1,6 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.SixthSense
 {
+    using System.Diagnostics.CodeAnalysis;
     using LabApi.Features.Wrappers;
     using SwiftArcadeMode.Utils.Interfaces;
 
@@ -11,6 +12,6 @@
 
         public virtual int Weight => 1;
 
-        public abstract bool Message(out string msg);
+        public abstract bool Message([NotNullWhen(true)] out string? msg);
     }
 }

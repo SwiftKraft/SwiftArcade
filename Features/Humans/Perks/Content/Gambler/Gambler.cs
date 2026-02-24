@@ -72,7 +72,11 @@
                 Player.SendHint(isTails ? "Tails" : "Heads");
                 Timing.CallDelayed(0.35f, () =>
                 {
-                    GamblerEffectBase eff = ev.IsTails ? NegativeEffects.GetWeightedRandom() : PositiveEffects.GetWeightedRandom();
+                    GamblerEffectBase? eff = ev.IsTails ? NegativeEffects.GetWeightedRandom() : PositiveEffects.GetWeightedRandom();
+
+                    if (eff is null)
+                        return;
+
                     eff.Effect(Player);
                     SendMessage(eff.Explanation, eff.ExplanationDuration);
                 });

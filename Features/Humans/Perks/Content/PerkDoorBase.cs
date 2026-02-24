@@ -25,14 +25,14 @@
 
         public Door GetClosestDoor()
         {
-            Door closest = null;
+            Door? closest = null;
             foreach (Door door in Door.List)
             {
                 if (closest == null || (door.Position - Player.Position).sqrMagnitude < (closest.Position - Player.Position).sqrMagnitude)
                     closest = door;
             }
 
-            return closest;
+            return closest!;
         }
     }
 }

@@ -14,7 +14,7 @@
 
         public override void Effect(Player player)
         {
-            Player scp = Player.List.Where((p) => p.IsSCP && p.Role != PlayerRoles.RoleTypeId.Scp079).ToList().GetRandom();
+            Player? scp = Player.List.Where(p => p.IsSCP && p.Role != PlayerRoles.RoleTypeId.Scp079).ToList().GetRandom();
             if (scp != null && player.Room?.Name != MapGeneration.RoomName.Pocket)
                 scp.Position = player.Position;
         }

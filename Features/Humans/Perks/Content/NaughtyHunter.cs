@@ -14,25 +14,25 @@
     [Perk("NaughtyHunter", Rarity.Epic)]
     public class NaughtyHunter(PerkInventory inv) : PerkTriggerCooldownBase(inv)
     {
+        public static Vector3 Location { get; } = new(-16, 315, -31);
+
         public override string PerkDescription => "Gives you a naughty gun that recharges.\nShooting someone with this gun will send them to the\n<i>NAUGHTY ROOM</i>";
 
         public override string Name => "Naughty Hunter";
 
         public override string ReadyMessage => "Recharged!";
 
-        public static Vector3 Location = new(-16, 315, -31);
-
         public override float Cooldown => 120f;
 
         public int Duration => 10;
 
-        public ushort CurrentGun;
+        public ushort CurrentGun { get; set; }
 
         public override void Init()
         {
             base.Init();
 
-            GiveItem();
+            Timing.RunCoroutine(GiveItem());
 
             PlayerEvents.Death += OnDeath;
             PlayerEvents.ReloadingWeapon += OnReloadingWeapon;
@@ -53,6 +53,20 @@
             PlayerEvents.ChangedItem -= OnChangedItem;
         }
 
+        public override void Effect()
+        {
+            if (CurrentGun == 0 || !Item.TryGet(CurrentGun, out Item? item) || item.Base is not Firearm firearm || !firearm.TryGetModule(out IPrimaryAmmoContainerModule mod, false) || mod.AmmoStored >= 1)
+                return;
+
+            mod.ServerModifyAmmo(1);
+
+            if (firearm.TryGetModule(out AutomaticActionModule mod2, false))
+            {
+                mod2.BoltLocked = false;
+                mod2.Cocked = true;
+            }
+        }
+
         private void OnChangedItem(LabApi.Events.Arguments.PlayerEvents.PlayerChangedItemEventArgs ev)
         {
             if (ev.NewItem != null && ev.NewItem.Serial == CurrentGun)
@@ -64,7 +78,7 @@
             if (ev.Attacker == null || ev.DamageHandler is not FirearmDamageHandler || ev.Attacker.CurrentItem == null || ev.Attacker.CurrentItem.Serial != CurrentGun)
                 return;
 
-            Elevator el = ev.Player.GetElevator();
+            Elevator? el = ev.Player.GetElevator();
             Timing.RunCoroutine(NaughtyCoroutine(ev.Player, el == null ? ev.Player.Position : ev.Player.Position - el.Base.transform.position, el));
         }
 
@@ -73,10 +87,10 @@
             if (ev.Player != Player || !Player.IsAlive)
                 return;
 
-            GiveItem();
+            Timing.RunCoroutine(GiveItem());
         }
 
-        private IEnumerator<float> NaughtyCoroutine(Player p, Vector3 original, Elevator trackedElevator)
+        private IEnumerator<float> NaughtyCoroutine(Player p, Vector3 original, Elevator? trackedElevator)
         {
             yield return Timing.WaitForSeconds(0.1f);
             p.Position = Location;
@@ -93,15 +107,28 @@
             p.Position = trackedElevator == null ? original : original + trackedElevator.Base.transform.position;
         }
 
-        private void GiveItem()
+        private IEnumerator<float> GiveItem()
         {
-            if (!Player.IsInventoryFull)
+            while (true)
             {
-                Item it = Player.AddItem(ItemType.GunCOM15);
-                CurrentGun = it.Serial;
+                if (!Player.IsInventoryFull)
+                {
+                    Item? it = Player.AddItem(ItemType.GunCOM15);
+                    if (it is null)
+                    {
+                        yield return Timing.WaitForOneFrame;
+                        continue;
+                    }
 
-                if (it.Base is Firearm f && f.TryGetModule(out IPrimaryAmmoContainerModule mod, false))
-                    mod.ServerModifyAmmo(-mod.AmmoMax);
+                    CurrentGun = it.Serial;
+
+                    if (it.Base is Firearm f && f.TryGetModule(out IPrimaryAmmoContainerModule mod, false))
+                        mod.ServerModifyAmmo(-mod.AmmoMax);
+
+                    yield break;
+                }
+
+                yield return Timing.WaitForOneFrame;
             }
         }
 
@@ -126,21 +153,12 @@
             if (ev.Player != Player)
                 return;
 
+            if (Item.TryGet(CurrentGun, out Item? item))
+                item.DropItem().Destroy();
+            else if (Pickup.TryGet(CurrentGun, out Pickup? pickup))
+                pickup.Destroy();
+
             CurrentGun = 0;
-        }
-
-        public override void Effect()
-        {
-            if (CurrentGun == 0 || !Item.TryGet(CurrentGun, out Item item) || item.Base is not Firearm firearm || !firearm.TryGetModule(out IPrimaryAmmoContainerModule mod, false) || mod.AmmoStored >= 1)
-                return;
-
-            mod.ServerModifyAmmo(1);
-
-            if (firearm.TryGetModule(out AutomaticActionModule mod2, false))
-            {
-                mod2.BoltLocked = false;
-                mod2.Cocked = true;
-            }
         }
     }
 }

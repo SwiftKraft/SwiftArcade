@@ -19,6 +19,13 @@
             PlayerEvents.Death += OnPlayerDeath;
         }
 
+        public override void Remove()
+        {
+            base.Remove();
+            PlayerEvents.Dying -= OnPlayerDying;
+            PlayerEvents.Death -= OnPlayerDeath;
+        }
+
         private void OnPlayerDeath(LabApi.Events.Arguments.PlayerEvents.PlayerDeathEventArgs ev)
         {
             if (ev.Player != Player)
@@ -41,13 +48,6 @@
             Player.Heal(500f);
             Player.ArtificialHealth += 75f;
             Player.EnableEffect<CardiacArrest>(1, 20f);
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            PlayerEvents.Dying -= OnPlayerDying;
-            PlayerEvents.Death -= OnPlayerDeath;
         }
     }
 }

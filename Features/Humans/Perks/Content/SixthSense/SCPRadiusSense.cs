@@ -128,7 +128,7 @@
 
         public virtual float Range => 30f;
 
-        public override bool Message(out string msg)
+        public override bool Message(out string? msg)
         {
             if (Player.IsSCP)
             {

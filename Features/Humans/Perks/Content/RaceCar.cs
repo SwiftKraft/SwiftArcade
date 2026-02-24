@@ -7,6 +7,8 @@
     [Perk("RaceCar", Rarity.Legendary)]
     public class RaceCar(PerkInventory inv) : PerkKillBase(inv)
     {
+        private byte currentStack;
+
         public override string Name => "Race Car";
 
         public override string Description => "Every kill increases your speed.";
@@ -15,7 +17,11 @@
 
         public virtual byte MaxValue => byte.MaxValue;
 
-        private byte currentStack;
+        public override void Remove()
+        {
+            base.Remove();
+            Player.DisableEffect<MovementBoost>();
+        }
 
         protected override void OnPlayerDying(PlayerDyingEventArgs ev)
         {
@@ -28,12 +34,6 @@
                 Player.EnableEffect<MovementBoost>(currentStack);
                 SendMessage("Gained Kill, Speed Level: " + currentStack);
             }
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            Player.DisableEffect<MovementBoost>();
         }
     }
 }

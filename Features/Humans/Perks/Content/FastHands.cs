@@ -15,7 +15,7 @@
 
         public bool Reloading
         {
-            get => field;
+            get;
             private set
             {
                 if (value == field)

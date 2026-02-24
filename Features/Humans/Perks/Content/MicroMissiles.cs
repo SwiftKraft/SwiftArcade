@@ -6,13 +6,13 @@
     [Perk("MicroMissiles", Rarity.Secret)]
     public class MicroMissiles(PerkInventory inv) : PerkBase(inv)
     {
+        private int counter;
+
         public override string Name => "Micro Missiles";
 
         public override string Description => $"Every {Amount} shots creates an explosive projectile.";
 
         public virtual int Amount => 10;
-
-        private int counter = 0;
 
         public override void Init()
         {
@@ -38,11 +38,14 @@
 
             counter = 0;
 
-            ExplosiveGrenadeProjectile pick = TimedGrenadeProjectile.SpawnActive(Player.Camera.position, ItemType.GrenadeHE, Player, 3d) as ExplosiveGrenadeProjectile;
-            pick.Base.MaxRadius = 2f;
+            ExplosiveGrenadeProjectile? projectile = TimedGrenadeProjectile.SpawnActive(Player.Camera.position, ItemType.GrenadeHE, Player, 3d) as ExplosiveGrenadeProjectile;
+            if (projectile is null)
+                return;
 
-            Rocketeer.ConvertRocket(Player, pick, 45f);
-            pick.Base.ScpDamageMultiplier = 1f;
+            projectile.Base.MaxRadius = 2f;
+
+            Rocketeer.ConvertRocket(Player, projectile, 45f);
+            projectile.Base.ScpDamageMultiplier = 1f;
         }
     }
 }

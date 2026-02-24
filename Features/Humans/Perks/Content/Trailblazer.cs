@@ -9,18 +9,21 @@
     [Perk("Trailblazer", Rarity.Rare)]
     public class Trailblazer(PerkInventory inv) : PerkCooldownBase(inv)
     {
+        private bool initialized;
+
         public override string Name => "Trailblazer" + (initialized ? " | Tracked Item: " + TrackedType + (!CooldownTimer.Ended ? " | Cooldown: " + Mathf.Round(CooldownTimer.CurrentValue) + "s" : string.Empty) : string.Empty);
 
         public override string PerkDescription => $"Set a teleport point after using an item. \nTeleport to the point after using an item of the same type. \nNo item types will be tracked when a teleport point exists.";
 
         public override float Cooldown => 80f;
 
-        public Vector3 TeleportPoint;
-        public bool TeleportExists;
-        public ItemType TrackedType = ItemType.None;
-        public Elevator TrackedElevator;
+        public Vector3 TeleportPoint { get; set; }
 
-        private bool initialized;
+        public bool TeleportExists { get; set; }
+
+        public ItemType TrackedType { get; set; } = ItemType.None;
+
+        public Elevator? TrackedElevator { get; set; }
 
         public override void Effect()
         {
@@ -42,19 +45,7 @@
             PlayerEvents.UsingItem += OnUsingItem;
             PlayerEvents.UsedItem += OnUsedItem;
 
-            if (Player != null)
-                initialized = true;
-        }
-
-        private void OnWarheadDetonated(LabApi.Events.Arguments.WarheadEvents.WarheadDetonatedEventArgs ev)
-        {
-            if (TeleportExists && (TrackedElevator != null || !Room.TryGetRoomAtPosition(TeleportPoint, out Room room) || room.Zone != MapGeneration.FacilityZone.Surface))
-            {
-                TrackedElevator = null;
-                TrackedType = ItemType.None;
-                TeleportExists = false;
-                SendMessage("Warhead detonated! Teleport point destroyed.");
-            }
+            initialized = true;
         }
 
         public override void Remove()
@@ -73,7 +64,7 @@
 
             if (TeleportExists && ev.UsableItem.Type == TrackedType)
                 SendMessage($"{(CooldownTimer.Ended ? "<color=#00FF00>You will be teleported!</color>" : "<color=#FF0000>On cooldown, you will <b>NOT</b> be teleported!</color>")} Cancel to abort.");
-            else if (!TeleportExists && Player.Room.Name == MapGeneration.RoomName.Pocket)
+            else if (!TeleportExists && Player.Room?.Name == MapGeneration.RoomName.Pocket)
                 SendMessage($"Cannot create teleport point in this room!");
         }
 
@@ -89,9 +80,9 @@
                 return;
             }
 
-            if (Player.Room.Name == MapGeneration.RoomName.Pocket)
+            if (Player.Room?.Name == MapGeneration.RoomName.Pocket)
             {
-                SendMessage($"Cannot create teleport point in this room!");
+                SendMessage("Cannot create teleport point in this room!");
                 return;
             }
 
@@ -100,6 +91,17 @@
             TrackedType = ev.UsableItem.Type;
             TeleportExists = true;
             SendMessage($"Teleport point has been created{(!CooldownTimer.Ended ? " (teleport on cooldown)" : string.Empty)}!");
+        }
+
+        private void OnWarheadDetonated(LabApi.Events.Arguments.WarheadEvents.WarheadDetonatedEventArgs ev)
+        {
+            if (TeleportExists && (TrackedElevator != null || !Room.TryGetRoomAtPosition(TeleportPoint, out Room? room) || room.Zone != MapGeneration.FacilityZone.Surface))
+            {
+                TrackedElevator = null;
+                TrackedType = ItemType.None;
+                TeleportExists = false;
+                SendMessage("Warhead detonated! Teleport point destroyed.");
+            }
         }
     }
 }

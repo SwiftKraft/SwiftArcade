@@ -52,20 +52,20 @@
             PerkSpawnRules.SpawnPerks();
         }
 
-        public static Pickup? SpawnPerk(PerkAttribute ty, Vector3 location)
+        public static Pickup? SpawnPerk(PerkAttribute attribute, Vector3 location)
         {
             Pickup? p = Pickup.Create(ItemType.Coin, location, Quaternion.identity, new Vector3(4f, 4f, 4f));
 
             if (p == null)
                 return p;
 
-            PerkPickups.Add(p.Serial, ty);
+            PerkPickups.Add(p.Serial, attribute);
             p.Weight *= 5f;
             p.Spawn();
 
             LightSourceToy toy = LightSourceToy.Create(p.Transform, false);
             toy.Intensity = 0.5f;
-            if (ColorUtility.TryParseHtmlString(ty.Rarity.GetColor(), out Color col))
+            if (ColorUtility.TryParseHtmlString(attribute.Rarity.GetColor(), out Color col))
                 toy.Color = col;
             toy.Spawn();
             LightSources.Add(p.Serial, toy);
