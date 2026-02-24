@@ -6,6 +6,7 @@
     using LabApi.Events.Handlers;
     using LabApi.Features.Wrappers;
     using PlayerStatsSystem;
+    using SwiftArcadeMode.Features.Events;
 
     public static class UpgradePathGiver
     {

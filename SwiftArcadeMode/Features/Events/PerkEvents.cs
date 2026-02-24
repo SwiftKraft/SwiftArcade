@@ -1,8 +1,8 @@
-﻿namespace SwiftArcadeMode.Features
+﻿namespace SwiftArcadeMode.Features.Events
 {
     using LabApi.Events;
-    using SwiftArcadeMode.Features.Events;
-    using static SwiftArcadeMode.Features.SCPs.Upgrades.UpgradePathGiver;
+
+    using static SCPs.Upgrades.UpgradePathGiver;
 
     public static class PerkEvents
     {

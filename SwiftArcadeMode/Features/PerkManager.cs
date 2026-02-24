@@ -45,15 +45,18 @@
             ServerEvents.RoundRestarted -= OnRoundRestarted;
         }
 
-        public static PerkBase CreatePerkInstance(Type type, PerkInventory inventory)
+        public static PerkBase CreatePerkInstance(PerkAttribute attribute, PerkInventory inventory)
         {
             try
             {
-                return (PerkBase)Activator.CreateInstance(type, inventory);
+                PerkBase perk = (PerkBase)Activator.CreateInstance(attribute.Perk, inventory);
+                perk.Rarity = attribute.Rarity;
+                perk.Restriction = attribute.Restriction;
+                return perk;
             }
             catch (Exception ex)
             {
-                Logger.Error($"Exception created when creating an instance of perk \"{type.Name}\"! Please ensure you do not define a custom constructor for your perks as an instance of all perks with a null Inventory and Owner will be created as a requirement for registration.");
+                Logger.Error($"Exception created when creating an instance of perk \"{attribute.ID}\"! Please ensure you do not define a custom constructor for your perks as an instance of all perks with a null Inventory and Owner will be created as a requirement for registration.");
                 Logger.Error(ex);
             }
 
@@ -79,7 +82,7 @@
                     attr.Value.Perk = attr.Key;
                     RegisteredPerks.Add((RegisteredPerks.ContainsKey(attr.Value.ID) ? nameSpace.ToLower() + "." : string.Empty) + attr.Value.ID.ToLower(), attr.Value);
 
-                    PerkBase p = CreatePerkInstance(attr.Key, null!);
+                    PerkBase p = CreatePerkInstance(attr.Value, null!);
 
                     attr.Value.HollowInstance = p;
 

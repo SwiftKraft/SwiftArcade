@@ -72,7 +72,7 @@
                 return true;
             }
 
-            PerkBase p = PerkManager.CreatePerkInstance(attribute.Perk, this);
+            PerkBase p = PerkManager.CreatePerkInstance(attribute, this);
 
             if (LimitUsage >= Limit && p.SlotUsage > 0)
             {
