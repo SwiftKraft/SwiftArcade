@@ -8,7 +8,7 @@
 
     public abstract class Summon(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : DeployableBase(name, schematicName, role, colliderScale, position, rotation)
     {
-        public Player Owner { get; set; }
+        public Player Owner { get; set; } = spell.Caster.Player;
 
         public SpellBase Spell { get; private set; } = spell;
 

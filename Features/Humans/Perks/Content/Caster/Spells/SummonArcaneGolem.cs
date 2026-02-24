@@ -8,6 +8,11 @@
 
     public class SummonArcaneGolem : SummonSpell
     {
+        public SummonArcaneGolem(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Summon Arcane Golem";
 
         public override Color BaseColor => new(0.3f, 0f, 0.4f);
@@ -18,10 +23,7 @@
 
         public override int Limit => 1;
 
-        public override DeployableBase Create(Vector3 loc) => new Golem(this, Caster.Player.DisplayName + "'s Golem", "ArcaneGolem".ApplySchematicPrefix(), Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity)
-        {
-            Owner = Caster.Player
-        };
+        public override DeployableBase Create(Vector3 loc) => new Golem(this, Caster.Player.DisplayName + "'s Golem", "ArcaneGolem".ApplySchematicPrefix(), Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
 
         public class Golem(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
@@ -38,7 +40,7 @@
             public override void Attack(Player target)
             {
                 Vector3 direction = (target.Position - Dummy.Camera.position).normalized;
-                new MagicMissile.Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 9f, 4f, Dummy);
+                new MagicMissile.Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 9f, 4f).Init();
             }
         }
     }

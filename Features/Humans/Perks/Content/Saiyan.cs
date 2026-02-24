@@ -68,7 +68,7 @@
 
                 Room? r = Player.Room;
                 if (r != null && (!r.LightController?.LightsEnabled ?? false))
-                    r.LightController.LightsEnabled = true;
+                    r.LightController?.LightsEnabled = true;
             }
         }
 

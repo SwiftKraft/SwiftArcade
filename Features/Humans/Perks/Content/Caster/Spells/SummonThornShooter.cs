@@ -8,6 +8,11 @@
 
     public class SummonThornShooter : SummonSpell
     {
+        public SummonThornShooter(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Summon Thorn Shooter";
 
         public override Color BaseColor => new(0f, 0.6f, 0.1f);
@@ -18,10 +23,7 @@
 
         public override int Limit => 2;
 
-        public override DeployableBase Create(Vector3 loc) => new Shooter(this, Caster.Player.DisplayName + "'s Thorn Shooter", "ThornShooter".ApplySchematicPrefix(), Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity)
-        {
-            Owner = Caster.Player
-        };
+        public override DeployableBase Create(Vector3 loc) => new Shooter(this, Caster.Player.DisplayName + "'s Thorn Shooter", "ThornShooter".ApplySchematicPrefix(), Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
 
         public class Shooter(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
@@ -38,7 +40,7 @@
             public override void Attack(Player target)
             {
                 Vector3 direction = Quaternion.Euler(Random.insideUnitSphere * 5f) * (target.Camera.position - Dummy.Camera.position).normalized;
-                new ThornShot.Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 20f, 4f, Dummy);
+                new ThornShot.Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 20f, 4f).Init();
             }
         }
     }

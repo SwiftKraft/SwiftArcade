@@ -11,6 +11,11 @@
 
     public class SummonRockGolem : SummonSpell
     {
+        public SummonRockGolem(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Summon Rock Golem";
 
         public override Color BaseColor => new(0.3f, 0.3f, 0.3f);
@@ -23,6 +28,10 @@
 
         public class Golem(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
+            private Vector3 damp;
+            private Vector3 vel;
+            private Player? prevTarget;
+
             public override string TypeName => "Rock Golem";
 
             public override float Range => 10;
@@ -33,19 +42,15 @@
 
             public override float DestroyRange => 20f;
 
-            private Vector3 damp;
-            private Vector3 vel;
-            private Player prevTarget;
-
             public override void Attack(Player target)
             {
                 prevTarget = target;
 
-                if (!VectorExtensions.SolveBallisticArc(Dummy.Camera.position, Dummy.Camera.position.PredictPosition(target.Position, damp, 12f), 12f, false, out Vector3 vel))
+                if (!VectorExtensions.SolveBallisticArc(Dummy.Camera.position, Dummy.Camera.position.PredictPosition(target.Position, damp, 12f), 12f, false, out Vector3 velocity))
                     return;
 
-                Vector3 direction = vel.normalized;
-                new Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 12f, 5f, Dummy);
+                Vector3 direction = velocity.normalized;
+                new Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 12f, 5f).Init();
             }
 
             public override void Tick()
@@ -58,7 +63,8 @@
                 damp = Vector3.SmoothDamp(damp, prevTarget.Velocity, ref vel, 0.2f);
             }
 
-            public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
+            public class Projectile(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10)
+                : CasterBase.MagicProjectileBase(spell, owner, initialPosition, initialRotation, initialVelocity, lifetime)
             {
                 public override bool UseGravity => true;
 
@@ -66,18 +72,22 @@
 
                 public override string SchematicName => "RockProjectile";
 
-                public override void Hit(Collision col, ReferenceHub hit)
+                public override void Hit(Collision col, ReferenceHub? hit)
                 {
-                    if (hit != null)
+                    if (hit)
                     {
                         float damage = 50f;
 
                         hit.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, damage * (hit.IsSCP() ? 2.5f : 1f), 30, ExplosionType.Grenade));
-                        Owner?.SendHitMarker(2f);
+                        Owner.SendHitMarker(2f);
                     }
 
-                    SchematicEffect.Create("RockHit".ApplySchematicPrefix(), Rigidbody.position, Rigidbody.rotation, Vector3.one, 0.4f);
-                    Spell?.PlaySound(Rigidbody.position, "hit");
+                    if (Rigidbody)
+                    {
+                        SchematicEffect.Create("RockHit".ApplySchematicPrefix(), Rigidbody.position, Rigidbody.rotation, Vector3.one, 0.4f);
+                        Spell.PlaySound(Rigidbody.position, "hit");
+                    }
+
                     Destroy();
                 }
             }

@@ -4,7 +4,7 @@
 
     public abstract class CustomEffectBase(float duration)
     {
-        public CustomEffectContainer? Parent { get; private set; }
+        public CustomEffectContainer Parent { get; private set; } = null!;
 
         public virtual int StackCount => int.MaxValue;
 

@@ -14,7 +14,7 @@
         public static readonly LayerMask CollisionLayers = LayerMask.GetMask("Default", "Door", "Glass");
         public static readonly LayerMask IgnoreRaycastLayer = LayerMask.GetMask("Ignore Raycast");
 
-        public ProjectileBase(Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10F, Player? owner = null)
+        public ProjectileBase(Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10F)
         {
             InitialPosition = initialPosition;
             InitialRotation = initialRotation;
@@ -24,7 +24,7 @@
             ProjectileManager.All.Add(this);
         }
 
-        public Player? Owner { get; private set; }
+        public Player Owner { get; private set; }
 
         public PrimitiveObjectToy? Parent { get; set; }
 
@@ -50,6 +50,10 @@
         /// <remarks>Leave empty for invisible projectile.</remarks>
         public virtual string SchematicName => string.Empty;
 
+        /// <summary>
+        /// Initializes this projectile.
+        /// </summary>
+        /// <remarks>MUST BE CALLED AFTER CONSTRUCTION.</remarks>
         public virtual void Init()
         {
             Parent = PrimitiveObjectToy.Create(InitialPosition, InitialRotation, networkSpawn: false);
@@ -110,10 +114,10 @@
 
         public void OnCollide(Collision cols)
         {
-            cols.collider.TryGetComponent(out ReferenceHub hub);
+            cols.collider.TryGetComponent(out ReferenceHub? hub);
             Hit(cols, hub);
         }
 
-        public abstract void Hit(Collision col, ReferenceHub hit);
+        public abstract void Hit(Collision col, ReferenceHub? hit);
     }
 }

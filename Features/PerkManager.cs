@@ -110,53 +110,49 @@
             return t != null;
         }
 
-        extension(Player player)
+        public static bool HasRestrictions(this Player player, IPerkInfo perk) => player.IsAlive && ((player.IsHuman && perk.Restriction == PerkRestriction.SCP) || (player.IsSCP && perk.Restriction == PerkRestriction.Human));
+
+        public static void UpdateSpectatorDisplay(this Player player, Player target)
         {
-            public bool HasRestrictions(IPerkInfo perk) => player.IsAlive && ((player.IsHuman && perk.Restriction == PerkRestriction.SCP) || (player.IsSCP && perk.Restriction == PerkRestriction.Human));
+            StringBuilder builder = new($"<align=\"left\">\n\n\n{target.DisplayName}'s Perks\n");
 
-            public void UpdateSpectatorDisplay(Player target)
+            if (Inventories.TryGetValue(target, out PerkInventory? inventory))
             {
-                StringBuilder builder = new($"<align=\"left\">\n\n\n{target.DisplayName}'s Perks\n");
-
-                if (Inventories.TryGetValue(target, out PerkInventory? inventory))
-                {
-                    foreach (PerkBase perk in inventory.Perks)
-                        builder.AppendLine($"- {perk.GetFancyName(target)}");
-                }
-
-                builder.Append("</align>");
-
-                player.SendHint(builder.ToString(), 120f);
+                foreach (PerkBase perk in inventory.Perks)
+                    builder.AppendLine($"- {perk.GetFancyName(target)}");
             }
 
-            // Note: The previous version of this was literally just GetPerkInventory with extra steps so expect stuff breaking (will obsolete if necessary)
-            public bool TryGetPerkInventory(out PerkInventory inventory) => Inventories.TryGetValue(player, out inventory);
+            builder.Append("</align>");
 
-            public PerkInventory GetPerkInventory() => Inventories.ContainsKey(player) ? Inventories[player] : Register(player);
-
-            public bool GivePerk(Type t) => TryGetPerk(t, out PerkAttribute? att) && player.GivePerk(att);
-
-            public bool GivePerk(PerkAttribute t)
-            {
-                if (!Inventories.ContainsKey(player))
-                    Register(player);
-
-                return Inventories[player].AddPerk(t);
-            }
-
-            public void RemovePerk(Type t)
-            {
-                if (!Inventories.TryGetValue(player, out PerkInventory? inventory))
-                {
-                    Register(player);
-                    return;
-                }
-
-                inventory.RemovePerk(t);
-            }
-
-            public bool HasPerk(Type perk) => Inventories.ContainsKey(player) && Inventories[player].HasPerk(perk);
+            player.SendHint(builder.ToString(), 120f);
         }
+
+        public static bool TryGetPerkInventory(this Player player, out PerkInventory inventory) => Inventories.TryGetValue(player, out inventory);
+
+        public static PerkInventory GetPerkInventory(this Player player) => Inventories.ContainsKey(player) ? Inventories[player] : Register(player);
+
+        public static bool GivePerk(this Player player, Type t) => TryGetPerk(t, out PerkAttribute? att) && player.GivePerk(att);
+
+        public static bool GivePerk(this Player player, PerkAttribute t)
+        {
+            if (!Inventories.ContainsKey(player))
+                Register(player);
+
+            return Inventories[player].AddPerk(t);
+        }
+
+        public static void RemovePerk(this Player player, Type t)
+        {
+            if (!Inventories.TryGetValue(player, out PerkInventory? inventory))
+            {
+                Register(player);
+                return;
+            }
+
+            inventory.RemovePerk(t);
+        }
+
+        public static bool HasPerk(this Player player, Type perk) => Inventories.ContainsKey(player) && Inventories[player].HasPerk(perk);
 
         public static PerkInventory Register(Player p)
         {

@@ -10,6 +10,11 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 
     public class LightArrow : SpellBase
     {
+        public LightArrow(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Light Arrow";
 
         public override Color BaseColor => Color.white;
@@ -20,20 +25,22 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 
         public override void Cast()
         {
-            new Projectile(this, Caster.Player.Camera.position + Caster.Player.Camera.forward * 0.4f, Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 30f, 6f, Caster.Player);
+            new Projectile(this, Caster.Player, Caster.Player.Camera.position + (Caster.Player.Camera.forward * 0.4f), Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 30f, 6f).Init();
             PlaySound("cast");
         }
 
-        public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
+        public class Projectile(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f)
+            : CasterBase.MagicProjectileBase(spell, owner, initialPosition, initialRotation, initialVelocity, lifetime)
         {
-            public override string SchematicName => "LightArrow";
+            private const int MaxBounces = 2;
 
-            private const int maxBounces = 2;
-            private int currentBounces = 0;
+            private int currentBounces;
             private float speed;
             private float currentDamage = 75f;
             private float currentScpMultiplier = 3f;
             private Vector3 vel;
+
+            public override string SchematicName => "LightArrow";
 
             public override bool UseGravity => false;
 
@@ -49,12 +56,15 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
             public override void Tick()
             {
                 base.Tick();
-                Rigidbody.linearVelocity = vel;
+                Rigidbody?.linearVelocity = vel;
             }
 
-            public override void Hit(Collision col, ReferenceHub hit)
+            public override void Hit(Collision col, ReferenceHub? hit)
             {
-                if (hit == null && currentBounces < maxBounces)
+                if (!Rigidbody)
+                    return;
+
+                if (!hit && currentBounces < MaxBounces)
                 {
                     Vector3 normal = col.GetContact(0).normal.normalized;
                     Vector3 direction = Vector3.Reflect(vel.normalized, -normal);
@@ -74,7 +84,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
                 }
                 else
                 {
-                    if (hit != null)
+                    if (hit)
                     {
                         hit.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, currentDamage * (hit.IsSCP() ? currentScpMultiplier : 1f), 100, ExplosionType.Disruptor));
                         hit.playerEffectsController.EnableEffect<Flashed>(3f, true);
@@ -84,7 +94,7 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
                             role.FpcModule.Motor.JumpController.ForceJump(1f);
                         }
 
-                        Owner?.SendHitMarker(2f);
+                        Owner.SendHitMarker(2f);
                     }
 
                     TimedGrenadeProjectile.PlayEffect(Rigidbody.position, ItemType.GrenadeFlash);
@@ -94,9 +104,13 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 
             private bool FindTargetInDirection(Vector3 dir, float maxDistance, float maxAngle, out Vector3 dirToTarget)
             {
-                Player best = null;
-                float bestDot = 0f;
                 dirToTarget = default;
+
+                if (!Rigidbody)
+                    return false;
+
+                Player? best = null;
+                float bestDot = 0f;
 
                 foreach (Player player in Player.List)
                 {
@@ -106,16 +120,17 @@ namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
                     Vector3 toTarget = player.Position - Rigidbody.position;
                     float dist = toTarget.magnitude;
 
-                    if (dist > maxDistance) continue;
+                    if (dist > maxDistance)
+                        continue;
 
-                    Vector3 _dirToTarget = toTarget.normalized;
-                    float dot = Vector3.Dot(dir.normalized, _dirToTarget);
+                    Vector3 dirToTarget1 = toTarget.normalized;
+                    float dot = Vector3.Dot(dir.normalized, dirToTarget1);
 
                     if (dot > Mathf.Cos(maxAngle * Mathf.Deg2Rad) && dot > bestDot)
                     {
                         bestDot = dot;
                         best = player;
-                        dirToTarget = _dirToTarget;
+                        dirToTarget = dirToTarget1;
                     }
                 }
 

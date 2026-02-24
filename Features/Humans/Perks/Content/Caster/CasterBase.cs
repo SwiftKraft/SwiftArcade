@@ -25,15 +25,15 @@
 
         public abstract float RegularCooldown { get; }
 
-        public override float Cooldown => Player == null || Player.Items.Count() < 3 ? LessItemsCooldown : RegularCooldown;
+        public override float Cooldown => Player.Items.Count() < 3 ? LessItemsCooldown : RegularCooldown;
 
         public override int Limit => int.MaxValue;
 
         public override string ReadyMessage => Player.IsInventoryFull ? "Failed to refresh, no space in inventory." : "Spells refreshed!";
 
-        public SpellBase CurrentSpell { get; private set; }
+        public SpellBase CurrentSpell { get; private set; } = null!;
 
-        public SpellBase[] Spells { get; private set; }
+        public SpellBase[] Spells { get; private set; } = null!;
 
         public Item? CurrentSpellItem { get; private set; }
 
@@ -49,7 +49,6 @@
 
                 field = value % Spells.Length;
                 CurrentSpell = Spells[field];
-                CurrentSpell?.Init(this);
             }
         }
 
@@ -67,9 +66,11 @@
 
             castDuration.OnTimerEnd += OnCastTimerEnded;
 
-            Spells = [.. ListSpells().Select(t => (SpellBase)Activator.CreateInstance(t)).Where(s => s != null)];
+            Spells = ListSpells().Select(t => (SpellBase)Activator.CreateInstance(t, this)).Where(s => s != null).ToArray();
+            for (int i = 0; i < Spells.Length; i++)
+                Spells[i].Init();
 
-            if (Player != null && Spells.Length <= 0)
+            if (Spells.Length <= 0)
                 Player.GetPerkInventory().RemovePerk(this);
 
             CurrentSpellIndex = 0;
@@ -97,8 +98,19 @@
             if (!castDuration.Ended)
             {
                 castDuration.Tick(Time.fixedDeltaTime);
-                CurrentSpell?.Tick();
+                CurrentSpell.Tick();
             }
+        }
+
+        public override Item? GiveItem()
+        {
+            RemoveCurrentSpellItem();
+
+            CurrentSpellItem = KeycardItem.CreateCustomKeycardTaskForce(Player, CurrentSpell.Name, CurrentSpell.Name, default, CurrentSpell.BaseColor, CurrentSpell.BaseColor, string.Empty, CurrentSpell.RankIndex);
+            if (CurrentSpellItem != null)
+                CurrentSpellItemSerial = CurrentSpellItem.Serial;
+
+            return CurrentSpellItem;
         }
 
         private void OnCastTimerEnded() => CurrentSpell?.End();
@@ -179,34 +191,30 @@
                 CurrentSpellIndex++;
                 bool held = ev.Player.CurrentItem == CurrentSpellItem;
 
-                Item it = GiveItem();
+                Item? it = GiveItem();
 
                 if (held)
                     ev.Player.CurrentItem = it;
             }
         }
 
-        public override Item GiveItem()
+        public abstract class MagicProjectileBase : ProjectileBase
         {
-            RemoveCurrentSpellItem();
+            protected MagicProjectileBase(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10)
+                : base(owner, initialPosition, initialRotation, initialVelocity, lifetime)
+            {
+                Spell = spell;
+            }
 
-            CurrentSpellItem = KeycardItem.CreateCustomKeycardTaskForce(Player, CurrentSpell.Name, CurrentSpell.Name, default, CurrentSpell.BaseColor, CurrentSpell.BaseColor, default, CurrentSpell.RankIndex);
-            if (CurrentSpellItem != null)
-                CurrentSpellItemSerial = CurrentSpellItem.Serial;
-
-            return CurrentSpellItem;
-        }
-
-        public abstract class MagicProjectileBase(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10, Player? owner = null) : ProjectileBase(initialPosition, initialRotation, initialVelocity, lifetime, owner)
-        {
-            public readonly SpellBase Spell = spell;
+            public SpellBase Spell { get; }
 
             public abstract bool UseGravity { get; }
 
+            /// <inheritdoc/>
             public override void Init()
             {
                 base.Init();
-                Rigidbody.useGravity = UseGravity;
+                Rigidbody?.useGravity = UseGravity;
             }
         }
     }

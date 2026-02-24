@@ -11,6 +11,11 @@
 
     public class SummonPylon : SummonSpell
     {
+        public SummonPylon(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Summon Pylon";
 
         public override Color BaseColor => Color.cyan;
@@ -19,16 +24,13 @@
 
         public override float CastTime => 1f;
 
-        public override DeployableBase Create(Vector3 loc) => new Pylon(this, Caster.Player.DisplayName + "'s Pylon", "Pylon".ApplySchematicPrefix(), Caster.Player.Role, new(1f, 0.5f, 1f), loc, Quaternion.identity)
-        {
-            Owner = Caster.Player
-        };
+        public override DeployableBase Create(Vector3 loc) => new Pylon(this, Caster.Player.DisplayName + "'s Pylon", "Pylon".ApplySchematicPrefix(), Caster.Player.Role, new(1f, 0.5f, 1f), loc, Quaternion.identity);
 
         public class Pylon(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : Summon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
             public override string TypeName => "Healing Pylon";
 
-            public Timer HealDelay = new();
+            public Timer HealDelay { get; set; } = new();
 
             public override float Health => 150f;
 
@@ -60,8 +62,8 @@
 
             public override void Destroy()
             {
-                TimedGrenadeProjectile proj = TimedGrenadeProjectile.SpawnActive(Position, ItemType.GrenadeHE, null, 0f);
-                if (proj.Base is ExplosionGrenade gr)
+                TimedGrenadeProjectile? proj = TimedGrenadeProjectile.SpawnActive(Position, ItemType.GrenadeHE, null, 0f);
+                if (proj?.Base is ExplosionGrenade gr)
                 {
                     gr.ScpDamageMultiplier = 1f;
                     gr.MaxRadius = 4f;

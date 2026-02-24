@@ -10,6 +10,11 @@
 
     public class BoltOfDarkness : SpellBase
     {
+        public BoltOfDarkness(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Bolt of Darkness";
 
         public override Color BaseColor => Color.black;
@@ -20,11 +25,12 @@
 
         public override void Cast()
         {
-            _ = new Projectile(this, Caster.Player.Camera.position + Caster.Player.Camera.forward * 0.4f, Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 35f, 10f, Caster.Player);
+            new Projectile(this, Caster.Player, Caster.Player.Camera.position + (Caster.Player.Camera.forward * 0.4f), Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 35f).Init();
             PlaySound("cast");
         }
 
-        public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f, Player? owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
+        public class Projectile(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f)
+            : CasterBase.MagicProjectileBase(spell, owner, initialPosition, initialRotation, initialVelocity, lifetime)
         {
             public override string SchematicName => "BoltOfDarkness";
 
@@ -32,7 +38,7 @@
 
             public override bool UseGravity => false;
 
-            public override void Hit(Collision col, ReferenceHub player)
+            public override void Hit(Collision col, ReferenceHub? player)
             {
                 if (player)
                 {
@@ -43,12 +49,15 @@
                     Owner.SendHitMarker(2f);
                 }
 
-                Spell.PlaySound(Rigidbody.position, "hit");
+                if (Rigidbody)
+                {
+                    Spell.PlaySound(Rigidbody.position, "hit");
 
-                LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
-                toy.Color = Color.white;
-                toy.Intensity = 1f;
-                LightExplosion.Create(toy, 15f);
+                    LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
+                    toy.Color = Color.white;
+                    toy.Intensity = 1f;
+                    LightExplosion.Create(toy, 15f);
+                }
 
                 Destroy();
             }

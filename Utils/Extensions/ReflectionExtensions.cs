@@ -9,7 +9,7 @@
     {
         public static HashSet<Type> GetAllNonAbstractSubclasses<T>()
         {
-            var baseType = typeof(T);
+            Type baseType = typeof(T);
 
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly =>

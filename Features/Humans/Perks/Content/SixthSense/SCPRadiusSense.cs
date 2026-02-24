@@ -1,6 +1,7 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.SixthSense
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using LabApi.Features.Wrappers;
     using MapGeneration;
@@ -128,17 +129,23 @@
 
         public virtual float Range => 30f;
 
-        public override bool Message(out string? msg)
+        public override bool Message([NotNullWhen(true)] out string? msg)
         {
+            if (SCPMessages.Length is 0)
+            {
+                msg = null;
+                return false;
+            }
+
             if (Player.IsSCP)
             {
-                msg = SCPMessages.GetRandom(ref lastRand1);
+                msg = SCPMessages.GetRandom(ref lastRand1)!;
                 return true;
             }
 
             if (Player.Room?.Name == RoomName.Pocket)
             {
-                msg = PocketDimensionMessages.GetRandom(ref lastRand2);
+                msg = PocketDimensionMessages.GetRandom(ref lastRand2)!;
                 return true;
             }
 

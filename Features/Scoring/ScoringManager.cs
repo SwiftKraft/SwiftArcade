@@ -40,23 +40,20 @@
                 b.Disable();
         }
 
-        extension(Player p)
+        public static void AddScore(this Player p, int amount)
         {
-            public void AddScore(int amount)
-            {
-                if (p.IsDummy || string.IsNullOrWhiteSpace(p.UserId) || p.DoNotTrack)
-                    return;
+            if (p.IsDummy || string.IsNullOrWhiteSpace(p.UserId) || p.DoNotTrack)
+                return;
 
-                if (!IDToName.ContainsKey(p.UserId))
-                    IDToName.Add(p.UserId, p.Nickname);
-                else if (p.Nickname != IDToName[p.UserId])
-                    IDToName[p.UserId] = p.Nickname;
+            if (!IDToName.ContainsKey(p.UserId))
+                IDToName.Add(p.UserId, p.Nickname);
+            else if (p.Nickname != IDToName[p.UserId])
+                IDToName[p.UserId] = p.Nickname;
 
-                if (!Scores.TryAdd(p.UserId, amount))
-                    Scores[p.UserId] += amount;
-            }
-
-            public int GetScore() => Scores.ContainsKey(p.UserId) ? Scores[p.UserId] : 0;
+            if (!Scores.TryAdd(p.UserId, amount))
+                Scores[p.UserId] += amount;
         }
+
+        public static int GetScore(this Player p) => Scores.ContainsKey(p.UserId) ? Scores[p.UserId] : 0;
     }
 }

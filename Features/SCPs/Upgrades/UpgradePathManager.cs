@@ -41,11 +41,8 @@
             }
         }
 
-        extension(RoleTypeId role)
-        {
-            public UpgradePathAttribute? GetRandomUpgradePath() => RegisteredUpgrades.Where(t => t.Roles.Contains(role)).ToArray().GetWeightedRandom();
+        public static UpgradePathAttribute? GetRandomUpgradePath(this RoleTypeId role) => RegisteredUpgrades.Where(t => t.Roles.Contains(role)).ToArray().GetWeightedRandom();
 
-            public UpgradePathAttribute? GetRandomUpgradePath(ICollection<UpgradePathAttribute> noRep) => RegisteredUpgrades.Where(t => t.Roles.Contains(role) && !noRep.Contains(t)).ToArray().GetWeightedRandom();
-        }
+        public static UpgradePathAttribute? GetRandomUpgradePath(this RoleTypeId role, ICollection<UpgradePathAttribute> noRep) => RegisteredUpgrades.Where(t => t.Roles.Contains(role) && !noRep.Contains(t)).ToArray().GetWeightedRandom();
     }
 }

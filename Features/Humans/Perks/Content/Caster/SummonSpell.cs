@@ -6,6 +6,11 @@
 
     public abstract class SummonSpell : SpellBase
     {
+        protected SummonSpell(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public virtual int Limit => 1;
 
         protected List<DeployableBase> SpawnedDeployables { get; } = [];

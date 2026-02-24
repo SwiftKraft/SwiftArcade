@@ -13,6 +13,11 @@
 
     public class SummonAltar : SummonSpell
     {
+        public SummonAltar(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Summon Altar";
 
         public override Color BaseColor => new(0.5f, 0.05f, 0.05f);
@@ -21,20 +26,26 @@
 
         public override float CastTime => 3f;
 
-        public override DeployableBase Create(Vector3 loc) => new Altar(this, Caster.Player.DisplayName + "'s Altar", "Altar".ApplySchematicPrefix(), Caster.Player.Role, new Vector3(1f, 0.25f, 1f), loc, Quaternion.identity)
-        {
-            Owner = Caster.Player
-        };
+        public override DeployableBase Create(Vector3 loc) => new Altar(
+            this,
+            Caster.Player.DisplayName + "'s Altar",
+            "Altar".ApplySchematicPrefix(),
+            Caster.Player.Role,
+            new Vector3(1f, 0.25f, 1f),
+            loc,
+            Quaternion.identity);
 
         public class Altar(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : Summon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
-            public Timer SpawnTimer = new(10f);
-
-            public int Limit = 3;
-            public float Range = 3f;
-            public float MaxHeight = 2f;
-
             private readonly List<Ghoul> spawned = [];
+
+            public Timer SpawnTimer { get; set; } = new(10f);
+
+            public int Limit { get; set; } = 3;
+
+            public float Range { get; set; } = 3f;
+
+            public float MaxHeight { get; set; } = 2f;
 
             public override float Health => 100f;
 
@@ -57,26 +68,26 @@
 
             public bool Spawn()
             {
-                Vector3 horizontalPos = Random.insideUnitSphere * Range + Position;
-                horizontalPos.y = Position.y + MaxHeight / 2f;
+                Vector3 horizontalPos = (Random.insideUnitSphere * Range) + Position;
+                horizontalPos.y = Position.y + (MaxHeight / 2f);
 
                 if (Physics.Raycast(horizontalPos, Vector3.down, out RaycastHit hit, MaxHeight, LayerMask.GetMask("Default"), QueryTriggerInteraction.Ignore))
                 {
                     Vector3 spawnPos = hit.point + Vector3.up;
-                    Ghoul summon = spawned.Count > 0 && spawned.Count >= Limit ? spawned[0] : new(Spell, Owner.DisplayName + "'s Ghoul", "Ghoul".ApplySchematicPrefix(), Dummy.Role, new Vector3(0.5f, 0.5f, 0.5f), spawnPos, Quaternion.identity) { Owner = Owner };
+                    Ghoul summon = spawned.Count > 0 && spawned.Count >= Limit ? spawned[0] : new Ghoul(this, Spell, Owner.DisplayName + "'s Ghoul", "Ghoul".ApplySchematicPrefix(), Dummy.Role, new Vector3(0.5f, 0.5f, 0.5f), spawnPos, Quaternion.identity) { Owner = Owner };
                     spawned.Remove(summon);
                     spawned.Add(summon);
                     summon.Position = spawnPos;
-                    summon.Parent = this;
                     return true;
                 }
 
                 return false;
             }
 
-            public class Ghoul(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
+            public class Ghoul(Altar parent, SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation)
+                : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
             {
-                public Altar Parent { get; set; }
+                public Altar Parent { get; } = parent;
 
                 public override float Range => 7f;
 
@@ -89,7 +100,7 @@
                 public override void Attack(Player target)
                 {
                     Vector3 direction = (target.Camera.position - Dummy.Camera.position).normalized;
-                    new Projectile(Spell, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 15f, 5f, Dummy);
+                    new Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 15f, 5f).Init();
                 }
 
                 public override void Destroy()
@@ -98,7 +109,8 @@
                     Parent.spawned.Remove(this);
                 }
 
-                public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
+                public class Projectile(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10)
+                    : CasterBase.MagicProjectileBase(spell, owner, initialPosition, initialRotation, initialVelocity, lifetime)
                 {
                     public override bool UseGravity => false;
 
@@ -109,15 +121,15 @@
                     public override void Init()
                     {
                         base.Init();
-                        Collider.material = new PhysicsMaterial() { bounciness = 1f, bounceCombine = PhysicsMaterialCombine.Maximum, dynamicFriction = 0f, staticFriction = 0f, frictionCombine = PhysicsMaterialCombine.Multiply };
+                        Collider?.material = new PhysicsMaterial { bounciness = 1f, bounceCombine = PhysicsMaterialCombine.Maximum, dynamicFriction = 0f, staticFriction = 0f, frictionCombine = PhysicsMaterialCombine.Multiply };
                     }
 
-                    public override void Hit(Collision col, ReferenceHub hit)
+                    public override void Hit(Collision col, ReferenceHub? hit)
                     {
-                        if (hit != null)
+                        if (hit)
                         {
                             hit.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, 3f * (hit.IsSCP() ? 2f : 1f), 50, ExplosionType.Disruptor));
-                            Owner?.SendHitMarker(0.5f);
+                            Owner.SendHitMarker(0.5f);
                         }
                     }
                 }

@@ -9,6 +9,11 @@
 
     public class OrbOfNature : SpellBase
     {
+        public OrbOfNature(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Orb of Nature";
 
         public override Color BaseColor => Color.yellow;
@@ -19,11 +24,12 @@
 
         public override void Cast()
         {
-            new Projectile(this, Caster.Player.Camera.position + Caster.Player.Camera.forward * 0.4f, Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 25f, 10f, Caster.Player);
+            new Projectile(this, Caster.Player, Caster.Player.Camera.position + (Caster.Player.Camera.forward * 0.4f), Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 25f).Init();
             PlaySound("cast");
         }
 
-        public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
+        public class Projectile(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f)
+            : CasterBase.MagicProjectileBase(spell, owner, initialPosition, initialRotation, initialVelocity, lifetime)
         {
             public override string SchematicName => "OrbOfNature";
 
@@ -31,9 +37,9 @@
 
             public override float CollisionRadius => 0.1f;
 
-            public override void Hit(Collision col, ReferenceHub player)
+            public override void Hit(Collision col, ReferenceHub? player)
             {
-                if (player != null)
+                if (player)
                 {
                     float damage = 85f;
                     if (player.GetFaction() != Owner.Faction)
@@ -43,12 +49,16 @@
                     Owner?.SendHitMarker(1.5f);
                 }
 
-                LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
-                toy.Intensity = 100f;
-                toy.Color = Color.green;
-                toy.ShadowType = LightShadows.Hard;
-                toy.Range = 30f;
-                LightExplosion.Create(toy, 100f);
+                if (Rigidbody)
+                {
+                    LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
+                    toy.Intensity = 100f;
+                    toy.Color = Color.green;
+                    toy.ShadowType = LightShadows.Hard;
+                    toy.Range = 30f;
+                    LightExplosion.Create(toy, 100f);
+                }
+
                 Destroy();
             }
         }

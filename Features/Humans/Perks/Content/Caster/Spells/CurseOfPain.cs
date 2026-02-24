@@ -10,6 +10,11 @@
     {
         public static readonly LayerMask CastMask = LayerMask.GetMask("Default", "Door", "Glass", "Hitbox");
 
+        public CurseOfPain(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Curse of Pain";
 
         public override Color BaseColor => new(0.5f, 0f, 0f);
@@ -45,10 +50,10 @@
 
             RaycastHit? validHit = null;
 
-            foreach (var hit in hits)
+            foreach (RaycastHit hit in hits)
             {
                 Transform t = hit.transform;
-                if (t == Caster.Player.GameObject.transform || t.IsChildOf(Caster.Player.GameObject.transform))
+                if (t == Caster.Player.GameObject?.transform || t.IsChildOf(Caster.Player.GameObject?.transform))
                     continue;
 
                 validHit = hit;
@@ -58,27 +63,28 @@
             if (!validHit.HasValue)
                 return;
 
-            var _hit = validHit.Value;
+            RaycastHit hit1 = validHit.Value;
 
-            if (_hit.collider.transform.TryGetComponentInParent(out ReferenceHub hub) && hub != Caster.Player.ReferenceHub && hub.GetFaction() != Caster.Player.Faction)
+            if (hit1.collider.transform.TryGetComponentInParent(out ReferenceHub hub) && hub != Caster.Player.ReferenceHub && hub.GetFaction() != Caster.Player.Faction)
             {
-                Player.Get(hub)?.AddCustomEffect(new Effect(10f, this));
+                Player.Get(hub).AddCustomEffect(new Effect(10f, this));
                 PlaySound(hub.transform.position, "curse");
                 Caster.Player.SendHitMarker(0.5f);
             }
         }
 
-        public class Effect(float duration) : CustomEffectBase(duration)
+        public class Effect : CustomEffectBase
         {
-            private LightSourceToy light;
+            private LightSourceToy? light;
+
+            public Effect(float duration, CurseOfPain spell)
+                : base(duration) => ParentSpell = spell;
 
             public override int StackCount => 1;
 
-            public readonly CurseOfPain ParentSpell;
+            public CurseOfPain ParentSpell { get; }
 
-            public readonly Timer Ticker = new(0.5f, false);
-
-            public Effect(float duration, CurseOfPain spell) : this(duration) => ParentSpell = spell;
+            public Timer Ticker { get; } = new(0.5f, false);
 
             public override void Add()
             {
@@ -115,7 +121,7 @@
                 if (light != null)
                 {
                     light.Position = Parent.Player.Position;
-                    light.Intensity = Mathf.Sin(Time.time * 4f) * 2f + 3f;
+                    light.Intensity = (Mathf.Sin(Time.time * 4f) * 2f) + 3f;
                 }
             }
         }

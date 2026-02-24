@@ -13,6 +13,13 @@
 
     public class MagicMissile : SpellBase
     {
+        private CoroutineHandle coroutine;
+
+        public MagicMissile(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Magic Missile";
 
         public override Color BaseColor => Color.magenta;
@@ -20,8 +27,6 @@
         public override int RankIndex => 2;
 
         public override float CastTime => 0.5f;
-
-        private CoroutineHandle coroutine;
 
         public override void Cast()
         {
@@ -47,7 +52,16 @@
             {
                 Quaternion rotation = Quaternion.Euler(0f, 10f * i, 0f);
                 Vector3 direction = rotation * Caster.Player.Camera.forward;
-                colliders.Add(new Projectile(this, Caster.Player.Camera.position + direction * 0.3f, Quaternion.LookRotation(direction), direction * 13f, 10f, Caster.Player).Collider);
+
+                Projectile projectile = new(this, Caster.Player, Caster.Player.Camera.position + (direction * 0.3f), Quaternion.LookRotation(direction), direction * 13f);
+                projectile.Init();
+                if (!projectile.Collider)
+                {
+                    LabApi.Features.Console.Logger.Error("Failed to create thorn shot projectile, collider is null!");
+                    continue;
+                }
+
+                colliders.Add(projectile.Collider);
             }
 
             for (int i = 0; i < colliders.Count; i++)
@@ -59,15 +73,15 @@
             PlaySound("cast");
         }
 
-        public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
+        public class Projectile(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f)
+            : CasterBase.MagicProjectileBase(spell, owner, initialPosition, initialRotation, initialVelocity, lifetime)
         {
-            public override string SchematicName => "MagicMissile";
-
-            private const float homingRangeSqr = 25f;
+            private const float HomingRangeSqr = 25f;
             private float initialSpeed;
-            private Player homing;
+            private Player? homing;
+            private List<Player> targets = null!;
 
-            private List<Player> targets;
+            public override string SchematicName => "MagicMissile";
 
             public override bool UseGravity => false;
 
@@ -77,22 +91,25 @@
             {
                 base.Init();
                 initialSpeed = InitialVelocity.magnitude;
-                targets = [.. Player.List.Where(p => p != Owner && p.IsAlive && (Owner == null || p.Faction != Owner.Faction))];
+                targets = Player.List.Where(p => p != Owner && p.IsAlive && p.Faction != Owner.Faction).ToList();
             }
 
             public override void Tick()
             {
                 base.Tick();
 
+                if (!Rigidbody)
+                    return;
+
                 if (homing == null)
                 {
-                    Player targetHoming = null;
+                    Player? targetHoming = null;
                     float dist = float.MaxValue;
                     foreach (Player p in targets)
                     {
                         float distSqr = (p.Position - Rigidbody.position).sqrMagnitude;
 
-                        if (distSqr > homingRangeSqr)
+                        if (distSqr > HomingRangeSqr)
                             continue;
 
                         if (dist > distSqr)
@@ -119,9 +136,9 @@
                 }
             }
 
-            public override void Hit(Collision col, ReferenceHub player)
+            public override void Hit(Collision col, ReferenceHub? player)
             {
-                if (player != null)
+                if (player)
                 {
                     player.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, 15f * (player.IsSCP() ? 2.25f : 1f), 100, ExplosionType.Disruptor));
 
@@ -130,13 +147,17 @@
                         role.FpcModule.Motor.JumpController.ForceJump(1f);
                     }
 
-                    Owner?.SendHitMarker();
+                    Owner.SendHitMarker();
                 }
 
-                LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
-                toy.Color = Color.magenta;
-                toy.Intensity = 10f;
-                LightExplosion.Create(toy, 40f);
+                if (Rigidbody)
+                {
+                    LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
+                    toy.Color = Color.magenta;
+                    toy.Intensity = 10f;
+                    LightExplosion.Create(toy, 40f);
+                }
+
                 Destroy();
             }
         }

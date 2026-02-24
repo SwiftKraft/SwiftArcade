@@ -12,7 +12,7 @@
                 Rarity.Legendary => "#FFFF00",
                 Rarity.Mythic => "#0000FF",
                 Rarity.Secret => "#FF0000",
-                _ => "#FFFFFF"
+                _ => "#FFFFFF",
             };
     }
 }

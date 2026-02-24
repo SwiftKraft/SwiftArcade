@@ -32,25 +32,22 @@
                 Containers.Add(player, new CustomEffectContainer(player));
         }
 
-        extension(Player player)
+        public static void AddCustomEffect(this Player player, CustomEffectBase effect)
         {
-            public void AddCustomEffect(CustomEffectBase effect)
-            {
-                Register(player);
-                Containers[player].AddEffect(effect);
-            }
+            Register(player);
+            Containers[player].AddEffect(effect);
+        }
 
-            public void RemoveCustomEffect(CustomEffectBase effect)
-            {
-                if (Containers.TryGetValue(player, out CustomEffectContainer? container))
-                    container.RemoveEffect(effect);
-            }
+        public static void RemoveCustomEffect(this Player player, CustomEffectBase effect)
+        {
+            if (Containers.TryGetValue(player, out CustomEffectContainer? container))
+                container.RemoveEffect(effect);
+        }
 
-            public void ClearCustomEffects()
-            {
-                if (Containers.TryGetValue(player, out CustomEffectContainer? container))
-                    container.ClearEffects();
-            }
+        public static void ClearCustomEffects(this Player player)
+        {
+            if (Containers.TryGetValue(player, out CustomEffectContainer? container))
+                container.ClearEffects();
         }
 
         private static void OnLeft(LabApi.Events.Arguments.PlayerEvents.PlayerLeftEventArgs ev)

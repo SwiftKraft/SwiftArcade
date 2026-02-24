@@ -6,7 +6,12 @@
 
     public abstract class SpellBase
     {
-        public CasterBase Caster { get; private set; }
+        public SpellBase(CasterBase caster)
+        {
+            Caster = caster;
+        }
+
+        public CasterBase Caster { get; }
 
         public abstract string Name { get; }
 
@@ -20,11 +25,10 @@
 
         public virtual string[] SoundList => ["cast", "hit"];
 
-        public virtual void Init(CasterBase caster)
+        public virtual void Init()
         {
             if (!SoundEffectManager.Disabled)
                 LoadSounds(SoundList);
-            Caster = caster;
         }
 
         public void LoadSounds(params string[] fileNames)

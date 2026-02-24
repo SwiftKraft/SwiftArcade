@@ -14,6 +14,13 @@
 
     public class FireArrow : SpellBase
     {
+        private CoroutineHandle coroutine;
+
+        public FireArrow(CasterBase caster)
+            : base(caster)
+        {
+        }
+
         public override string Name => "Fire Arrow";
 
         public override Color BaseColor => Color.red;
@@ -22,11 +29,9 @@
 
         public override float CastTime => 0.5f;
 
-        private CoroutineHandle coroutine;
-
         public override void Cast()
         {
-            new Projectile(this, Caster.Player.Camera.position, Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 20f, 10f, Caster.Player);
+            new Projectile(this, Caster.Player, Caster.Player.Camera.position, Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 20f).Init();
             PlaySound("cast");
 
             coroutine = Timing.CallPeriodically(0.42f, 0.1f, () =>
@@ -37,18 +42,19 @@
                     return;
                 }
 
-                new Projectile(this, Caster.Player.Camera.position + Caster.Player.Camera.forward * 0.4f, Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 20f, 10f, Caster.Player);
+                new Projectile(this, Caster.Player, Caster.Player.Camera.position + (Caster.Player.Camera.forward * 0.4f), Caster.Player.Camera.rotation, Caster.Player.Camera.forward * 20f).Init();
                 PlaySound("cast");
             });
         }
 
-        public class Projectile(SpellBase spell, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f, Player owner = null) : CasterBase.MagicProjectileBase(spell, initialPosition, initialRotation, initialVelocity, lifetime, owner)
+        public class Projectile(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10f)
+            : CasterBase.MagicProjectileBase(spell, owner, initialPosition, initialRotation, initialVelocity, lifetime)
         {
-            private const float homingRangeSqr = 25f;
+            private const float HomingRangeSqr = 25f;
             private float initialSpeed;
-            private Player homing;
+            private Player? homing;
 
-            private List<Player> targets;
+            private List<Player> targets = null!;
 
             public override string SchematicName => "FireArrow";
 
@@ -60,22 +66,25 @@
             {
                 base.Init();
                 initialSpeed = InitialVelocity.magnitude;
-                targets = [.. Player.List.Where(p => p != Owner && p.IsAlive && (Owner == null || p.Faction != Owner.Faction))];
+                targets = Player.List.Where(p => p != Owner && p.IsAlive && p.Faction != Owner.Faction).ToList();
             }
 
             public override void Tick()
             {
                 base.Tick();
 
+                if (!Rigidbody)
+                    return;
+
                 if (homing == null)
                 {
-                    Player targetHoming = null;
+                    Player? targetHoming = null;
                     float dist = float.MaxValue;
                     foreach (Player p in targets)
                     {
                         float distSqr = (p.Position - Rigidbody.position).sqrMagnitude;
 
-                        if (distSqr > homingRangeSqr)
+                        if (distSqr > HomingRangeSqr)
                             continue;
 
                         if (dist > distSqr)
@@ -102,9 +111,9 @@
                 }
             }
 
-            public override void Hit(Collision col, ReferenceHub player)
+            public override void Hit(Collision col, ReferenceHub? player)
             {
-                if (player != null)
+                if (player)
                 {
                     player.playerStats.DealDamage(new ExplosionDamageHandler(new Footprint(Owner.ReferenceHub), InitialVelocity, 40f * (player.IsSCP() ? 3f : 1f), 100, ExplosionType.Disruptor));
                     player.playerEffectsController.EnableEffect<Burned>(3f, true);
@@ -117,10 +126,14 @@
                     Owner?.SendHitMarker();
                 }
 
-                LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
-                toy.Color = Color.red;
-                toy.Intensity = 10f;
-                LightExplosion.Create(toy, 40f);
+                if (Rigidbody)
+                {
+                    LightSourceToy toy = LightSourceToy.Create(Rigidbody.position, null, false);
+                    toy.Color = Color.red;
+                    toy.Intensity = 10f;
+                    LightExplosion.Create(toy, 40f);
+                }
+
                 Destroy();
             }
         }
