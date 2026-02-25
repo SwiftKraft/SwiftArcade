@@ -1,5 +1,7 @@
 ﻿namespace SwiftArcadeMode
 {
+    using System;
+
     public class Config
     {
         public bool AllowBaseContent { get; set; } = true;
@@ -18,7 +20,10 @@
 
         public bool Replace096 { get; set; } = true;
 
+        [Obsolete("Will be removed in future versions in favor of SchematicsDirectory")]
         public string SchematicPrefix { get; set; } = "SAM-";
+
+        public string SchematicsDirectory { get; set; } = "SAM";
 
         public float CustomGameModeChance { get; set; } = 0.25f;
 

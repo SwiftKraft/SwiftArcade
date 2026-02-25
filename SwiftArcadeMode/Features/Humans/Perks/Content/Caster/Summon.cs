@@ -10,7 +10,7 @@
     {
         public Player Owner { get; set; } = spell.Caster.Player;
 
-        public SpellBase Spell { get; private set; } = spell;
+        public SpellBase Spell { get; } = spell;
 
         public abstract float DestroyRange { get; }
 
@@ -32,11 +32,13 @@
         {
             base.Tick();
 
+            if (!Initialized)
+                return;
+
             if ((Owner.Position - Position).sqrMagnitude > DestroyRange * DestroyRange)
             {
                 Destroy();
                 Spell.Caster.SendMessage($"{Name} has been destroyed! \nYou are too far away to support its existence.");
-                return;
             }
         }
 

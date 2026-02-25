@@ -23,7 +23,7 @@
 
         public override int Limit => 2;
 
-        public override DeployableBase Create(Vector3 loc) => new Shooter(this, Caster.Player.DisplayName + "'s Thorn Shooter", "ThornShooter".ApplySchematicPrefix(), Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc) => new Shooter(this, Caster.Player.DisplayName + "'s Thorn Shooter", "ThornShooter", Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
 
         public class Shooter(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
         {

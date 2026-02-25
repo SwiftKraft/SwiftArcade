@@ -29,12 +29,14 @@
 		<Reference Include="Assembly-CSharp" HintPath="$(SCPSLREFERENCES)\Assembly-CSharp-Publicized.dll" Private="false" />
 		<Reference Include="AudioPlayerApi" HintPath="$(SCPSLREFERENCES)\AudioPlayerApi.dll" Private="false" />
 		<Reference Include="CommandSystem.Core" HintPath="$(SCPSLREFERENCES)\CommandSystem.Core.dll" Private="false" />
+		<Reference Include="NorthwoodLib" HintPath="$(SCPSLREFERENCES)\NorthwoodLib.dll" Private="false" />
 		<Reference Include="LabApi" HintPath="$(SCPSLREFERENCES)\LabApi.dll" Private="false" />
 		<Reference Include="Mirror" HintPath="$(SCPSLREFERENCES)\Mirror-Publicized.dll" Private="false" />
 		<Reference Include="mscorlib" HintPath="$(SCPSLREFERENCES)\mscorlib.dll" Private="false" />
 		<Reference Include="System" HintPath="$(SCPSLREFERENCES)\System.dll" Private="false" />
 		<Reference Include="Pooling" HintPath="$(SCPSLREFERENCES)\Pooling.dll" Private="false" />
 		<Reference Include="ProjectMER" HintPath="$(SCPSLREFERENCES)\ProjectMER.dll" Private="false" />
+		<Reference Include="HarmonyLib" HintPath="$(SCPSLREFERENCES)\0Harmony.dll" Private="false" />
 		<Reference Include="UnityEngine" HintPath="$(SCPSLREFERENCES)\UnityEngine.dll" Private="false" />
 		<Reference Include="UnityEngine.AIModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AIModule.dll" Private="false" />
 		<Reference Include="UnityEngine.AnimationModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AnimationModule.dll" Private="false" />

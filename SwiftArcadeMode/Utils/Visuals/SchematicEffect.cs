@@ -1,7 +1,7 @@
 ﻿namespace SwiftArcadeMode.Utils.Visuals
 {
-    using ProjectMER.Features;
     using ProjectMER.Features.Objects;
+    using SwiftArcadeMode.Utils.Extensions;
     using SwiftArcadeMode.Utils.Structures;
     using UnityEngine;
 
@@ -13,7 +13,7 @@
 
         public static SchematicEffect? Create(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale, float lifetime)
         {
-            SchematicObject obj = ObjectSpawner.SpawnSchematic(schematicName, position, rotation, scale);
+            SchematicObject? obj = SchematicExtensions.SpawnSchematic(schematicName, position, rotation, scale);
 
             if (!obj)
                 return null;

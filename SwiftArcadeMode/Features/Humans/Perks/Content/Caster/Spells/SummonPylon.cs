@@ -24,7 +24,7 @@
 
         public override float CastTime => 1f;
 
-        public override DeployableBase Create(Vector3 loc) => new Pylon(this, Caster.Player.DisplayName + "'s Pylon", "Pylon".ApplySchematicPrefix(), Caster.Player.Role, new(1f, 0.5f, 1f), loc, Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc) => new Pylon(this, Caster.Player.DisplayName + "'s Pylon", "Pylon", Caster.Player.Role, new(1f, 0.5f, 1f), loc, Quaternion.identity);
 
         public class Pylon(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : Summon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
@@ -49,7 +49,7 @@
                 if (HealDelay.Ended)
                 {
                     HealDelay.Reset();
-                    SchematicEffect.Create("PylonVfx".ApplySchematicPrefix(), Position, Rotation, Vector3.one, 0.5f);
+                    SchematicEffect.Create("PylonVfx", Position, Rotation, Vector3.one, 0.5f);
                     foreach (Player p in Player.List)
                     {
                         if (p == Dummy || p.Faction != Owner.Faction || !p.IsAlive || (p.Position - Dummy.Position).sqrMagnitude > 16f)

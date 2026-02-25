@@ -29,7 +29,7 @@
         public override DeployableBase Create(Vector3 loc) => new Altar(
             this,
             Caster.Player.DisplayName + "'s Altar",
-            "Altar".ApplySchematicPrefix(),
+            "Altar",
             Caster.Player.Role,
             new Vector3(1f, 0.25f, 1f),
             loc,
@@ -74,7 +74,7 @@
                 if (Physics.Raycast(horizontalPos, Vector3.down, out RaycastHit hit, MaxHeight, LayerMask.GetMask("Default"), QueryTriggerInteraction.Ignore))
                 {
                     Vector3 spawnPos = hit.point + Vector3.up;
-                    Ghoul summon = spawned.Count > 0 && spawned.Count >= Limit ? spawned[0] : new Ghoul(this, Spell, Owner.DisplayName + "'s Ghoul", "Ghoul".ApplySchematicPrefix(), Dummy.Role, new Vector3(0.5f, 0.5f, 0.5f), spawnPos, Quaternion.identity) { Owner = Owner };
+                    Ghoul summon = spawned.Count > 0 && spawned.Count >= Limit ? spawned[0] : new Ghoul(this, Spell, Owner.DisplayName + "'s Ghoul", "Ghoul", Dummy.Role, new Vector3(0.5f, 0.5f, 0.5f), spawnPos, Quaternion.identity) { Owner = Owner };
                     spawned.Remove(summon);
                     spawned.Add(summon);
                     summon.Position = spawnPos;

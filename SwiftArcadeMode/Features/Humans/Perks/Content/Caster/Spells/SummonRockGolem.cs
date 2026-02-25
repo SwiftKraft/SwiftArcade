@@ -24,7 +24,7 @@
 
         public override float CastTime => 1f;
 
-        public override DeployableBase Create(Vector3 loc) => new Golem(this, Caster.Player.DisplayName + "'s Rock Golem", "RockGolem".ApplySchematicPrefix(), Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc) => new Golem(this, Caster.Player.DisplayName + "'s Rock Golem", "RockGolem", Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
 
         public class Golem(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
         {
@@ -84,7 +84,7 @@
 
                     if (Rigidbody)
                     {
-                        SchematicEffect.Create("RockHit".ApplySchematicPrefix(), Rigidbody.position, Rigidbody.rotation, Vector3.one, 0.4f);
+                        SchematicEffect.Create("RockHit", Rigidbody.position, Rigidbody.rotation, Vector3.one, 0.4f);
                         Spell.PlaySound(Rigidbody.position, "hit");
                     }
 

@@ -5,6 +5,7 @@
     using System.Linq;
     using AdminToys;
     using CustomPlayerEffects;
+    using HarmonyLib;
     using LabApi.Events.Handlers;
     using LabApi.Features;
     using LabApi.Loader.Features.Plugins;
@@ -26,6 +27,8 @@
 
     public class Core : Plugin<Config>
     {
+        public static Harmony Harmony { get; private set; } = null!;
+
         public static Core Instance { get; private set; } = null!;
 
         public static Config CoreConfig { get; private set; } = null!;
@@ -53,6 +56,9 @@
             CoreConfig = Config;
 
             Logger.Info($"Arcade Mode {Version} by SwiftKraft: Loaded!");
+
+            Harmony = new Harmony(Name);
+            Harmony.PatchAll();
 
             SaveManager.GeneralDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SCP Secret Laboratory", "Swift Arcade Mode");
             SaveManager.SaveDirectory = Path.Combine(SaveManager.GeneralDirectory, "Scoring");
@@ -96,6 +102,8 @@
 
         public override void Disable()
         {
+            Harmony.UnpatchAll(Harmony.Id);
+
             StaticUnityMethods.OnFixedUpdate -= FixedUpdate;
 
             PerkManager.Disable();

@@ -1,5 +1,6 @@
 ﻿namespace SwiftArcadeMode.Utils.Sounds
 {
+    using System.Collections.Generic;
     using System.IO;
     using LabApi.Features.Wrappers;
     using UnityEngine;
@@ -7,6 +8,8 @@
 
     public static class SoundEffectManager
     {
+        public static HashSet<string> PreviousIds { get; } = [];
+
         public static bool DebugLogs { get; set; }
 
         public static bool Disabled { get; private set; }
@@ -25,15 +28,20 @@
                 return;
 
             string path = Path.Combine(BasePath, Path.Combine(folders));
-            bool success = AudioClipStorage.LoadClip(path, id);
+            if (File.Exists(path))
+            {
+                AudioClipStorage.LoadClip(path, id);
+            }
+            else if (DebugLogs && !PreviousIds.Contains(id))
+            {
+                Logger.Error("Failed to load sound clip at \"" + path + "\", ID: " + id);
+                PreviousIds.Add(id);
+            }
 
             if (!DebugLogs)
                 return;
 
-            if (success)
-                Logger.Info("Successfully loaded sound clip at \"" + path + "\", ID: " + id);
-            else
-                Logger.Error("Failed to load sound clip at \"" + path + "\", ID: " + id);
+            Logger.Info("Successfully loaded sound clip at \"" + path + "\", ID: " + id);
         }
 
         public static void PlaySound(Player player, string id, string name = "speaker", float volume = 1f, bool loop = false, bool destroyOnEnd = true, float minDist = 5f, float maxDist = 15f)

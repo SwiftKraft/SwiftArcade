@@ -4,7 +4,6 @@
     using LabApi.Features.Wrappers;
     using PlayerRoles;
     using PlayerStatsSystem;
-    using ProjectMER.Features;
     using ProjectMER.Features.Objects;
     using SwiftArcadeMode.Utils.Extensions;
     using SwiftArcadeMode.Utils.Projectiles;
@@ -67,7 +66,7 @@
             UpdateRay();
             RayVisual.Spawn();
 
-            Schematic = ObjectSpawner.SpawnSchematic(SchematicName.ApplySchematicPrefix(), default, Quaternion.identity, Vector3.one);
+            Schematic = SchematicExtensions.SpawnSchematic(SchematicName, default, Quaternion.identity, Vector3.one);
             if (Schematic)
             {
                 Schematic.transform.SetParent(RayVisual.Transform, false);

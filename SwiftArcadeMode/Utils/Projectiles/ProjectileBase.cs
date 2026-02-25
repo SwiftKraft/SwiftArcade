@@ -72,7 +72,7 @@
 
             if (!string.IsNullOrWhiteSpace(SchematicName))
             {
-                Schematic = ObjectSpawner.SpawnSchematic(SchematicName.ApplySchematicPrefix(), default, Quaternion.identity);
+                Schematic = SchematicExtensions.SpawnSchematic(SchematicName, default, Quaternion.identity);
                 Schematic?.transform.SetParent(Parent.Transform, false);
             }
 

@@ -9,6 +9,7 @@
     using PlayerRoles;
     using ProjectMER.Features;
     using ProjectMER.Features.Objects;
+    using SwiftArcadeMode.Utils.Extensions;
     using UnityEngine;
 
     public abstract class DeployableBase
@@ -30,8 +31,9 @@
                 Position = position;
                 Rotation = rotation;
                 Initialize();
+                Initialized = true;
             });
-            Schematic = ObjectSpawner.SpawnSchematic(schematicName, position, rotation);
+            Schematic = SchematicExtensions.SpawnSchematic(schematicName, position, rotation);
             DeployableManager.AllDeployables.Add(this);
             Scp096Events.AddingTarget += On096AddingTarget;
             Scp173Events.AddingObserver += On173AddingObserver;
@@ -65,11 +67,13 @@
             }
         }
 
-        public bool Destroyed { get; private set; } = false;
+        public bool Initialized { get; private set; }
 
-        public SchematicObject Schematic { get; set; }
+        public bool Destroyed { get; private set; }
 
-        public AnimationController Animator => Schematic.AnimationController;
+        public SchematicObject? Schematic { get; set; }
+
+        public AnimationController? Animator => Schematic?.AnimationController;
 
         public virtual void Initialize()
         {
@@ -95,7 +99,7 @@
             DeployableManager.AllDeployables.Remove(this);
             if (Dummy.GameObject)
                 NetworkServer.Destroy(Dummy.GameObject);
-            if (Schematic != null && Schematic.gameObject != null)
+            if (Schematic && Schematic.gameObject)
                 Schematic.Destroy();
             Scp096Events.AddingTarget -= On096AddingTarget;
             Scp173Events.AddingObserver -= On173AddingObserver;
