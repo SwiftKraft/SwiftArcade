@@ -1,9 +1,7 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
     using LabApi.Features.Wrappers;
-    using PlayerRoles;
     using SwiftArcadeMode.Utils.Deployable;
-    using SwiftArcadeMode.Utils.Extensions;
     using UnityEngine;
 
     public class SummonArcaneGolem : SummonSpell
@@ -23,13 +21,18 @@
 
         public override int Limit => 1;
 
-        public override DeployableBase Create(Vector3 loc) => new Golem(this, Caster.Player.DisplayName + "'s Golem", "ArcaneGolem", Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc)
+        {
+            Golem golem = new(this, Caster.Player.DisplayName + "'s Golem", "ArcaneGolem", loc, Quaternion.identity);
+            golem.Initialize();
+            return golem;
+        }
 
-        public class Golem(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
+        public class Golem(SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, position, rotation)
         {
             public override string TypeName => "Arcane Golem";
 
-            public override float Health => 70f;
+            public override float MaxHealth => 70f;
 
             public override float Range => 10f;
 
@@ -39,8 +42,8 @@
 
             public override void Attack(Player target)
             {
-                Vector3 direction = (target.Position - Dummy.Camera.position).normalized;
-                new MagicMissile.Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 9f, 4f).Init();
+                Vector3 direction = (target.Position - Head.Transform.position).normalized;
+                new MagicMissile.Projectile(Spell, Owner, Head.Transform.position, Quaternion.LookRotation(direction), direction * 9f, 4f).Init();
             }
         }
     }

@@ -207,7 +207,12 @@
             }
         }
 
-        private static void OnChangedSpectator(PlayerChangedSpectatorEventArgs ev) => ev.Player.UpdateSpectatorDisplay(ev.NewTarget);
+        private static void OnChangedSpectator(PlayerChangedSpectatorEventArgs ev)
+        {
+            // NW LIES
+            if (ev.NewTarget != null)
+                ev.Player.UpdateSpectatorDisplay(ev.NewTarget);
+        }
 
         private static void OnRoundRestarted() => Inventories.Clear();
 

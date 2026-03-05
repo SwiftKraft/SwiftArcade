@@ -6,7 +6,6 @@
     using PlayerRoles;
     using PlayerStatsSystem;
     using SwiftArcadeMode.Utils.Deployable;
-    using SwiftArcadeMode.Utils.Extensions;
     using SwiftArcadeMode.Utils.Structures;
     using UnityEngine;
     using Random = UnityEngine.Random;
@@ -26,16 +25,15 @@
 
         public override float CastTime => 3f;
 
-        public override DeployableBase Create(Vector3 loc) => new Altar(
-            this,
-            Caster.Player.DisplayName + "'s Altar",
-            "Altar",
-            Caster.Player.Role,
-            new Vector3(1f, 0.25f, 1f),
-            loc,
-            Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc)
+        {
+            Altar altar = new(this, Caster.Player.DisplayName + "'s Altar", "Altar", loc, Quaternion.identity);
+            altar.Initialize();
+            return altar;
+        }
 
-        public class Altar(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : Summon(spell, name, schematicName, role, colliderScale, position, rotation)
+        public class Altar(SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation)
+            : Summon(spell, name, schematicName, position, rotation)
         {
             private readonly List<Ghoul> spawned = [];
 
@@ -47,7 +45,7 @@
 
             public float MaxHeight { get; set; } = 2f;
 
-            public override float Health => 100f;
+            public override float MaxHealth => 100f;
 
             public override float DestroyRange => 20f;
 
@@ -74,7 +72,15 @@
                 if (Physics.Raycast(horizontalPos, Vector3.down, out RaycastHit hit, MaxHeight, LayerMask.GetMask("Default"), QueryTriggerInteraction.Ignore))
                 {
                     Vector3 spawnPos = hit.point + Vector3.up;
-                    Ghoul summon = spawned.Count > 0 && spawned.Count >= Limit ? spawned[0] : new Ghoul(this, Spell, Owner.DisplayName + "'s Ghoul", "Ghoul", Dummy.Role, new Vector3(0.5f, 0.5f, 0.5f), spawnPos, Quaternion.identity) { Owner = Owner };
+                    Ghoul summon;
+                    if (spawned.Count > 0 && spawned.Count >= Limit)
+                        summon = spawned[0];
+                    else
+                    {
+                        summon = new Ghoul(this, Spell, Owner.DisplayName + "'s Ghoul", "Ghoul", spawnPos, Quaternion.identity);
+                        summon.Initialize();
+                    }
+
                     spawned.Remove(summon);
                     spawned.Add(summon);
                     summon.Position = spawnPos;
@@ -84,8 +90,8 @@
                 return false;
             }
 
-            public class Ghoul(Altar parent, SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation)
-                : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
+            public class Ghoul(Altar parent, SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation)
+                : TurretSummon(spell, name, schematicName, position, rotation)
             {
                 public Altar Parent { get; } = parent;
 
@@ -93,14 +99,14 @@
 
                 public override float Delay => 1f;
 
-                public override float Health => 25f;
+                public override float MaxHealth => 25f;
 
                 public override float DestroyRange => 20f;
 
                 public override void Attack(Player target)
                 {
-                    Vector3 direction = (target.Camera.position - Dummy.Camera.position).normalized;
-                    new Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 15f, 5f).Init();
+                    Vector3 direction = (target.Camera.position - Head.Transform.position).normalized;
+                    new Projectile(Spell, Owner, Head.Transform.position, Quaternion.LookRotation(direction), direction * 15f, 5f).Init();
                 }
 
                 public override void Destroy()

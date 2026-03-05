@@ -4,7 +4,6 @@
     using LabApi.Features.Wrappers;
     using PlayerRoles;
     using SwiftArcadeMode.Utils.Deployable;
-    using SwiftArcadeMode.Utils.Extensions;
     using SwiftArcadeMode.Utils.Structures;
     using SwiftArcadeMode.Utils.Visuals;
     using UnityEngine;
@@ -24,15 +23,21 @@
 
         public override float CastTime => 1f;
 
-        public override DeployableBase Create(Vector3 loc) => new Pylon(this, Caster.Player.DisplayName + "'s Pylon", "Pylon", Caster.Player.Role, new(1f, 0.5f, 1f), loc, Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc)
+        {
+            Pylon pylon = new(this, Caster.Player.DisplayName + "'s Pylon", "Pylon", loc, Quaternion.identity);
+            pylon.Initialize();
+            return pylon;
+        }
 
-        public class Pylon(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : Summon(spell, name, schematicName, role, colliderScale, position, rotation)
+        public class Pylon(SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation)
+            : Summon(spell, name, schematicName, position, rotation)
         {
             public override string TypeName => "Healing Pylon";
 
             public Timer HealDelay { get; set; } = new();
 
-            public override float Health => 150f;
+            public override float MaxHealth => 150f;
 
             public override float DestroyRange => 25f;
 
@@ -52,7 +57,7 @@
                     SchematicEffect.Create("PylonVfx", Position, Rotation, Vector3.one, 0.5f);
                     foreach (Player p in Player.List)
                     {
-                        if (p == Dummy || p.Faction != Owner.Faction || !p.IsAlive || (p.Position - Dummy.Position).sqrMagnitude > 16f)
+                        if (p.Faction != Footprint.Role.GetFaction() || !p.IsAlive || (p.Position - Position).sqrMagnitude > 16f)
                             continue;
 
                         p.Heal(10f);

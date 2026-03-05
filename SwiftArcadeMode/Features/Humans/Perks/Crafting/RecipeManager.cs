@@ -1,11 +1,8 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Crafting
 {
-    using System;
     using System.Collections.Generic;
-    using Hints;
     using LabApi.Features.Wrappers;
     using SwiftArcadeMode.Features.Humans.Perks.Content;
-    using SwiftArcadeMode.Utils.Interfaces;
 
     public static class RecipeManager
     {

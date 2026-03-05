@@ -1,28 +1,27 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
 {
+    using Footprinting;
     using LabApi.Events.Handlers;
     using LabApi.Features.Wrappers;
-    using PlayerRoles;
     using SwiftArcadeMode.Utils.Deployable;
     using UnityEngine;
 
-    public abstract class Summon(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : DeployableBase(name, schematicName, role, colliderScale, position, rotation)
+    public abstract class Summon(SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation)
+        : DeployableBase(name, schematicName, position, rotation)
     {
-        public Player Owner { get; set; } = spell.Caster.Player;
+        public Player Owner { get; } = spell.Caster.Player;
+
+        public Footprint Footprint { get; } = new(spell.Caster.Player.ReferenceHub);
 
         public SpellBase Spell { get; } = spell;
 
         public abstract float DestroyRange { get; }
-
-        public abstract float Health { get; }
 
         public virtual bool DieOnOwnerDeath => true;
 
         public override void Initialize()
         {
             base.Initialize();
-            Dummy.MaxHealth = Health;
-            Dummy.Health = Health;
 
             if (DieOnOwnerDeath)
                 PlayerEvents.Death += OnOwnerDied;
@@ -31,9 +30,6 @@
         public override void Tick()
         {
             base.Tick();
-
-            if (!Initialized)
-                return;
 
             if ((Owner.Position - Position).sqrMagnitude > DestroyRange * DestroyRange)
             {

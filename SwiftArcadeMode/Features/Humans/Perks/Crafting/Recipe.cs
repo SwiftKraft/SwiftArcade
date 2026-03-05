@@ -1,11 +1,9 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Crafting
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Hints;
     using LabApi.Features.Wrappers;
-    using SwiftArcadeMode.Features.Humans.Perks.Content;
     using SwiftArcadeMode.Utils.Interfaces;
 
     public class Recipe(int weight, string message, Type result, params Type[] perks) : IWeight

@@ -2,7 +2,6 @@
 {
     using LabApi.Features.Wrappers;
     using PlayerRoles.FirstPersonControl;
-    using ProjectMER.Features;
     using ProjectMER.Features.Objects;
     using SwiftArcadeMode.Utils.Extensions;
     using SwiftArcadeMode.Utils.Structures;

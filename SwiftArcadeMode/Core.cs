@@ -58,7 +58,15 @@
             Logger.Info($"Arcade Mode {Version} by SwiftKraft: Loaded!");
 
             Harmony = new Harmony(Name);
-            Harmony.PatchAll();
+
+            try
+            {
+                Harmony.PatchAll();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to patch target methods while enabling SwiftArcadeMode. Exception:\n{ex}");
+            }
 
             SaveManager.GeneralDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SCP Secret Laboratory", "Swift Arcade Mode");
             SaveManager.SaveDirectory = Path.Combine(SaveManager.GeneralDirectory, "Scoring");

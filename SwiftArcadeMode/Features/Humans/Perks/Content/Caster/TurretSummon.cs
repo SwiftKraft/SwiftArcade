@@ -3,12 +3,14 @@
     using System.Linq;
     using LabApi.Features.Wrappers;
     using PlayerRoles;
+    using PlayerRoles.FirstPersonControl;
     using SwiftArcadeMode.Utils.Structures;
     using UnityEngine;
 
-    public abstract class TurretSummon(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : Summon(spell, name, schematicName, role, colliderScale, position, rotation)
+    public abstract class TurretSummon(SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation)
+        : Summon(spell, name, schematicName, position, rotation)
     {
-        public static readonly LayerMask LineOfSightMask = LayerMask.GetMask("Default", "Door", "Glass");
+        public static readonly LayerMask LineOfSightMask = FpcStateProcessor.Mask;
 
         public Timer Timer { get; } = new();
 
@@ -32,7 +34,7 @@
                 return;
 
             Timer.Reset(Delay);
-            Player[] targets = Player.GetAll().Where(p => p.IsAlive && p.Faction != Dummy.Faction && !p.IsDisarmed && (Position - p.Position).sqrMagnitude <= Range * Range && CheckLOS(p.Camera.position)).ToArray();
+            Player[] targets = Player.GetAll().Where(p => p.IsAlive && p.Faction != Footprint.Role.GetFaction() && !p.IsDisarmed && (Position - p.Position).sqrMagnitude <= Range * Range && CheckLOS(p.Camera.position)).ToArray();
             if (targets.Length is 0)
                 return;
 
@@ -51,6 +53,6 @@
 
         public abstract void Attack(Player target);
 
-        public bool CheckLOS(Vector3 pos) => !Physics.Linecast(Dummy.Camera.position, pos, LineOfSightMask, QueryTriggerInteraction.Ignore);
+        public bool CheckLOS(Vector3 pos) => !Physics.Linecast(Head.Transform.position, pos, out RaycastHit hitInfo, LineOfSightMask, QueryTriggerInteraction.Ignore);
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster.Spells
 {
     using LabApi.Features.Wrappers;
-    using PlayerRoles;
     using SwiftArcadeMode.Utils.Deployable;
-    using SwiftArcadeMode.Utils.Extensions;
     using UnityEngine;
 
     public class SummonThornShooter : SummonSpell
@@ -23,13 +21,19 @@
 
         public override int Limit => 2;
 
-        public override DeployableBase Create(Vector3 loc) => new Shooter(this, Caster.Player.DisplayName + "'s Thorn Shooter", "ThornShooter", Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc)
+        {
+            Shooter shooter = new(this, Caster.Player.DisplayName + "'s Thorn Shooter", "ThornShooter", loc, Quaternion.identity);
+            shooter.Initialize();
+            return shooter;
+        }
 
-        public class Shooter(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
+        public class Shooter(SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation)
+            : TurretSummon(spell, name, schematicName, position, rotation)
         {
             public override string TypeName => "Thorn Shooter";
 
-            public override float Health => 50f;
+            public override float MaxHealth => 50f;
 
             public override float Range => 5f;
 
@@ -39,8 +43,8 @@
 
             public override void Attack(Player target)
             {
-                Vector3 direction = Quaternion.Euler(Random.insideUnitSphere * 5f) * (target.Camera.position - Dummy.Camera.position).normalized;
-                new ThornShot.Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 20f, 4f).Init();
+                Vector3 direction = Quaternion.Euler(Random.insideUnitSphere * 5f) * (target.Camera.position - Head.Transform.position).normalized;
+                new ThornShot.Projectile(Spell, Owner, Head.Transform.position, Quaternion.LookRotation(direction), direction * 20f, 4f).Init();
             }
         }
     }

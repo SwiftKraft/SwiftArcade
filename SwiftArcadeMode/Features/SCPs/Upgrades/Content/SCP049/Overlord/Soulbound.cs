@@ -1,6 +1,5 @@
 ﻿namespace SwiftArcadeMode.Features.SCPs.Upgrades.Content.SCP049.Overlord
 {
-    using System.Collections.Generic;
     using System.Linq;
     using LabApi.Events.Handlers;
     using LabApi.Features.Wrappers;

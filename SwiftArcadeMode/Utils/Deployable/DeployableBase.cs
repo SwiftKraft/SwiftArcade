@@ -1,127 +1,188 @@
 ﻿namespace SwiftArcadeMode.Utils.Deployable
 {
-    using CustomPlayerEffects;
-    using LabApi.Events.Handlers;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using AdminToys;
     using LabApi.Features.Wrappers;
-    using MEC;
-    using Mirror;
-    using NetworkManagerUtils.Dummies;
-    using PlayerRoles;
+    using PlayerStatsSystem;
     using ProjectMER.Features;
     using ProjectMER.Features.Objects;
     using SwiftArcadeMode.Utils.Extensions;
     using UnityEngine;
 
+    using Logger = LabApi.Features.Console.Logger;
+
     public abstract class DeployableBase
     {
-        public DeployableBase(string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeployableBase"/> class.
+        /// </summary>
+        /// <param name="name">The name of the deployable.</param>
+        /// <param name="schematicName">The name of the schematic.</param>
+        /// <param name="position">The position of the deployable.</param>
+        /// <param name="rotation">The rotation of the deployable.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the target schematic either doesnt exist, or has no head.</exception>
+        /// <remarks>Call <see cref="Initialize"/> on the new instance after this constructor.</remarks>
+        public DeployableBase(string name, string schematicName, Vector3 position, Quaternion rotation)
         {
             Name = name;
-            Dummy = Player.Get(DummyUtils.SpawnDummy(Name));
-            Dummy.ReferenceHub.serverRoles.NetworkHideFromPlayerList = true;
-            Dummy.IsSpectatable = false;
-            Timing.CallDelayed(Time.deltaTime, () =>
-            {
-                Dummy.SetRole(role, RoleChangeReason.None, RoleSpawnFlags.None);
-                Dummy.CustomInfo = TypeName;
-                Dummy.Scale = colliderScale;
-                Dummy.EnableEffect<Fade>(byte.MaxValue);
-                Dummy.ReferenceHub.playerStats.OnThisPlayerDied += OnDummyDied;
-                Dummy.ReferenceHub.serverRoles.TryHideTag();
-                Position = position;
-                Rotation = rotation;
-                Initialize();
-                Initialized = true;
-            });
-            Schematic = SchematicExtensions.SpawnSchematic(schematicName, position, rotation);
+
+            Schematic = SchematicExtensions.SpawnSchematic(schematicName, position, rotation) ?? throw new InvalidOperationException($"Failed to spawn deployable {schematicName}!");
+
+            RegisterSchematicProperties(schematicName);
+
+            if (Head is null)
+                throw new InvalidOperationException($"Deployable {schematicName} has no head!");
+
             DeployableManager.AllDeployables.Add(this);
-            Scp096Events.AddingTarget += On096AddingTarget;
-            Scp173Events.AddingObserver += On173AddingObserver;
         }
 
-        public string Name { get; private set; }
+        public static Dictionary<string, int[]> SchematicPropertyCache { get; } = new();
+
+        public static FileSystemWatcher? Watcher { get; } = TryInitializeWatcher();
+
+        public string Name { get; }
 
         public virtual string TypeName => GetType().Name;
 
-        public Player Dummy { get; set; }
-
         public Vector3 Position
         {
-            get => Dummy.Position;
-            set
-            {
-                Dummy.Position = value;
-                if (Schematic)
-                    Schematic.Position = Dummy.Position;
-            }
+            get => Schematic.Position;
+            set => Schematic.Position = value;
         }
 
         public Quaternion Rotation
         {
-            get => Dummy.Rotation;
-            set
-            {
-                Dummy.Rotation = value;
-                if (Schematic)
-                    Schematic.Rotation = Dummy.Rotation;
-            }
+            get => Schematic.Rotation;
+            set => Schematic.Rotation = value;
         }
 
-        public bool Initialized { get; private set; }
+        public abstract float MaxHealth { get; }
+
+        public float Health { get; set; }
 
         public bool Destroyed { get; private set; }
 
-        public SchematicObject? Schematic { get; set; }
+        public SchematicObject Schematic { get; set; }
 
-        public AnimationController? Animator => Schematic?.AnimationController;
+        public AdminToy Head { get; set; }
+
+        public AnimationController Animator => Schematic.AnimationController;
+
+        public List<Hitbox> Hitboxes { get; } = [];
 
         public virtual void Initialize()
         {
+            Health = MaxHealth;
         }
 
         public virtual void Tick()
         {
-            if (!Schematic || !Dummy.GameObject)
-            {
+            if (!Schematic)
                 Destroy();
-                return;
-            }
+        }
 
-            if (Dummy.ReferenceHub.transform.hasChanged)
-            {
-                Schematic.transform.SetPositionAndRotation(Dummy.Position, Dummy.Rotation);
-                Dummy.ReferenceHub.transform.hasChanged = false;
-            }
+        public virtual void OnHit(float damage, DamageHandlerBase handler, Vector3 hitPosition)
+        {
+            Health -= damage;
+
+            if (Health <= 0)
+                Destroy();
         }
 
         public virtual void Destroy()
         {
             DeployableManager.AllDeployables.Remove(this);
-            if (Dummy.GameObject)
-                NetworkServer.Destroy(Dummy.GameObject);
             if (Schematic && Schematic.gameObject)
                 Schematic.Destroy();
-            Scp096Events.AddingTarget -= On096AddingTarget;
-            Scp173Events.AddingObserver -= On173AddingObserver;
             Destroyed = true;
         }
 
-        private void On173AddingObserver(LabApi.Events.Arguments.Scp173Events.Scp173AddingObserverEventArgs ev)
+        private static FileSystemWatcher? TryInitializeWatcher()
         {
-            if (ev.Target == Dummy)
-                ev.IsAllowed = false;
+            if (!Directory.Exists(ProjectMER.ProjectMER.SchematicsDir))
+                return null;
+
+            string dir = Path.Combine(ProjectMER.ProjectMER.SchematicsDir, Core.CoreConfig.SchematicsDirectory);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            FileSystemWatcher watcher = new(dir);
+
+            watcher.Changed += OnChanged;
+            watcher.Renamed += OnChanged;
+            watcher.Deleted += OnChanged;
+            watcher.Created += OnChanged;
+
+            watcher.Error += (_, ev) => { Logger.Error(ev.GetException()); };
+
+            return watcher;
         }
 
-        private void On096AddingTarget(LabApi.Events.Arguments.Scp096Events.Scp096AddingTargetEventArgs ev)
+        private static void OnChanged(object source, FileSystemEventArgs e)
         {
-            if (ev.Target == Dummy)
-                ev.IsAllowed = false;
+            if (Path.GetExtension(e.FullPath) != ".json")
+                return;
+
+            SchematicPropertyCache.Remove(Path.ChangeExtension(e.Name, null));
         }
 
-        private void OnDummyDied(PlayerStatsSystem.DamageHandlerBase obj)
+        private void RegisterSchematicProperties(string schematicName)
         {
-            Dummy.ReferenceHub.playerStats.OnThisPlayerDied -= OnDummyDied;
-            Destroy();
+            if (SchematicPropertyCache.TryGetValue(schematicName, out int[] indices))
+            {
+                for (int i = 0; i < indices.Length; i++)
+                    CheckToy(Schematic.AdminToyBases[indices[i]]);
+            }
+
+            HashSet<int> keyIndices = [];
+
+            for (int i = 0; i < Schematic.AdminToyBases.Count; i++)
+            {
+                if (CheckToy(Schematic.AdminToyBases[i]))
+                    keyIndices.Add(i);
+            }
+
+            if (Watcher != null)
+                SchematicPropertyCache[schematicName] = keyIndices.ToArray();
+
+            return;
+
+            bool CheckToy(AdminToyBase toy)
+            {
+                bool result = false;
+                if (toy.name.Contains("SAM-DeployableHead") && Head is null)
+                {
+                    Head = AdminToy.Get(toy);
+                    result = true;
+                }
+
+                if (toy is not AdminToys.PrimitiveObjectToy prim)
+                    return result;
+
+                const string HitboxTag = "SAM-Hitbox(";
+                int index = toy.name.IndexOf(HitboxTag, StringComparison.Ordinal);
+                if (index is not -1)
+                {
+                    index += HitboxTag.Length;
+
+                    int nextIndex = toy.name.IndexOf(')', index);
+                    string tag = toy.name.Substring(index, nextIndex - index);
+
+                    if (!float.TryParse(tag, out float multiplier))
+                    {
+                        Logger.Warn($"Hitbox {toy} for deployable {Name} has an invalid damage multiplier and will be ignored. (Processed value: {tag})");
+                        return false;
+                    }
+
+                    Hitboxes.Add(Hitbox.Create(this, prim, multiplier));
+                    result = true;
+                }
+
+                return result;
+            }
         }
     }
 }

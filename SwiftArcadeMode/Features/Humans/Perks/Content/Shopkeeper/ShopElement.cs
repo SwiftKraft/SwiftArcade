@@ -1,7 +1,5 @@
 ﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Shopkeeper
 {
-    using LabApi.Features.Wrappers;
-
     public abstract class ShopElement
     {
         public Shopkeeper Parent { get; protected set; } = null!;

@@ -145,7 +145,14 @@
                 if (!Player.IsAlive)
                     return;
 
-                CurrentSpell.Cast();
+                try
+                {
+                    CurrentSpell.Cast();
+                }
+                catch (Exception ex)
+                {
+                    LabApi.Features.Console.Logger.Error(ex);
+                }
 
                 if (CurrentSpell.CastDuration > 0f)
                     castDuration.Reset(CurrentSpell.CastDuration);

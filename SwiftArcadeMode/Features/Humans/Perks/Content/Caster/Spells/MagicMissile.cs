@@ -57,7 +57,7 @@
                 projectile.Init();
                 if (!projectile.Collider)
                 {
-                    LabApi.Features.Console.Logger.Error("Failed to create thorn shot projectile, collider is null!");
+                    LabApi.Features.Console.Logger.Error("Failed to create magic missile projectile, collider is null!");
                     continue;
                 }
 

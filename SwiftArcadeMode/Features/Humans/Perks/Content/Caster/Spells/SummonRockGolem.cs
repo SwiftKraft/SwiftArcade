@@ -24,9 +24,15 @@
 
         public override float CastTime => 1f;
 
-        public override DeployableBase Create(Vector3 loc) => new Golem(this, Caster.Player.DisplayName + "'s Rock Golem", "RockGolem", Caster.Player.Role, new Vector3(1f, 0.5f, 1f), loc, Quaternion.identity);
+        public override DeployableBase Create(Vector3 loc)
+        {
+            Golem golem = new(this, Caster.Player.DisplayName + "'s Rock Golem", "RockGolem", loc, Quaternion.identity);
+            golem.Initialize();
+            return golem;
+        }
 
-        public class Golem(SpellBase spell, string name, string schematicName, RoleTypeId role, Vector3 colliderScale, Vector3 position, Quaternion rotation) : TurretSummon(spell, name, schematicName, role, colliderScale, position, rotation)
+        public class Golem(SpellBase spell, string name, string schematicName, Vector3 position, Quaternion rotation)
+            : TurretSummon(spell, name, schematicName, position, rotation)
         {
             private Vector3 damp;
             private Vector3 vel;
@@ -38,7 +44,7 @@
 
             public override float Delay => 2.5f;
 
-            public override float Health => 200f;
+            public override float MaxHealth => 200f;
 
             public override float DestroyRange => 20f;
 
@@ -46,11 +52,11 @@
             {
                 prevTarget = target;
 
-                if (!VectorExtensions.SolveBallisticArc(Dummy.Camera.position, Dummy.Camera.position.PredictPosition(target.Position, damp, 12f), 12f, false, out Vector3 velocity))
+                if (!VectorExtensions.SolveBallisticArc(Head.Transform.position, Head.Transform.position.PredictPosition(target.Position, damp, 12f), 12f, false, out Vector3 velocity))
                     return;
 
                 Vector3 direction = velocity.normalized;
-                new Projectile(Spell, Dummy, Dummy.Camera.position, Quaternion.LookRotation(direction), direction * 12f, 5f).Init();
+                new Projectile(Spell, Owner, Head.Transform.position, Quaternion.LookRotation(direction), direction * 12f, 5f).Init();
             }
 
             public override void Tick()
