@@ -1,0 +1,228 @@
+﻿namespace SwiftArcadeMode.Features.Humans.Perks.Content.Caster
+{
+    using System;
+    using System.Linq;
+    using LabApi.Events.Handlers;
+    using LabApi.Features.Wrappers;
+    using MEC;
+    using SwiftArcadeMode.Utils.Projectiles;
+    using SwiftArcadeMode.Utils.Structures;
+    using UnityEngine;
+
+    public abstract class CasterBase(PerkInventory inv) : PerkItemReceiveBase(inv)
+    {
+        private readonly Timer castDuration = new();
+
+        private bool casting;
+
+        public override ItemType ItemType => ItemType.KeycardCustomTaskForce;
+
+        public override string PerkDescription => $"Allows you to cast {Name} spells.\nDrop the keycard to change spell, inspect to cast.";
+
+        public virtual float KillCooldownReduction => 4f;
+
+        public virtual float LessItemsCooldown => 3f;
+
+        public abstract float RegularCooldown { get; }
+
+        public override int Limit => int.MaxValue;
+
+        public override string ReadyMessage => Player.IsInventoryFull ? "Failed to refresh, no space in inventory." : "Spells refreshed!";
+
+        public SpellBase CurrentSpell { get; private set; } = null!;
+
+        public SpellBase[] Spells { get; private set; } = null!;
+
+        public Item? CurrentSpellItem { get; private set; }
+
+        public ushort CurrentSpellItemSerial { get; private set; }
+
+        public int CurrentSpellIndex
+        {
+            get;
+            set
+            {
+                if (value < 0 || Spells.Length <= 0)
+                    return;
+
+                field = value % Spells.Length;
+                CurrentSpell = Spells[field];
+            }
+        }
+
+        public override float GetCooldown(Player player) => player.Items.Count() < 3 ? LessItemsCooldown : RegularCooldown;
+
+        public abstract Type[] ListSpells();
+
+        public override void Init()
+        {
+            base.Init();
+
+            PlayerEvents.DroppingItem += OnDroppingItem;
+            PlayerEvents.DroppedItem += OnDroppedItem;
+            PlayerEvents.InspectingKeycard += OnInspectingKeycard;
+            PlayerEvents.Dying += OnDying;
+            PlayerEvents.ChangingItem += OnChangingItem;
+
+            castDuration.OnTimerEnd += OnCastTimerEnded;
+
+            Spells = ListSpells().Select(t => (SpellBase)Activator.CreateInstance(t, this)).Where(s => s != null).ToArray();
+            for (int i = 0; i < Spells.Length; i++)
+                Spells[i].Init();
+
+            if (Spells.Length <= 0)
+                Player.GetPerkInventory().RemovePerk(this);
+
+            CurrentSpellIndex = 0;
+        }
+
+        public override void Remove()
+        {
+            base.Remove();
+            PlayerEvents.DroppingItem -= OnDroppingItem;
+            PlayerEvents.DroppedItem -= OnDroppedItem;
+            PlayerEvents.InspectingKeycard -= OnInspectingKeycard;
+            PlayerEvents.Dying -= OnDying;
+            PlayerEvents.ChangingItem -= OnChangingItem;
+
+            castDuration.OnTimerEnd -= OnCastTimerEnded;
+
+            RemoveCurrentSpellItem();
+        }
+
+        public override void Tick()
+        {
+            if (CurrentSpellItem == null || Player.Items.All(i => i.Serial != CurrentSpellItemSerial))
+                base.Tick();
+
+            if (!castDuration.Ended)
+            {
+                castDuration.Tick(Time.fixedDeltaTime);
+                CurrentSpell.Tick();
+            }
+        }
+
+        public override Item? GiveItem()
+        {
+            RemoveCurrentSpellItem();
+
+            CurrentSpellItem = KeycardItem.CreateCustomKeycardTaskForce(Player, CurrentSpell.Name, CurrentSpell.Name, default, CurrentSpell.BaseColor, CurrentSpell.BaseColor, string.Empty, CurrentSpell.RankIndex);
+            if (CurrentSpellItem != null)
+                CurrentSpellItemSerial = CurrentSpellItem.Serial;
+
+            return CurrentSpellItem;
+        }
+
+        private void OnCastTimerEnded() => CurrentSpell?.End();
+
+        private void OnDroppedItem(LabApi.Events.Arguments.PlayerEvents.PlayerDroppedItemEventArgs ev)
+        {
+            if (ev.Pickup.Serial != CurrentSpellItemSerial)
+                return;
+
+            ev.Pickup.Destroy();
+        }
+
+        private void OnChangingItem(LabApi.Events.Arguments.PlayerEvents.PlayerChangingItemEventArgs ev)
+        {
+            if (ev.Player == Player && ev.NewItem == CurrentSpellItem)
+                SendMessage("Equipped " + CurrentSpell.Name);
+
+            if (casting && ev.Player == Player && ev.OldItem == CurrentSpellItem)
+                ev.IsAllowed = false;
+        }
+
+        private void OnInspectingKeycard(LabApi.Events.Arguments.PlayerEvents.PlayerInspectingKeycardEventArgs ev)
+        {
+            if (casting || !castDuration.Ended || ev.Player != Player || ev.KeycardItem != CurrentSpellItem)
+                return;
+
+            SendMessage("Casting " + CurrentSpell.Name, CurrentSpell.CastTime);
+            casting = true;
+            Timing.CallDelayed(CurrentSpell.CastTime, () =>
+            {
+                casting = false;
+                if (!Player.IsAlive)
+                    return;
+
+                try
+                {
+                    CurrentSpell.Cast();
+                }
+                catch (Exception ex)
+                {
+                    LabApi.Features.Console.Logger.Error(ex);
+                }
+
+                if (CurrentSpell.CastDuration > 0f)
+                    castDuration.Reset(CurrentSpell.CastDuration);
+
+                RemoveCurrentSpellItem();
+                SendMessage("Casted " + CurrentSpell.Name, 1f);
+            });
+        }
+
+        private void OnDying(LabApi.Events.Arguments.PlayerEvents.PlayerDyingEventArgs ev)
+        {
+            if (ev.Player != Player)
+            {
+                if (ev.Attacker == Player)
+                    CooldownTimer.Tick(KillCooldownReduction);
+
+                return;
+            }
+
+            casting = false;
+            RemoveCurrentSpellItem();
+        }
+
+        private void RemoveCurrentSpellItem()
+        {
+            if (CurrentSpellItem != null)
+            {
+                Player.RemoveItem(CurrentSpellItem);
+                CurrentSpellItem = null;
+                CurrentSpellItemSerial = 0;
+            }
+        }
+
+        private void OnDroppingItem(LabApi.Events.Arguments.PlayerEvents.PlayerDroppingItemEventArgs ev)
+        {
+            if (ev.Player != Player || ev.Item != CurrentSpellItem)
+                return;
+
+            ev.IsAllowed = false;
+
+            if (castDuration.Ended && !casting)
+            {
+                CurrentSpellIndex++;
+                bool held = ev.Player.CurrentItem == CurrentSpellItem;
+
+                Item? it = GiveItem();
+
+                if (held)
+                    ev.Player.CurrentItem = it;
+            }
+        }
+
+        public abstract class MagicProjectileBase : ProjectileBase
+        {
+            protected MagicProjectileBase(SpellBase spell, Player owner, Vector3 initialPosition, Quaternion initialRotation, Vector3 initialVelocity, float lifetime = 10)
+                : base(owner, initialPosition, initialRotation, initialVelocity, lifetime)
+            {
+                Spell = spell;
+            }
+
+            public SpellBase Spell { get; }
+
+            public abstract bool UseGravity { get; }
+
+            /// <inheritdoc/>
+            public override void Init()
+            {
+                base.Init();
+                Rigidbody?.useGravity = UseGravity;
+            }
+        }
+    }
+}

@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>14</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<AssemblyName>SwiftArcade</AssemblyName>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<OutputPath>../bin/$(Configuration)/</OutputPath>
+		
+		<PlatformTarget>x64</PlatformTarget>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<IncludeCopyLocalFilesOutputGroup>false</IncludeCopyLocalFilesOutputGroup>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(Configuration) == 'Release'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" IncludeAssets="all" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp-firstpass" HintPath="$(SCPSLREFERENCES)\Assembly-CSharp-firstpass.dll" Private="false" />
+		<Reference Include="Assembly-CSharp" HintPath="$(SCPSLREFERENCES)\Assembly-CSharp-Publicized.dll" Private="false" />
+		<Reference Include="AudioPlayerApi" HintPath="$(SCPSLREFERENCES)\AudioPlayerApi.dll" Private="false" />
+		<Reference Include="CommandSystem.Core" HintPath="$(SCPSLREFERENCES)\CommandSystem.Core.dll" Private="false" />
+		<Reference Include="NorthwoodLib" HintPath="$(SCPSLREFERENCES)\NorthwoodLib.dll" Private="false" />
+		<Reference Include="LabApi" HintPath="$(SCPSLREFERENCES)\LabApi.dll" Private="false" />
+		<Reference Include="Mirror" HintPath="$(SCPSLREFERENCES)\Mirror-Publicized.dll" Private="false" />
+		<Reference Include="mscorlib" HintPath="$(SCPSLREFERENCES)\mscorlib.dll" Private="false" />
+		<Reference Include="System" HintPath="$(SCPSLREFERENCES)\System.dll" Private="false" />
+		<Reference Include="Pooling" HintPath="$(SCPSLREFERENCES)\Pooling.dll" Private="false" />
+		<Reference Include="ProjectMER" HintPath="$(SCPSLREFERENCES)\ProjectMER.dll" Private="false" />
+		<Reference Include="HarmonyLib" HintPath="$(SCPSLREFERENCES)\0Harmony.dll" Private="false" />
+		<Reference Include="UnityEngine" HintPath="$(SCPSLREFERENCES)\UnityEngine.dll" Private="false" />
+		<Reference Include="UnityEngine.AIModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AIModule.dll" Private="false" />
+		<Reference Include="UnityEngine.AnimationModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.AnimationModule.dll" Private="false" />
+		<Reference Include="UnityEngine.CoreModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.CoreModule.dll" Private="false" />
+		<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.PhysicsModule.dll" Private="false" />
+		<Reference Include="UnityEngine.TerrainModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.TerrainModule.dll" Private="false" />
+		<Reference Include="UnityEngine.TerrainPhysicsModule" HintPath="$(SCPSLREFERENCES)\UnityEngine.TerrainPhysicsModule.dll" Private="false" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\Game\Modifiers\" />
+	  <Folder Include="Features\SCPs\Upgrades\Content\SCP079\" />
+	  <Folder Include="Features\SCPs\Upgrades\Content\SCP096\" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<NoWarn>$(NoWarn);SA0001</NoWarn>
+		<NoWarn>$(NoWarn);SA1000</NoWarn>
+		<NoWarn>$(NoWarn);SA1008</NoWarn>
+		<NoWarn>$(NoWarn);SA1520</NoWarn>
+		<NoWarn>$(NoWarn);SA1009</NoWarn>
+		<NoWarn>$(NoWarn);SA1002</NoWarn>
+		<NoWarn>$(NoWarn);SA1600</NoWarn>
+		<NoWarn>$(NoWarn);SA1602</NoWarn>
+		<NoWarn>$(NoWarn);SA1010</NoWarn>
+		<NoWarn>$(NoWarn);SA1013</NoWarn>
+		<NoWarn>$(NoWarn);SA1028</NoWarn>
+		<NoWarn>$(NoWarn);SA1101</NoWarn>
+		<NoWarn>$(NoWarn);SA1011</NoWarn>
+		<NoWarn>$(NoWarn);SA1503</NoWarn>
+		<NoWarn>$(NoWarn);SA1118</NoWarn>
+		<NoWarn>$(NoWarn);SA1633</NoWarn>
+	</PropertyGroup>
+
+</Project>
